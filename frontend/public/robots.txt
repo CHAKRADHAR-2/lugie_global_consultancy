@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://lugie-global-consultancy.web.app/sitemap.xml

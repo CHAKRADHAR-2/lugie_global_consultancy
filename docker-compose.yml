@@ -1,0 +1,94 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lugie_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-lugie}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lugie_dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-lugie}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-lugie} -d ${POSTGRES_DB:-lugie}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: lugie_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    container_name: lugie_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-minioadmin}
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MinIO bucket initialisation
+  minio-init:
+    image: minio/mc:latest
+    container_name: lugie_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD};
+      mc mb --ignore-existing local/$${BUCKET_NAME};
+      mc mb --ignore-existing local/$${QUARANTINE_BUCKET};
+      mc anonymous set none local/$${BUCKET_NAME};
+      mc anonymous set none local/$${QUARANTINE_BUCKET};
+      echo 'Buckets created and set to private.';
+      "
+    environment:
+      MINIO_ROOT_USER: ${S3_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-minioadmin}
+      BUCKET_NAME: ${S3_BUCKET_NAME:-lugie-documents}
+      QUARANTINE_BUCKET: ${S3_QUARANTINE_BUCKET:-lugie-quarantine}
+
+  # ClamAV (optional — comment out if not needed)
+  # clamav:
+  #   image: clamav/clamav:1.4
+  #   container_name: lugie_clamav
+  #   restart: unless-stopped
+  #   ports:
+  #     - "3310:3310"
+  #   volumes:
+  #     - clamav_data:/var/lib/clamav
+  #   healthcheck:
+  #     test: ["CMD", "clamdcheck"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  # clamav_data:

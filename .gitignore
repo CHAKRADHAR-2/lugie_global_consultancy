@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment
+.env
+.env.local
+.env.production
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Next.js
+frontend/.next/
+frontend/out/
+
+# Python
+backend/.venv/
+backend/venv/
+backend/.ruff_cache/
+backend/htmlcov/
+backend/.coverage
+
+# Docker
+docker-data/
+
+# Logs
+*.log
+firebase-debug*.log
+
+# Sensitive / Temporary
+cookies_admin.txt
+.firebase/
+deploy-public/
+scratch/
+backend/.env
+frontend/.env.local
+
+# MinIO data (local)
+minio-data/
