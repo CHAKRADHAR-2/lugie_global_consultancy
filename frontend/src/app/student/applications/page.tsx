@@ -83,7 +83,7 @@ export default function StudentApplicationsPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -92,7 +92,7 @@ export default function StudentApplicationsPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)]">My Applications</h1>
+          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">My Applications</h1>
           <p className="mt-1 text-sm text-gray-500">
             Track your submissions across international university admission committees.
           </p>
@@ -100,7 +100,7 @@ export default function StudentApplicationsPage() {
 
         <Link
           href="/student/universities"
-          className="inline-flex items-center gap-2 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition"
+          className="inline-flex items-center gap-2 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
         >
           <Plus className="h-4 w-4" />
           Apply to Another University
@@ -116,7 +116,7 @@ export default function StudentApplicationsPage() {
           </p>
           <Link
             href="/student/universities"
-            className="rounded-lg bg-[hsl(174,85%,32%)] px-6 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)]"
+            className="rounded-lg bg-[hsl(166,72%,40%)] px-6 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)]"
           >
             Explore University Directory
           </Link>
@@ -133,7 +133,7 @@ export default function StudentApplicationsPage() {
                   onClick={() => handleSelectApp(app)}
                   className={`cursor-pointer rounded-2xl p-5 border transition ${
                     isSelected
-                      ? "border-[hsl(174,85%,32%)] bg-white shadow-md ring-2 ring-[hsl(174,85%,32%)]/10"
+                      ? "border-[hsl(166,72%,40%)] bg-white shadow-md ring-2 ring-[hsl(166,72%,40%)]/10"
                       : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
                   }`}
                 >
@@ -167,7 +167,7 @@ export default function StudentApplicationsPage() {
               <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-6">
                 <div className="flex items-center justify-between pb-4 border-b border-gray-100">
                   <div>
-                    <h3 className="text-lg font-bold text-[hsl(215,50%,12%)]">
+                    <h3 className="text-lg font-bold text-[hsl(222,47%,11%)]">
                       {selectedApp.application_reference || `Application Details`}
                     </h3>
                     <p className="text-xs text-gray-400 mt-0.5">ID: {selectedApp.id}</p>
@@ -187,7 +187,7 @@ export default function StudentApplicationsPage() {
 
                 {/* Timeline History */}
                 <div>
-                  <h4 className="text-sm font-bold text-[hsl(215,50%,12%)] mb-4">
+                  <h4 className="text-sm font-bold text-[hsl(222,47%,11%)] mb-4">
                     Status History & Milestones
                   </h4>
 
@@ -199,11 +199,11 @@ export default function StudentApplicationsPage() {
                     <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-200">
                       {timeline.map((item, idx) => (
                         <div key={item.id} className="relative">
-                          <div className="absolute -left-6 top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[hsl(174,85%,32%)] shadow-sm" />
+                          <div className="absolute -left-6 top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[hsl(166,72%,40%)] shadow-sm" />
                           <div>
                             <span className="text-xs font-bold text-gray-900 block">
                               Status changed to:{" "}
-                              <span className="text-[hsl(174,85%,32%)]">{item.to_status}</span>
+                              <span className="text-[hsl(166,72%,40%)]">{item.to_status}</span>
                             </span>
                             {item.notes && <p className="text-xs text-gray-600 mt-0.5">{item.notes}</p>}
                             <span className="text-[10px] text-gray-400 mt-1 block">

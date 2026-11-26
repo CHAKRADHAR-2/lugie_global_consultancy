@@ -5,7 +5,9 @@ import Link from "next/link";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { api } from "@/lib/api-client";
-import { Check, ShieldAlert, Sparkles, HelpCircle, ArrowRight, Loader2 } from "lucide-react";
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/fade-in";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
+import { Check, ShieldAlert, ArrowRight, Sparkles } from "lucide-react";
 
 interface Inclusion {
   id: string;
@@ -104,7 +106,7 @@ const DEFAULT_INCLUSIONS_BY_SLUG: Record<string, Inclusion[]> = {
 export default function PricingPage() {
   const [packages, setPackages] = useState<Package[]>(FALLBACK_PACKAGES);
   const [services, setServices] = useState<AdditionalService[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchPricing() {
@@ -116,7 +118,7 @@ export default function PricingPage() {
         if (pkgData && pkgData.length > 0) {
           const merged = pkgData.map((pkg) => {
             const fallback = DEFAULT_INCLUSIONS_BY_SLUG[pkg.slug?.toLowerCase()] || [];
-            const inclusions = (pkg.inclusions && pkg.inclusions.length > 0) ? pkg.inclusions : fallback;
+            const inclusions = pkg.inclusions && pkg.inclusions.length > 0 ? pkg.inclusions : fallback;
             return { ...pkg, inclusions };
           });
           setPackages(merged);
@@ -134,171 +136,185 @@ export default function PricingPage() {
   }, []);
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-[hsl(210,20%,98%)]">
       <Header />
 
       <main className="flex-1">
         {/* Banner */}
-        <section className="bg-[hsl(215,50%,12%)] py-20 px-6 lg:px-8 text-center text-white">
-          <div className="mx-auto max-w-4xl">
-            <span className="text-sm font-semibold tracking-widest uppercase text-[hsl(174,85%,42%)]">
-              Transparent & Non-Negotiable
-            </span>
-            <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
-              Honest Consultancy Packages
-            </h1>
-            <p className="mt-4 text-lg text-white/70 max-w-2xl mx-auto">
-              Flat, published rates for Indian students. No hidden percentages, no surprise fees, and
-              no secret university tie-up markups.
-            </p>
+        <section className="relative overflow-hidden bg-[hsl(222,47%,11%)] py-24 px-6 lg:px-8 text-center text-white">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="mesh-orb absolute top-1/4 left-1/3 h-[420px] w-[420px] rounded-full bg-[hsl(166,72%,40%)] opacity-[0.07] blur-[120px]" />
+            <div className="mesh-orb-delayed absolute bottom-1/4 right-1/4 h-[350px] w-[350px] rounded-full bg-[hsl(45,93%,58%)] opacity-[0.05] blur-[100px]" />
+          </div>
+
+          <div className="relative mx-auto max-w-4xl">
+            <FadeIn delay={0.1} direction="none">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-5 py-2 text-xs font-semibold tracking-widest uppercase text-[hsl(166,72%,50%)] mb-6 backdrop-blur-sm border border-white/[0.08]">
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Transparent & Non-Negotiable</span>
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.2}>
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-[1.1]">
+                Honest Consultancy Packages
+              </h1>
+            </FadeIn>
+            <FadeIn delay={0.35}>
+              <p className="mt-5 text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
+                Flat, published rates for Indian students. No hidden percentages, no surprise fees, and
+                no secret university tie-up markups.
+              </p>
+            </FadeIn>
           </div>
         </section>
 
         {/* Pricing Cards */}
-        <section className="py-20 px-6 lg:px-8">
+        <section className="bg-white py-24 px-6 lg:px-8 border-b border-[hsl(220,13%,91%)]">
           <div className="mx-auto max-w-7xl">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            <StaggerContainer className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
               {packages.map((pkg) => {
                 const isRec = pkg.is_recommended;
+                const inclusions =
+                  pkg.inclusions && pkg.inclusions.length > 0
+                    ? pkg.inclusions
+                    : DEFAULT_INCLUSIONS_BY_SLUG[pkg.slug?.toLowerCase()] || [];
+
                 return (
-                  <div
-                    key={pkg.id}
-                    className={`relative rounded-3xl p-8 flex flex-col justify-between transition ${
-                      isRec
-                        ? "border-2 border-[hsl(174,85%,32%)] bg-white shadow-xl ring-4 ring-[hsl(174,85%,32%)]/10"
-                        : "border border-gray-200 bg-white shadow-sm hover:shadow-md"
-                    }`}
-                  >
-                    {isRec && (
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-[hsl(174,85%,32%)] px-4 py-1 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-                        Most Popular Choice
+                  <StaggerItem key={pkg.id} className="flex">
+                    <div
+                      className={`group relative w-full rounded-2xl p-8 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 ${
+                        isRec
+                          ? "border-2 border-[hsl(166,72%,40%)] bg-white shadow-lg shadow-[hsl(166,72%,40%)]/10 hover:shadow-xl hover:shadow-[hsl(166,72%,40%)]/15"
+                          : "border border-[hsl(220,13%,91%)] bg-white shadow-sm hover:shadow-lg hover:shadow-black/5 hover:border-[hsl(166,72%,40%)]/30"
+                      }`}
+                    >
+                      {isRec && (
+                        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-[hsl(166,72%,36%)] to-[hsl(166,72%,44%)] px-4 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-md whitespace-nowrap">
+                          Most Popular Choice
+                        </div>
+                      )}
+
+                      <div>
+                        <div className="flex items-center justify-between mb-4">
+                          <h2 className="text-2xl font-bold text-[hsl(222,47%,11%)]">
+                            {pkg.name}
+                          </h2>
+                        </div>
+
+                        <div className="mb-6 flex items-baseline gap-1">
+                          <AnimatedCounter
+                            target={pkg.price}
+                            prefix="₹"
+                            className="text-4xl font-extrabold text-[hsl(222,47%,11%)]"
+                          />
+                          <span className="text-xs text-[hsl(220,13%,46%)] font-medium">/ complete package</span>
+                        </div>
+
+                        <p className="text-xs text-[hsl(220,13%,46%)] pb-6 border-b border-[hsl(220,13%,91%)]">
+                          {pkg.slug === "basic" && "Ideal for self-directed students who only need shortlisting & SOP review."}
+                          {pkg.slug === "standard" && "Our flagship package with full admissions, LORs, and visa mock preparation."}
+                          {pkg.slug === "premium" && "Founder-led, high-touch support for top-tier global admissions & scholarships."}
+                        </p>
+
+                        <div className="pt-6 space-y-3.5 mb-8">
+                          <p className="text-xs font-bold uppercase tracking-wider text-[hsl(220,13%,46%)]">
+                            Package Inclusions:
+                          </p>
+                          {inclusions.map((inc) => (
+                            <div key={inc.id || inc.description} className="flex items-start gap-2.5 text-xs text-[hsl(222,47%,20%)]">
+                              <Check className="h-4 w-4 shrink-0 text-[hsl(160,84%,39%)] mt-0.5" />
+                              <span>{inc.description}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    )}
 
-                    <div>
-                      <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-2xl font-bold text-[hsl(215,50%,12%)]">
-                          {pkg.name}
-                        </h2>
+                      <div className="pt-4 border-t border-[hsl(220,13%,91%)] space-y-2.5">
+                        <Link
+                          href={`/student/payments?package=${pkg.slug}&enroll=true`}
+                          className={`w-full flex items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-all active:scale-[0.98] ${
+                            isRec
+                              ? "bg-[hsl(166,72%,40%)] text-white hover:bg-[hsl(166,72%,50%)] shadow-md shadow-[hsl(166,72%,40%)]/20"
+                              : "bg-[hsl(222,47%,11%)] text-white hover:bg-[hsl(222,47%,18%)]"
+                          }`}
+                        >
+                          Enroll Online (Instant) <ArrowRight className="h-4 w-4" />
+                        </Link>
+                        <Link
+                          href={`/book-consultation?package=${encodeURIComponent(pkg.name)}`}
+                          className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-xs font-semibold text-[hsl(220,13%,46%)] hover:text-[hsl(222,47%,11%)] hover:bg-[hsl(220,14%,96%)] border border-[hsl(220,13%,91%)] transition-colors"
+                        >
+                          Or Book Free Consultation
+                        </Link>
                       </div>
-
-                      <div className="mb-6 flex items-baseline gap-1">
-                        <span className="text-4xl font-extrabold text-[hsl(215,50%,12%)]">
-                          ₹{pkg.price.toLocaleString("en-IN")}
-                        </span>
-                        <span className="text-xs text-gray-500 font-medium">/ complete package</span>
-                      </div>
-
-                      <p className="text-xs text-gray-500 pb-6 border-b border-gray-100">
-                        {pkg.slug === "basic" && "Ideal for self-directed students who only need shortlisting & SOP review."}
-                        {pkg.slug === "standard" && "Our flagship package with full admissions, LORs, and visa mock preparation."}
-                        {pkg.slug === "premium" && "Founder-led, high-touch support for top-tier global admissions & scholarships."}
-                      </p>
-
-                      {(() => {
-                        const inclusions = (pkg.inclusions && pkg.inclusions.length > 0)
-                          ? pkg.inclusions
-                          : (DEFAULT_INCLUSIONS_BY_SLUG[pkg.slug?.toLowerCase()] || []);
-                        return (
-                          <div className="pt-6 space-y-3.5 mb-8">
-                            <p className="text-xs font-bold uppercase tracking-wider text-gray-500">
-                              Package Inclusions:
-                            </p>
-                            {inclusions.map((inc) => (
-                              <div key={inc.id || inc.description} className="flex items-start gap-2.5 text-xs text-gray-700">
-                                <Check className="h-4 w-4 shrink-0 text-emerald-600 mt-0.5" />
-                                <span>{inc.description}</span>
-                              </div>
-                            ))}
-                          </div>
-                        );
-                      })()}
                     </div>
-
-                    <div className="pt-4 border-t border-gray-100 space-y-2">
-                      <Link
-                        href={`/student/payments?package=${pkg.slug}&enroll=true`}
-                        className={`w-full flex items-center justify-center gap-2 rounded-xl py-3 text-sm font-semibold transition ${
-                          isRec
-                            ? "bg-[hsl(174,85%,32%)] text-white hover:bg-[hsl(174,85%,38%)] shadow-md"
-                            : "bg-[hsl(215,50%,12%)] text-white hover:bg-[hsl(215,50%,18%)]"
-                        }`}
-                      >
-                        Enroll Online (Instant) <ArrowRight className="h-4 w-4" />
-                      </Link>
-                      <Link
-                        href={`/book-consultation?package=${encodeURIComponent(pkg.name)}`}
-                        className="w-full flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-200 transition"
-                      >
-                        Or Book Free Consultation
-                      </Link>
-                    </div>
-                  </div>
+                  </StaggerItem>
                 );
               })}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
 
         {/* Additional Services */}
         {services.length > 0 && (
-          <section className="bg-gray-50 py-20 px-6 lg:px-8 border-t border-gray-100">
+          <section className="bg-[hsl(220,14%,96%)] py-20 px-6 lg:px-8 border-b border-[hsl(220,13%,91%)]">
             <div className="mx-auto max-w-6xl">
-              <div className="text-center mb-12">
-                <span className="text-xs font-bold uppercase tracking-wider text-[hsl(174,85%,32%)]">
+              <FadeIn className="text-center mb-12">
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-[hsl(166,72%,40%)]">
                   Modular Flexibility
                 </span>
-                <h2 className="text-3xl font-bold text-[hsl(215,50%,12%)] mt-2">
+                <h2 className="text-3xl font-bold tracking-tight text-[hsl(222,47%,11%)] mt-2">
                   Standalone Services & Add-Ons
                 </h2>
-                <p className="text-sm text-gray-600 mt-2 max-w-2xl mx-auto">
+                <p className="text-sm text-[hsl(220,13%,46%)] mt-2 max-w-2xl mx-auto">
                   Only need a single document reviewed or an emergency mock visa interview?
                   You can purchase individual services as needed.
                 </p>
-              </div>
+              </FadeIn>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {services.map((srv) => (
-                  <div
-                    key={srv.id}
-                    className="rounded-2xl border border-gray-200 bg-white p-5 flex items-center justify-between shadow-sm"
-                  >
-                    <div>
-                      <h4 className="text-sm font-bold text-[hsl(215,50%,12%)]">{srv.name}</h4>
-                      {srv.description && (
-                        <p className="text-xs text-gray-500 mt-0.5">{srv.description}</p>
-                      )}
+                  <StaggerItem key={srv.id} className="flex">
+                    <div className="w-full rounded-2xl border border-[hsl(220,13%,91%)] bg-white p-5 flex items-center justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/5 hover:border-[hsl(166,72%,40%)]/30">
+                      <div>
+                        <h4 className="text-sm font-bold text-[hsl(222,47%,11%)]">{srv.name}</h4>
+                        {srv.description && (
+                          <p className="text-xs text-[hsl(220,13%,46%)] mt-0.5">{srv.description}</p>
+                        )}
+                      </div>
+                      <div className="text-right pl-4 shrink-0">
+                        <span className="text-sm font-bold text-[hsl(222,47%,11%)]">
+                          ₹{srv.price_min.toLocaleString("en-IN")}
+                          {srv.price_max > srv.price_min ? ` – ₹${srv.price_max.toLocaleString("en-IN")}` : ""}
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right pl-4 shrink-0">
-                      <span className="text-sm font-bold text-gray-900">
-                        ₹{srv.price_min.toLocaleString("en-IN")}
-                        {srv.price_max > srv.price_min ? ` – ₹${srv.price_max.toLocaleString("en-IN")}` : ""}
-                      </span>
-                    </div>
-                  </div>
+                  </StaggerItem>
                 ))}
-              </div>
+              </StaggerContainer>
             </div>
           </section>
         )}
 
         {/* Third-Party Fee Notice */}
         <section className="py-16 px-6 lg:px-8">
-          <div className="mx-auto max-w-4xl rounded-3xl border border-amber-200 bg-amber-50/70 p-8 sm:p-10 space-y-4">
-            <div className="flex items-center gap-2 font-bold text-amber-950 text-base">
-              <ShieldAlert className="h-5 w-5 text-amber-700" />
-              <span>Notice Concerning Third-Party Government & University Fees</span>
+          <FadeIn>
+            <div className="mx-auto max-w-4xl rounded-2xl border border-[hsl(45,93%,58%)]/40 bg-[hsl(45,93%,58%)]/10 p-8 sm:p-10 space-y-4">
+              <div className="flex items-center gap-2.5 font-bold text-[hsl(222,47%,11%)] text-base">
+                <ShieldAlert className="h-5 w-5 text-amber-700 shrink-0" />
+                <span>Notice Concerning Third-Party Government & University Fees</span>
+              </div>
+              <p className="text-xs sm:text-sm text-[hsl(222,47%,20%)] leading-relaxed">
+                All package fees listed above are strictly for <strong>Lugie Global Consultancy advisory and preparation services</strong>.
+              </p>
+              <p className="text-xs sm:text-sm text-[hsl(220,13%,46%)] leading-relaxed font-medium">
+                Third-party institutional and government fees — including university application fees,
+                credential evaluation fees (e.g. WES, Uni-Assist), English proficiency exam fees (IELTS/TOEFL/PTE),
+                embassy visa application fees, SEVIS fees, health surcharges (NHS/OSHC), blocked accounts, and courier costs —
+                are paid directly by the student to the respective authorized authorities and are not included in our consultancy fees.
+              </p>
             </div>
-            <p className="text-xs sm:text-sm text-amber-900 leading-relaxed">
-              All package fees listed above are strictly for <strong>Lugie Global Consultancy advisory and preparation services</strong>.
-            </p>
-            <p className="text-xs sm:text-sm text-amber-900 leading-relaxed font-medium">
-              Third-party institutional and government fees — including university application fees,
-              credential evaluation fees (e.g. WES, Uni-Assist), English proficiency exam fees (IELTS/TOEFL/PTE),
-              embassy visa application fees, SEVIS fees, health surcharges (NHS/OSHC), blocked accounts, and courier costs —
-              are paid directly by the student to the respective authorized authorities and are not included in our consultancy fees.
-            </p>
-          </div>
+          </FadeIn>
         </section>
       </main>
 

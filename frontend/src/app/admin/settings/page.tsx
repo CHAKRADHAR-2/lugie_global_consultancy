@@ -106,7 +106,7 @@ export default function AdminSettingsPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -115,7 +115,7 @@ export default function AdminSettingsPage() {
     <div className="space-y-8 max-w-5xl">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)]">Platform & Agency Settings</h1>
+        <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">Platform & Agency Settings</h1>
         <p className="mt-1 text-sm text-gray-500">
           Manage agency branding, corporate headquarters contact channels, and operational access controls.
         </p>
@@ -144,8 +144,8 @@ export default function AdminSettingsPage() {
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Section 1: Agency Identity & Contact */}
         <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-          <div className="flex items-center gap-2 pb-4 border-b border-gray-100 text-[hsl(215,50%,12%)]">
-            <Building className="h-5 w-5 text-[hsl(174,85%,32%)]" />
+          <div className="flex items-center gap-2 pb-4 border-b border-gray-100 text-[hsl(222,47%,11%)]">
+            <Building className="h-5 w-5 text-[hsl(166,72%,40%)]" />
             <h2 className="text-base font-bold">Brand Identity & Official Channels</h2>
           </div>
 
@@ -160,7 +160,7 @@ export default function AdminSettingsPage() {
                 value={formData.agency_name}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)] font-medium"
+                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)] font-medium"
               />
             </div>
 
@@ -174,7 +174,7 @@ export default function AdminSettingsPage() {
                 value={formData.tagline}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)] font-medium"
+                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)] font-medium"
               />
             </div>
 
@@ -188,7 +188,7 @@ export default function AdminSettingsPage() {
                 value={formData.support_email}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
 
@@ -202,7 +202,7 @@ export default function AdminSettingsPage() {
                 value={formData.contact_phone}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
 
@@ -216,7 +216,7 @@ export default function AdminSettingsPage() {
                 value={formData.emergency_whatsapp}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
           </div>
@@ -224,8 +224,8 @@ export default function AdminSettingsPage() {
 
         {/* Section 2: Corporate Address */}
         <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-          <div className="flex items-center gap-2 pb-4 border-b border-gray-100 text-[hsl(215,50%,12%)]">
-            <MapPin className="h-5 w-5 text-[hsl(174,85%,32%)]" />
+          <div className="flex items-center gap-2 pb-4 border-b border-gray-100 text-[hsl(222,47%,11%)]">
+            <MapPin className="h-5 w-5 text-[hsl(166,72%,40%)]" />
             <h2 className="text-base font-bold">Headquarters Address</h2>
           </div>
 
@@ -240,7 +240,7 @@ export default function AdminSettingsPage() {
                 value={formData.address_street}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
 
@@ -252,7 +252,7 @@ export default function AdminSettingsPage() {
                 value={formData.address_city}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
 
@@ -264,7 +264,7 @@ export default function AdminSettingsPage() {
                 value={formData.address_state}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
 
@@ -276,7 +276,7 @@ export default function AdminSettingsPage() {
                 value={formData.address_postal_code}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
 
@@ -288,7 +288,7 @@ export default function AdminSettingsPage() {
                 value={formData.address_country}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
           </div>
@@ -296,8 +296,8 @@ export default function AdminSettingsPage() {
 
         {/* Section 3: Operational Access & Security */}
         <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-          <div className="flex items-center gap-2 pb-4 border-b border-gray-100 text-[hsl(215,50%,12%)]">
-            <ShieldCheck className="h-5 w-5 text-[hsl(174,85%,32%)]" />
+          <div className="flex items-center gap-2 pb-4 border-b border-gray-100 text-[hsl(222,47%,11%)]">
+            <ShieldCheck className="h-5 w-5 text-[hsl(166,72%,40%)]" />
             <h2 className="text-base font-bold">Operational Controls & Policies</h2>
           </div>
 
@@ -319,7 +319,7 @@ export default function AdminSettingsPage() {
                 name="enable_student_self_registration"
                 checked={formData.enable_student_self_registration}
                 onChange={() => {}}
-                className="h-4 w-4 text-[hsl(174,85%,32%)] rounded focus:ring-0 cursor-pointer"
+                className="h-4 w-4 text-[hsl(166,72%,40%)] rounded focus:ring-0 cursor-pointer"
               />
             </div>
 
@@ -340,7 +340,7 @@ export default function AdminSettingsPage() {
                 name="enable_simulated_payments"
                 checked={formData.enable_simulated_payments}
                 onChange={() => {}}
-                className="h-4 w-4 text-[hsl(174,85%,32%)] rounded focus:ring-0 cursor-pointer"
+                className="h-4 w-4 text-[hsl(166,72%,40%)] rounded focus:ring-0 cursor-pointer"
               />
             </div>
 
@@ -361,7 +361,7 @@ export default function AdminSettingsPage() {
                 name="require_document_verification"
                 checked={formData.require_document_verification}
                 onChange={() => {}}
-                className="h-4 w-4 text-[hsl(174,85%,32%)] rounded focus:ring-0 cursor-pointer"
+                className="h-4 w-4 text-[hsl(166,72%,40%)] rounded focus:ring-0 cursor-pointer"
               />
             </div>
           </div>
@@ -372,7 +372,7 @@ export default function AdminSettingsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2.5 rounded-xl bg-[hsl(174,85%,32%)] text-white text-xs font-semibold hover:bg-[hsl(174,85%,28%)] transition flex items-center gap-2 shadow-sm disabled:opacity-50"
+            className="px-6 py-2.5 rounded-xl bg-[hsl(166,72%,40%)] text-white text-xs font-semibold hover:bg-[hsl(174,85%,28%)] transition flex items-center gap-2 shadow-sm disabled:opacity-50"
           >
             {saving ? (
               <>

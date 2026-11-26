@@ -238,8 +238,8 @@ export default function StudentMessagesPage() {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)] flex items-center gap-2">
-            <MessageSquare className="h-6 w-6 text-[hsl(174,85%,32%)]" />
+          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)] flex items-center gap-2">
+            <MessageSquare className="h-6 w-6 text-[hsl(166,72%,40%)]" />
             Admissions Desk & Direct Messages
           </h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -253,7 +253,7 @@ export default function StudentMessagesPage() {
             onClick={() => setActiveTab("chat")}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
               activeTab === "chat"
-                ? "bg-white text-[hsl(174,85%,32%)] shadow-xs"
+                ? "bg-white text-[hsl(166,72%,40%)] shadow-xs"
                 : "text-gray-500 hover:text-gray-800"
             }`}
           >
@@ -264,7 +264,7 @@ export default function StudentMessagesPage() {
             onClick={() => setActiveTab("notifications")}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 ${
               activeTab === "notifications"
-                ? "bg-white text-[hsl(174,85%,32%)] shadow-xs"
+                ? "bg-white text-[hsl(166,72%,40%)] shadow-xs"
                 : "text-gray-500 hover:text-gray-800"
             }`}
           >
@@ -286,7 +286,7 @@ export default function StudentMessagesPage() {
           <div className="px-6 py-4 bg-slate-50 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="h-10 w-10 rounded-full bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)] font-extrabold flex items-center justify-center text-sm border border-[hsl(174,85%,32%)]/20">
+                <div className="h-10 w-10 rounded-full bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] font-extrabold flex items-center justify-center text-sm border border-[hsl(166,72%,40%)]/20">
                   SC
                 </div>
                 <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 border-2 border-white" />
@@ -294,7 +294,7 @@ export default function StudentMessagesPage() {
 
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-sm font-bold text-[hsl(215,50%,12%)]">
+                  <h3 className="text-sm font-bold text-[hsl(222,47%,11%)]">
                     Priya Sharma &bull; Senior Admissions Counsellor
                   </h3>
                   <span className="text-[10px] bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded-full border border-emerald-200">
@@ -308,7 +308,7 @@ export default function StudentMessagesPage() {
             </div>
 
             <div className="hidden sm:flex items-center gap-2 text-xs text-gray-400">
-              <ShieldCheck className="h-4 w-4 text-[hsl(174,85%,32%)]" />
+              <ShieldCheck className="h-4 w-4 text-[hsl(166,72%,40%)]" />
               <span>End-to-End Logged & Verified</span>
             </div>
           </div>
@@ -317,7 +317,7 @@ export default function StudentMessagesPage() {
           <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gradient-to-b from-slate-50/40 to-white">
             {loadingChat ? (
               <div className="flex h-full items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+                <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
               </div>
             ) : messages.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center text-center p-8">
@@ -337,7 +337,7 @@ export default function StudentMessagesPage() {
                     className={`flex items-start gap-2.5 ${isStudent ? "justify-end" : "justify-start"}`}
                   >
                     {!isStudent && (
-                      <div className="h-8 w-8 rounded-full bg-[hsl(174,85%,32%)]/15 text-[hsl(174,85%,32%)] font-bold flex items-center justify-center text-xs shrink-0 mt-1">
+                      <div className="h-8 w-8 rounded-full bg-[hsl(166,72%,40%)]/15 text-[hsl(166,72%,40%)] font-bold flex items-center justify-center text-xs shrink-0 mt-1">
                         SC
                       </div>
                     )}
@@ -345,7 +345,7 @@ export default function StudentMessagesPage() {
                     <div
                       className={`max-w-[78%] sm:max-w-md rounded-2xl p-4 text-xs leading-relaxed shadow-xs ${
                         isStudent
-                          ? "bg-[hsl(174,85%,32%)] text-white rounded-tr-xs"
+                          ? "bg-[hsl(166,72%,40%)] text-white rounded-tr-xs"
                           : "bg-white text-gray-800 border border-gray-200/80 rounded-tl-xs"
                       }`}
                     >
@@ -380,7 +380,7 @@ export default function StudentMessagesPage() {
                           <div className="flex items-center gap-2 truncate">
                             <FileText
                               className={`h-4 w-4 shrink-0 ${
-                                isStudent ? "text-white" : "text-[hsl(174,85%,32%)]"
+                                isStudent ? "text-white" : "text-[hsl(166,72%,40%)]"
                               }`}
                             />
                             <span className="font-mono text-[11px] truncate">
@@ -400,8 +400,8 @@ export default function StudentMessagesPage() {
                             }
                             className={`shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded text-[10px] font-bold transition ${
                               isStudent
-                                ? "bg-white text-[hsl(174,85%,32%)] hover:bg-teal-50"
-                                : "bg-[hsl(174,85%,32%)] text-white hover:bg-[hsl(174,85%,38%)]"
+                                ? "bg-white text-[hsl(166,72%,40%)] hover:bg-teal-50"
+                                : "bg-[hsl(166,72%,40%)] text-white hover:bg-[hsl(166,72%,46%)]"
                             }`}
                           >
                             <Download className="h-3 w-3" /> View
@@ -438,7 +438,7 @@ export default function StudentMessagesPage() {
                 key={i}
                 type="button"
                 onClick={() => handleSendPrompt(p)}
-                className="shrink-0 bg-white border border-gray-200 px-2.5 py-1 rounded-full text-gray-700 hover:border-[hsl(174,85%,32%)] hover:text-[hsl(174,85%,32%)] transition"
+                className="shrink-0 bg-white border border-gray-200 px-2.5 py-1 rounded-full text-gray-700 hover:border-[hsl(166,72%,40%)] hover:text-[hsl(166,72%,40%)] transition"
               >
                 {p}
               </button>
@@ -472,13 +472,13 @@ export default function StudentMessagesPage() {
             <form onSubmit={handleSendMessage} className="flex items-end gap-3">
               {/* Attachment Button */}
               <label
-                className={`p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:text-[hsl(174,85%,32%)] hover:border-[hsl(174,85%,32%)] hover:bg-slate-50 transition cursor-pointer shrink-0 ${
+                className={`p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:text-[hsl(166,72%,40%)] hover:border-[hsl(166,72%,40%)] hover:bg-slate-50 transition cursor-pointer shrink-0 ${
                   uploadingAttachment ? "opacity-50 pointer-events-none" : ""
                 }`}
                 title="Attach PDF or Document for Counsellor"
               >
                 {uploadingAttachment ? (
-                  <Loader2 className="h-5 w-5 animate-spin text-[hsl(174,85%,32%)]" />
+                  <Loader2 className="h-5 w-5 animate-spin text-[hsl(166,72%,40%)]" />
                 ) : (
                   <Paperclip className="h-5 w-5" />
                 )}
@@ -498,7 +498,7 @@ export default function StudentMessagesPage() {
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder="Type your message or question for your counsellor (Press Enter to send)..."
-                  className="w-full resize-none rounded-xl border border-gray-200 px-4 py-2.5 text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[hsl(174,85%,32%)] focus:ring-1 focus:ring-[hsl(174,85%,32%)]/20"
+                  className="w-full resize-none rounded-xl border border-gray-200 px-4 py-2.5 text-xs text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-[hsl(166,72%,40%)] focus:ring-1 focus:ring-[hsl(166,72%,40%)]/20"
                 />
               </div>
 
@@ -506,7 +506,7 @@ export default function StudentMessagesPage() {
               <button
                 type="submit"
                 disabled={sending || (!inputText.trim() && !attachedDocInfo)}
-                className="h-10 px-5 rounded-xl bg-[hsl(174,85%,32%)] text-white font-bold text-xs shadow-md hover:bg-[hsl(174,85%,38%)] transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 shrink-0"
+                className="h-10 px-5 rounded-xl bg-[hsl(166,72%,40%)] text-white font-bold text-xs shadow-md hover:bg-[hsl(166,72%,46%)] transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 shrink-0"
               >
                 {sending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -534,7 +534,7 @@ export default function StudentMessagesPage() {
             {notifications.some((n) => !n.is_read) && (
               <button
                 onClick={handleMarkAllRead}
-                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[hsl(174,85%,32%)] hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-[hsl(166,72%,40%)] hover:underline"
               >
                 <CheckCheck className="h-3.5 w-3.5" /> Mark All as Read
               </button>
@@ -563,7 +563,7 @@ export default function StudentMessagesPage() {
                       <div className="flex items-center gap-2">
                         <h4 className="text-xs font-bold text-gray-900">{notif.title}</h4>
                         {!notif.is_read && (
-                          <span className="h-2 w-2 rounded-full bg-[hsl(174,85%,32%)] shrink-0" />
+                          <span className="h-2 w-2 rounded-full bg-[hsl(166,72%,40%)] shrink-0" />
                         )}
                       </div>
                       <p className="text-xs text-gray-600">{notif.message}</p>

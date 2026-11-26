@@ -118,7 +118,7 @@ export default function AdminLeadsPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)]">CRM Leads & Enquiries</h1>
+          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">CRM Leads & Enquiries</h1>
           <p className="mt-1 text-sm text-gray-500">
             Total {total} enquiries from website forms and consultation requests.
           </p>
@@ -134,7 +134,7 @@ export default function AdminLeadsPage() {
             placeholder="Search by name, email, or phone..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+            className="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
           />
         </form>
 
@@ -143,7 +143,7 @@ export default function AdminLeadsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full md:w-44 py-2 px-3 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+            className="w-full md:w-44 py-2 px-3 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
           >
             <option value="">All Statuses</option>
             <option value="new">New</option>
@@ -158,7 +158,7 @@ export default function AdminLeadsPage() {
       {/* Master Detail View */}
       {loading ? (
         <div className="flex h-64 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+          <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
         </div>
       ) : leads.length === 0 ? (
         <div className="p-12 text-center bg-white rounded-2xl border border-gray-100">
@@ -177,7 +177,7 @@ export default function AdminLeadsPage() {
                   onClick={() => setSelectedLead(lead)}
                   className={`cursor-pointer rounded-2xl p-4 border transition ${
                     isSelected
-                      ? "border-[hsl(174,85%,32%)] bg-white shadow-md ring-2 ring-[hsl(174,85%,32%)]/10"
+                      ? "border-[hsl(166,72%,40%)] bg-white shadow-md ring-2 ring-[hsl(166,72%,40%)]/10"
                       : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
                   }`}
                 >
@@ -215,7 +215,7 @@ export default function AdminLeadsPage() {
               <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-6">
                 <div className="flex items-center justify-between pb-4 border-b border-gray-100">
                   <div>
-                    <h2 className="text-lg font-bold text-[hsl(215,50%,12%)]">
+                    <h2 className="text-lg font-bold text-[hsl(222,47%,11%)]">
                       {selectedLead.first_name} {selectedLead.last_name || ""}
                     </h2>
                     <span className="text-xs text-gray-400">Source: {selectedLead.source}</span>
@@ -299,7 +299,7 @@ export default function AdminLeadsPage() {
                       <button
                         onClick={() => handleConvertLead(selectedLead.id)}
                         disabled={converting}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] disabled:opacity-50"
                       >
                         {converting ? <Loader2 className="h-3 w-3 animate-spin" /> : <UserCheck className="h-3.5 w-3.5" />}
                         Convert Now

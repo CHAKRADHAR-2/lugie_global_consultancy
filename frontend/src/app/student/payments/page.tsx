@@ -332,7 +332,7 @@ function PaymentsContent() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -342,8 +342,8 @@ function PaymentsContent() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)] flex items-center gap-2">
-            <CreditCard className="h-6 w-6 text-[hsl(174,85%,32%)]" />
+          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)] flex items-center gap-2">
+            <CreditCard className="h-6 w-6 text-[hsl(166,72%,40%)]" />
             Billing & Package Services
           </h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -356,7 +356,7 @@ function PaymentsContent() {
             setSelectedPkgSlug(activePackage?.slug === "basic" ? "standard" : "premium");
             setIsCheckoutOpen(true);
           }}
-          className="inline-flex items-center gap-2 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition"
+          className="inline-flex items-center gap-2 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
         >
           <ArrowUpCircle className="h-4 w-4" />
           {activePackage ? "Upgrade Plan Tier" : "Enroll in Package"}
@@ -365,19 +365,19 @@ function PaymentsContent() {
 
       {/* Active Package Banner */}
       {activePackage ? (
-        <div className="rounded-2xl border-2 border-[hsl(174,85%,32%)] bg-white p-8 shadow-md relative overflow-hidden">
-          <div className="absolute top-0 right-0 bg-[hsl(174,85%,32%)] text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-bl-xl flex items-center gap-1.5">
+        <div className="rounded-2xl border-2 border-[hsl(166,72%,40%)] bg-white p-8 shadow-md relative overflow-hidden">
+          <div className="absolute top-0 right-0 bg-[hsl(166,72%,40%)] text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-bl-xl flex items-center gap-1.5">
             <CheckCircle2 className="h-3 w-3" />
             Active Enrolled Plan
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[hsl(174,85%,32%)]">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[hsl(166,72%,40%)]">
                 <ShieldCheck className="h-4 w-4" />
                 <span>Lugie Global Consultancy Enrolled</span>
               </div>
-              <h2 className="text-2xl font-bold text-[hsl(215,50%,12%)] mt-1">
+              <h2 className="text-2xl font-bold text-[hsl(222,47%,11%)] mt-1">
                 {activePackage.name}
               </h2>
               <p className="text-xs text-gray-500 mt-1 max-w-xl">
@@ -418,7 +418,7 @@ function PaymentsContent() {
                     const nextSlug = activePackage.tierRank === 1 ? "standard" : "premium";
                     handleOpenUpgradeModal(nextSlug);
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[hsl(174,85%,32%)] px-5 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[hsl(166,72%,40%)] px-5 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
                 >
                   <ArrowUpCircle className="h-4 w-4" />
                   Upgrade Plan (Differential Rate)
@@ -433,7 +433,7 @@ function PaymentsContent() {
             <span className="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
               No Active Package Enrolled
             </span>
-            <h2 className="text-xl font-bold text-[hsl(215,50%,12%)] mt-2">
+            <h2 className="text-xl font-bold text-[hsl(222,47%,11%)] mt-2">
               Unlock Full Admissions & Visa Support
             </h2>
             <p className="text-xs text-gray-500 mt-1 max-w-lg">
@@ -442,7 +442,7 @@ function PaymentsContent() {
           </div>
           <button
             onClick={() => setIsCheckoutOpen(true)}
-            className="rounded-xl bg-[hsl(174,85%,32%)] px-6 py-3 text-xs font-bold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition self-start"
+            className="rounded-xl bg-[hsl(166,72%,40%)] px-6 py-3 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition self-start"
           >
             Enroll in a Plan Now
           </button>
@@ -455,7 +455,7 @@ function PaymentsContent() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-lg font-bold text-[hsl(215,50%,12%)]">
+            <h2 className="text-lg font-bold text-[hsl(222,47%,11%)]">
               Consultancy Packages & Prorated Upgrades
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
@@ -482,12 +482,12 @@ function PaymentsContent() {
                   isCurrent
                     ? "border-emerald-400 bg-emerald-50/20 ring-2 ring-emerald-400/30"
                     : pkg.recommended
-                    ? "border-[hsl(174,85%,32%)] bg-white ring-1 ring-[hsl(174,85%,32%)]/20"
+                    ? "border-[hsl(166,72%,40%)] bg-white ring-1 ring-[hsl(166,72%,40%)]/20"
                     : "border-gray-200 bg-white hover:border-gray-300"
                 }`}
               >
                 {pkg.recommended && !isCurrent && (
-                  <span className="absolute -top-3 right-6 bg-[hsl(174,85%,32%)] text-white text-[9px] font-extrabold uppercase tracking-wider px-3 py-0.5 rounded-full shadow-xs">
+                  <span className="absolute -top-3 right-6 bg-[hsl(166,72%,40%)] text-white text-[9px] font-extrabold uppercase tracking-wider px-3 py-0.5 rounded-full shadow-xs">
                     Most Popular
                   </span>
                 )}
@@ -499,7 +499,7 @@ function PaymentsContent() {
 
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-bold text-[hsl(215,50%,12%)]">{pkg.name}</h3>
+                    <h3 className="text-lg font-bold text-[hsl(222,47%,11%)]">{pkg.name}</h3>
                     <p className="text-xs text-gray-500 mt-1">{pkg.description}</p>
                   </div>
 
@@ -508,7 +508,7 @@ function PaymentsContent() {
                     {isUpgrade ? (
                       <div className="space-y-1">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-2xl font-extrabold text-[hsl(174,85%,32%)]">
+                          <span className="text-2xl font-extrabold text-[hsl(166,72%,40%)]">
                             ₹{calc.payable.toLocaleString("en-IN")}
                           </span>
                           <span className="text-xs line-through text-gray-400">
@@ -521,7 +521,7 @@ function PaymentsContent() {
                       </div>
                     ) : (
                       <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-extrabold text-[hsl(215,50%,12%)]">
+                        <span className="text-2xl font-extrabold text-[hsl(222,47%,11%)]">
                           ₹{pkg.price.toLocaleString("en-IN")}
                         </span>
                         <span className="text-xs text-gray-400 font-semibold">one-time</span>
@@ -533,7 +533,7 @@ function PaymentsContent() {
                   <ul className="space-y-2 text-xs text-gray-600 pt-2 border-t border-gray-100">
                     {pkg.inclusions.map((inc, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-[hsl(174,85%,32%)] shrink-0 mt-0.5" />
+                        <Check className="h-4 w-4 text-[hsl(166,72%,40%)] shrink-0 mt-0.5" />
                         <span>{inc}</span>
                       </li>
                     ))}
@@ -550,7 +550,7 @@ function PaymentsContent() {
                   ) : isUpgrade ? (
                     <button
                       onClick={() => handleOpenUpgradeModal(pkg.slug)}
-                      className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(174,85%,32%)] py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition"
+                      className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(166,72%,40%)] py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
                     >
                       <ArrowUpCircle className="h-4 w-4" />
                       Upgrade for ₹{calc.payable.toLocaleString("en-IN")}
@@ -562,7 +562,7 @@ function PaymentsContent() {
                   ) : (
                     <button
                       onClick={() => handleOpenUpgradeModal(pkg.slug)}
-                      className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(215,50%,12%)] py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[hsl(215,50%,18%)] transition"
+                      className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(222,47%,11%)] py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[hsl(222,47%,18%)] transition"
                     >
                       Enroll for ₹{pkg.price.toLocaleString("en-IN")}
                     </button>
@@ -607,7 +607,7 @@ function PaymentsContent() {
                     <td className="py-4 px-6 font-semibold text-gray-900">
                       {ord.package_name || "Admissions Package"}
                     </td>
-                    <td className="py-4 px-6 font-bold text-[hsl(215,50%,12%)]">
+                    <td className="py-4 px-6 font-bold text-[hsl(222,47%,11%)]">
                       ₹{ord.total_amount?.toLocaleString("en-IN")}
                     </td>
                     <td className="py-4 px-6 text-emerald-700 font-semibold">
@@ -641,7 +641,7 @@ function PaymentsContent() {
                     <td className="py-4 px-6 text-right">
                       <button
                         onClick={() => setViewReceipt(ord)}
-                        className="font-semibold text-[hsl(174,85%,32%)] hover:underline inline-flex items-center gap-1"
+                        className="font-semibold text-[hsl(166,72%,40%)] hover:underline inline-flex items-center gap-1"
                       >
                         <Receipt className="h-3.5 w-3.5" /> View
                       </button>
@@ -668,10 +668,10 @@ function PaymentsContent() {
             </button>
 
             <div className="mb-6">
-              <span className="text-xs font-bold uppercase tracking-wider text-[hsl(174,85%,32%)]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[hsl(166,72%,40%)]">
                 {currentPayableCalc.isUpgrade ? "Prorated Plan Upgrade" : "Secure Package Checkout"}
               </span>
-              <h3 className="text-xl font-bold text-[hsl(215,50%,12%)] mt-1">
+              <h3 className="text-xl font-bold text-[hsl(222,47%,11%)] mt-1">
                 {currentPayableCalc.isUpgrade ? "Confirm Package Upgrade" : "Select Your Consultancy Tier"}
               </h3>
               <p className="text-xs text-gray-500 mt-1">
@@ -693,15 +693,15 @@ function PaymentsContent() {
                     onClick={() => setSelectedPkgSlug(pkg.slug)}
                     className={`cursor-pointer rounded-2xl p-4 border transition flex items-center justify-between ${
                       isSelected
-                        ? "border-[hsl(174,85%,32%)] bg-[hsl(174,85%,32%)]/5 ring-2 ring-[hsl(174,85%,32%)]/20"
+                        ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/5 ring-2 ring-[hsl(166,72%,40%)]/20"
                         : "border-gray-200 hover:border-gray-300"
                     }`}
                   >
                     <div>
                       <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-sm text-[hsl(215,50%,12%)]">{pkg.name}</h4>
+                        <h4 className="font-bold text-sm text-[hsl(222,47%,11%)]">{pkg.name}</h4>
                         {pkg.recommended && (
-                          <span className="bg-[hsl(174,85%,32%)] text-white text-[9px] font-bold uppercase px-2 py-0.5 rounded-full">
+                          <span className="bg-[hsl(166,72%,40%)] text-white text-[9px] font-bold uppercase px-2 py-0.5 rounded-full">
                             Recommended
                           </span>
                         )}
@@ -717,7 +717,7 @@ function PaymentsContent() {
                     <div className="text-right shrink-0">
                       {calc.isUpgrade ? (
                         <div>
-                          <span className="text-base font-extrabold text-[hsl(174,85%,32%)] block">
+                          <span className="text-base font-extrabold text-[hsl(166,72%,40%)] block">
                             ₹{calc.payable.toLocaleString("en-IN")}
                           </span>
                           <span className="text-[10px] text-emerald-700 font-semibold">
@@ -725,7 +725,7 @@ function PaymentsContent() {
                           </span>
                         </div>
                       ) : (
-                        <span className="text-base font-extrabold text-[hsl(215,50%,12%)]">
+                        <span className="text-base font-extrabold text-[hsl(222,47%,11%)]">
                           ₹{pkg.price.toLocaleString("en-IN")}
                         </span>
                       )}
@@ -767,19 +767,19 @@ function PaymentsContent() {
                   }}
                   className={`p-3 rounded-xl border text-left transition flex items-center justify-between ${
                     selectedGateway === "razorpay"
-                      ? "border-[hsl(174,85%,32%)] bg-[hsl(174,85%,32%)]/10 ring-1 ring-[hsl(174,85%,32%)]"
+                      ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 ring-1 ring-[hsl(166,72%,40%)]"
                       : "border-gray-200 hover:border-gray-300 bg-white"
                   }`}
                 >
                   <div>
-                    <div className="text-xs font-bold text-[hsl(215,50%,12%)] flex items-center gap-1.5">
+                    <div className="text-xs font-bold text-[hsl(222,47%,11%)] flex items-center gap-1.5">
                       <span>🇮🇳 Razorpay</span>
                       <span className="text-[10px] bg-blue-100 text-blue-800 px-1.5 py-0.2 rounded font-semibold">India</span>
                     </div>
                     <div className="text-[10px] text-gray-500 mt-0.5">UPI, NetBanking, RuPay & Cards</div>
                   </div>
                   {selectedGateway === "razorpay" && (
-                    <CheckCircle2 className="h-4 w-4 text-[hsl(174,85%,32%)] shrink-0 ml-2" />
+                    <CheckCircle2 className="h-4 w-4 text-[hsl(166,72%,40%)] shrink-0 ml-2" />
                   )}
                 </button>
 
@@ -791,19 +791,19 @@ function PaymentsContent() {
                   }}
                   className={`p-3 rounded-xl border text-left transition flex items-center justify-between ${
                     selectedGateway === "stripe"
-                      ? "border-[hsl(174,85%,32%)] bg-[hsl(174,85%,32%)]/10 ring-1 ring-[hsl(174,85%,32%)]"
+                      ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 ring-1 ring-[hsl(166,72%,40%)]"
                       : "border-gray-200 hover:border-gray-300 bg-white"
                   }`}
                 >
                   <div>
-                    <div className="text-xs font-bold text-[hsl(215,50%,12%)] flex items-center gap-1.5">
+                    <div className="text-xs font-bold text-[hsl(222,47%,11%)] flex items-center gap-1.5">
                       <span>🌐 Stripe</span>
                       <span className="text-[10px] bg-purple-100 text-purple-800 px-1.5 py-0.2 rounded font-semibold">Global</span>
                     </div>
                     <div className="text-[10px] text-gray-500 mt-0.5">International Cards & Apple Pay</div>
                   </div>
                   {selectedGateway === "stripe" && (
-                    <CheckCircle2 className="h-4 w-4 text-[hsl(174,85%,32%)] shrink-0 ml-2" />
+                    <CheckCircle2 className="h-4 w-4 text-[hsl(166,72%,40%)] shrink-0 ml-2" />
                   )}
                 </button>
               </div>
@@ -827,7 +827,7 @@ function PaymentsContent() {
                       onClick={() => setSelectedMethod(m.id)}
                       className={`rounded-xl p-3 border text-left transition ${
                         selectedMethod === m.id
-                          ? "border-[hsl(174,85%,32%)] bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)]"
+                          ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)]"
                           : "border-gray-200 text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -848,7 +848,7 @@ function PaymentsContent() {
                       onClick={() => setSelectedMethod(m.id)}
                       className={`rounded-xl p-3 border text-left transition ${
                         selectedMethod === m.id
-                          ? "border-[hsl(174,85%,32%)] bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)]"
+                          ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)]"
                           : "border-gray-200 text-gray-700 hover:bg-gray-50"
                       }`}
                     >
@@ -866,7 +866,7 @@ function PaymentsContent() {
                 <span className="text-xs text-gray-500">
                   {currentPayableCalc.isUpgrade ? "Differential Total Payable:" : "Total Payable:"}
                 </span>
-                <div className="text-2xl font-extrabold text-[hsl(215,50%,12%)]">
+                <div className="text-2xl font-extrabold text-[hsl(222,47%,11%)]">
                   ₹{currentPayableCalc.payable.toLocaleString("en-IN")}
                 </div>
               </div>
@@ -886,7 +886,7 @@ function PaymentsContent() {
                       disabled={submitting || currentPayableCalc.isCurrent}
                       type="button"
                       onClick={handleRazorpayModalPayment}
-                      className="inline-flex items-center gap-2 rounded-xl bg-[hsl(174,85%,32%)] px-5 py-3 text-xs font-bold text-white shadow-md hover:bg-[hsl(174,85%,38%)] transition disabled:opacity-50"
+                      className="inline-flex items-center gap-2 rounded-xl bg-[hsl(166,72%,40%)] px-5 py-3 text-xs font-bold text-white shadow-md hover:bg-[hsl(166,72%,46%)] transition disabled:opacity-50"
                     >
                       {submitting ? (
                         <>
@@ -938,7 +938,7 @@ function PaymentsContent() {
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 mx-auto mb-3">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-bold text-[hsl(215,50%,12%)]">Official Tax Invoice</h3>
+              <h3 className="text-lg font-bold text-[hsl(222,47%,11%)]">Official Tax Invoice</h3>
               <p className="text-xs text-gray-500 mt-0.5">Lugie Global Consultancy – Dream Beyond Borders</p>
             </div>
 
@@ -973,7 +973,7 @@ function PaymentsContent() {
               </div>
               <div className="pt-2 border-t border-gray-200 flex justify-between text-sm font-bold">
                 <span>Total Amount Paid:</span>
-                <span className="text-[hsl(174,85%,32%)] font-extrabold">
+                <span className="text-[hsl(166,72%,40%)] font-extrabold">
                   ₹{viewReceipt.total_amount?.toLocaleString("en-IN")}
                 </span>
               </div>
@@ -999,7 +999,7 @@ export default function StudentPaymentsPage() {
     <Suspense
       fallback={
         <div className="flex h-64 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+          <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
         </div>
       }
     >

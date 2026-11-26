@@ -38,7 +38,7 @@ export function Sidebar({ items, portalName }: SidebarProps) {
     <>
       {/* Mobile toggle */}
       <button
-        className="fixed left-4 top-4 z-50 rounded-md bg-[hsl(215,50%,12%)] p-2 text-white lg:hidden"
+        className="fixed left-4 top-4 z-50 rounded-md bg-[hsl(222,47%,11%)] p-2 text-white shadow-md transition hover:bg-[hsl(215,25%,18%)] lg:hidden"
         onClick={() => setCollapsed(!collapsed)}
       >
         {collapsed ? <X size={20} /> : <Menu size={20} />}
@@ -55,18 +55,19 @@ export function Sidebar({ items, portalName }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-gray-200 bg-white transition-transform lg:translate-x-0",
+          "fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-white/10 bg-[hsl(222,47%,11%)] text-white transition-transform lg:translate-x-0",
           collapsed ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
       >
         {/* Brand */}
-        <div className="flex h-16 items-center border-b border-gray-200 px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-lg font-bold text-[hsl(215,50%,12%)]">
-              Lugie<span className="text-[hsl(174,85%,42%)]">.</span>
+        <div className="flex h-16 items-center border-b border-white/10 px-6">
+          <Link href="/" className="flex items-center gap-1.5">
+            <span className="text-xl font-black tracking-tight text-white">
+              LUGIE
             </span>
+            <span className="inline-block h-2 w-2 rounded-full bg-[hsl(166,72%,40%)]" />
           </Link>
-          <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600">
+          <span className="ml-2.5 rounded-full bg-[hsl(166,72%,40%)]/15 px-2.5 py-0.5 text-[10px] font-semibold text-[hsl(166,72%,50%)]">
             {portalName}
           </span>
         </div>
@@ -84,14 +85,17 @@ export function Sidebar({ items, portalName }: SidebarProps) {
                     href={item.href}
                     onClick={() => setCollapsed(false)}
                     className={cn(
-                      "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition",
+                      "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition",
                       isActive
-                        ? "bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)]"
-                        : "text-gray-700 hover:bg-gray-100",
+                        ? "bg-[hsl(166,72%,40%)]/15 text-[hsl(166,72%,50%)]"
+                        : "text-white/70 hover:bg-[hsl(215,25%,18%)] hover:text-white",
                     )}
                   >
                     {IconComponent && <IconComponent size={18} />}
-                    {item.label}
+                    <span>{item.label}</span>
+                    {isActive && (
+                      <span className="ml-auto h-1.5 w-1.5 rounded-full bg-[hsl(166,72%,40%)]" />
+                    )}
                   </Link>
                 </li>
               );
@@ -100,18 +104,18 @@ export function Sidebar({ items, portalName }: SidebarProps) {
         </nav>
 
         {/* User info */}
-        <div className="border-t border-gray-200 p-4">
+        <div className="border-t border-white/10 p-4">
           {user && (
             <div className="flex items-center justify-between">
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium text-gray-900">
+                <p className="truncate text-sm font-medium text-white">
                   {user.first_name} {user.last_name}
                 </p>
-                <p className="truncate text-xs text-gray-500">{user.email}</p>
+                <p className="truncate text-xs text-white/50">{user.email}</p>
               </div>
               <button
                 onClick={logout}
-                className="rounded-md p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600"
+                className="rounded-md p-1.5 text-white/50 transition hover:bg-[hsl(215,25%,18%)] hover:text-[hsl(166,72%,50%)]"
                 title="Logout"
               >
                 <LogOut size={16} />

@@ -70,7 +70,7 @@ export default function AdminReportsPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -117,7 +117,7 @@ export default function AdminReportsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)]">
+          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">
             Executive Analytics & Reports
           </h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -154,7 +154,7 @@ export default function AdminReportsPage() {
             <span className="text-[11px] font-semibold uppercase tracking-wider">Total Leads</span>
             <Users className="h-4 w-4 text-blue-500" />
           </div>
-          <div className="text-2xl font-bold text-[hsl(215,50%,12%)]">
+          <div className="text-2xl font-bold text-[hsl(222,47%,11%)]">
             {safeTotalLeads}
           </div>
           <p className="text-[11px] text-gray-400 mt-1">In CRM Pipeline</p>
@@ -165,7 +165,7 @@ export default function AdminReportsPage() {
             <span className="text-[11px] font-semibold uppercase tracking-wider">Active Students</span>
             <GraduationCap className="h-4 w-4 text-purple-500" />
           </div>
-          <div className="text-2xl font-bold text-[hsl(215,50%,12%)]">
+          <div className="text-2xl font-bold text-[hsl(222,47%,11%)]">
             {reports.total_students ?? 0}
           </div>
           <p className="text-[11px] text-gray-400 mt-1">Enrolled dossiers</p>
@@ -176,7 +176,7 @@ export default function AdminReportsPage() {
             <span className="text-[11px] font-semibold uppercase tracking-wider">Applications</span>
             <Layers className="h-4 w-4 text-amber-500" />
           </div>
-          <div className="text-2xl font-bold text-[hsl(215,50%,12%)]">
+          <div className="text-2xl font-bold text-[hsl(222,47%,11%)]">
             {safeTotalApps}
           </div>
           <p className="text-[11px] text-gray-400 mt-1">Across partner universities</p>
@@ -185,9 +185,9 @@ export default function AdminReportsPage() {
         <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex items-center justify-between text-gray-400 mb-2">
             <span className="text-[11px] font-semibold uppercase tracking-wider">Gross Revenue</span>
-            <Wallet className="h-4 w-4 text-[hsl(174,85%,32%)]" />
+            <Wallet className="h-4 w-4 text-[hsl(166,72%,40%)]" />
           </div>
-          <div className="text-2xl font-bold text-[hsl(215,50%,12%)]">
+          <div className="text-2xl font-bold text-[hsl(222,47%,11%)]">
             ₹{safeTotalRev.toLocaleString("en-IN")}
           </div>
           <p className="text-[11px] text-gray-400 mt-1">Tuition advisory fees</p>
@@ -199,7 +199,7 @@ export default function AdminReportsPage() {
         {/* Lead Funnel */}
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-bold text-[hsl(215,50%,12%)]">Lead Lifecycle Funnel</h2>
+            <h2 className="text-base font-bold text-[hsl(222,47%,11%)]">Lead Lifecycle Funnel</h2>
             <span className="text-xs text-gray-400 font-medium">CRM Stages</span>
           </div>
 
@@ -240,7 +240,7 @@ export default function AdminReportsPage() {
         {/* Application Stage Breakdown */}
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-bold text-[hsl(215,50%,12%)]">Application Status Distribution</h2>
+            <h2 className="text-base font-bold text-[hsl(222,47%,11%)]">Application Status Distribution</h2>
             <span className="text-xs text-gray-400 font-medium">Admissions Pipeline</span>
           </div>
 
@@ -266,7 +266,7 @@ export default function AdminReportsPage() {
                     <div className="h-2 w-full rounded-full bg-gray-100 overflow-hidden">
                       <div
                         className={`h-full rounded-full ${
-                          statusColors[item.status] || "bg-[hsl(174,85%,32%)]"
+                          statusColors[item.status] || "bg-[hsl(166,72%,40%)]"
                         }`}
                         style={{ width: `${pct}%` }}
                       />
@@ -284,8 +284,8 @@ export default function AdminReportsPage() {
         {/* Top Study Destinations */}
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <Globe2 className="h-5 w-5 text-[hsl(174,85%,32%)]" />
-            <h2 className="text-base font-bold text-[hsl(215,50%,12%)]">Top Study Destinations</h2>
+            <Globe2 className="h-5 w-5 text-[hsl(166,72%,40%)]" />
+            <h2 className="text-base font-bold text-[hsl(222,47%,11%)]">Top Study Destinations</h2>
           </div>
 
           {topDestinations.length === 0 ? (
@@ -303,7 +303,7 @@ export default function AdminReportsPage() {
                     </span>
                     <span className="text-xs font-bold text-gray-800">{dest.name}</span>
                   </div>
-                  <span className="text-xs font-semibold text-[hsl(174,85%,32%)] bg-[hsl(174,85%,32%)]/10 px-2.5 py-1 rounded-lg">
+                  <span className="text-xs font-semibold text-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 px-2.5 py-1 rounded-lg">
                     {dest.count} Applicants
                   </span>
                 </div>
@@ -316,7 +316,7 @@ export default function AdminReportsPage() {
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
             <Award className="h-5 w-5 text-amber-500" />
-            <h2 className="text-base font-bold text-[hsl(215,50%,12%)]">Revenue by Advisory Tier</h2>
+            <h2 className="text-base font-bold text-[hsl(222,47%,11%)]">Revenue by Advisory Tier</h2>
           </div>
 
           {revenueByPkg.length === 0 ? (

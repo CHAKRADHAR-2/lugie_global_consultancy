@@ -118,7 +118,7 @@ export default function AdminUniversitiesPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -127,7 +127,7 @@ export default function AdminUniversitiesPage() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)]">University Registry</h1>
+          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">University Registry</h1>
           <p className="mt-1 text-sm text-gray-500">
             Total {universities.length} institutions verified for study abroad counseling.
           </p>
@@ -135,7 +135,7 @@ export default function AdminUniversitiesPage() {
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
         >
           <Plus className="h-4 w-4" />
           Add University
@@ -150,7 +150,7 @@ export default function AdminUniversitiesPage() {
             placeholder="Search universities by name or city..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full md:w-80 rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(174,85%,32%)]"
+            className="w-full md:w-80 rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
           />
         </div>
 
@@ -186,7 +186,7 @@ export default function AdminUniversitiesPage() {
                         href={uni.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[hsl(174,85%,32%)] hover:underline inline-flex items-center gap-1 font-semibold"
+                        className="text-[hsl(166,72%,40%)] hover:underline inline-flex items-center gap-1 font-semibold"
                       >
                         Visit <ExternalLink className="h-3 w-3" />
                       </a>
@@ -206,7 +206,7 @@ export default function AdminUniversitiesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
           <div className="rounded-2xl bg-white p-6 shadow-xl max-w-lg w-full space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 className="font-bold text-base text-[hsl(215,50%,12%)]">Add Verified University</h3>
+              <h3 className="font-bold text-base text-[hsl(222,47%,11%)]">Add Verified University</h3>
               <button
                 onClick={() => setShowAddModal(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -301,7 +301,7 @@ export default function AdminUniversitiesPage() {
                 <button
                   type="submit"
                   disabled={saving}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] px-5 py-2 text-xs font-semibold text-white hover:bg-[hsl(174,85%,38%)] disabled:opacity-50"
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-5 py-2 text-xs font-semibold text-white hover:bg-[hsl(166,72%,46%)] disabled:opacity-50"
                 >
                   {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                   Save University

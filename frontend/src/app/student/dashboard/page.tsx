@@ -126,7 +126,7 @@ export default function StudentDashboard() {
   if (authLoading || (loading && user?.roles?.includes("student"))) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-[hsl(174,85%,32%)]" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -138,7 +138,7 @@ export default function StudentDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[hsl(215,50%,12%)]">
+          <h1 className="text-2xl sm:text-3xl font-bold text-[hsl(222,47%,11%)]">
             Welcome back, {user?.first_name}! 👋
           </h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -149,7 +149,7 @@ export default function StudentDashboard() {
         <div className="flex items-center gap-3">
           <Link
             href="/student/universities"
-            className="inline-flex items-center gap-2 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition"
+            className="inline-flex items-center gap-2 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
           >
             <Building2 className="h-4 w-4" />
             Explore Universities
@@ -251,19 +251,19 @@ export default function StudentDashboard() {
             </span>
           </div>
           <div className="mt-4 flex items-center justify-between">
-            <span className="text-3xl font-extrabold text-[hsl(215,50%,12%)]">
+            <span className="text-3xl font-extrabold text-[hsl(222,47%,11%)]">
               {completionPct}%
             </span>
           </div>
           <div className="mt-3 w-full bg-gray-100 rounded-full h-2 overflow-hidden">
             <div
-              className="bg-[hsl(174,85%,32%)] h-2 rounded-full transition-all duration-500"
+              className="bg-[hsl(166,72%,40%)] h-2 rounded-full transition-all duration-500"
               style={{ width: `${completionPct}%` }}
             />
           </div>
           <Link
             href="/student/profile"
-            className="mt-3 inline-block text-xs font-semibold text-[hsl(174,85%,32%)] hover:underline"
+            className="mt-3 inline-block text-xs font-semibold text-[hsl(166,72%,40%)] hover:underline"
           >
             Complete profile details →
           </Link>
@@ -277,7 +277,7 @@ export default function StudentDashboard() {
             </span>
             <GraduationCap className="h-5 w-5 text-purple-600" />
           </div>
-          <p className="mt-4 text-3xl font-extrabold text-[hsl(215,50%,12%)]">
+          <p className="mt-4 text-3xl font-extrabold text-[hsl(222,47%,11%)]">
             {applications.length}
           </p>
           <p className="mt-2 text-xs text-gray-500">
@@ -299,7 +299,7 @@ export default function StudentDashboard() {
             </span>
             <FileText className="h-5 w-5 text-emerald-600" />
           </div>
-          <p className="mt-4 text-3xl font-extrabold text-[hsl(215,50%,12%)]">
+          <p className="mt-4 text-3xl font-extrabold text-[hsl(222,47%,11%)]">
             {documents.length}
           </p>
           <p className="mt-2 text-xs text-gray-500">
@@ -321,7 +321,7 @@ export default function StudentDashboard() {
             </span>
             <Bell className="h-5 w-5 text-amber-600" />
           </div>
-          <p className="mt-4 text-3xl font-extrabold text-[hsl(215,50%,12%)]">
+          <p className="mt-4 text-3xl font-extrabold text-[hsl(222,47%,11%)]">
             {unreadCount}
           </p>
           <p className="mt-2 text-xs text-gray-500">Status updates & counsellor messages</p>
@@ -340,12 +340,12 @@ export default function StudentDashboard() {
         <div className="lg:col-span-8 space-y-6">
           <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-[hsl(215,50%,12%)]">
+              <h2 className="text-lg font-bold text-[hsl(222,47%,11%)]">
                 Active Applications
               </h2>
               <Link
                 href="/student/applications"
-                className="text-xs font-semibold text-[hsl(174,85%,32%)] hover:underline"
+                className="text-xs font-semibold text-[hsl(166,72%,40%)] hover:underline"
               >
                 View all ({applications.length})
               </Link>
@@ -360,7 +360,7 @@ export default function StudentDashboard() {
                 </p>
                 <Link
                   href="/student/universities"
-                  className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)]"
+                  className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)]"
                 >
                   Browse Universities <ArrowRight className="h-3.5 w-3.5" />
                 </Link>
@@ -387,7 +387,7 @@ export default function StudentDashboard() {
                       </span>
                       <Link
                         href={`/student/applications`}
-                        className="text-xs font-semibold text-[hsl(174,85%,32%)] hover:underline"
+                        className="text-xs font-semibold text-[hsl(166,72%,40%)] hover:underline"
                       >
                         Details →
                       </Link>
@@ -423,7 +423,7 @@ export default function StudentDashboard() {
           </div>
 
           <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-[hsl(215,50%,12%)]">
+            <h3 className="text-sm font-bold text-[hsl(222,47%,11%)]">
               Next Action Items
             </h3>
             <ul className="space-y-3 text-xs text-gray-600">

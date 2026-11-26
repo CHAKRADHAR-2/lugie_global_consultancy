@@ -1,12 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
-import { Globe2, ArrowRight, CheckCircle2, Clock, DollarSign, Briefcase } from "lucide-react";
-
-export const metadata = {
-  title: "Study Destinations",
-  description: "Explore top overseas study destinations: UK, USA, Canada, Australia, Germany, and Ireland.",
-};
+import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/fade-in";
+import { ArrowRight, Globe2 } from "lucide-react";
 
 const DESTINATIONS = [
   {
@@ -79,83 +77,94 @@ const DESTINATIONS = [
 
 export default function DestinationsPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col bg-[hsl(210,20%,98%)]">
       <Header />
 
       <main className="flex-1">
-        <section className="bg-[hsl(215,50%,12%)] py-20 px-6 lg:px-8 text-center text-white">
-          <div className="mx-auto max-w-4xl">
-            <span className="text-sm font-semibold tracking-widest uppercase text-[hsl(174,85%,42%)]">
-              Global Horizons
-            </span>
-            <h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">
-              Top Study Abroad Destinations
-            </h1>
-            <p className="mt-4 text-lg text-white/70 max-w-2xl mx-auto">
-              Compare costs, post-study work rights, typical intakes, and program structures
-              across the world&apos;s leading education destinations.
-            </p>
+        <section className="relative overflow-hidden bg-[hsl(222,47%,11%)] py-24 px-6 lg:px-8 text-center text-white">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="mesh-orb absolute top-1/4 left-1/3 h-[420px] w-[420px] rounded-full bg-[hsl(166,72%,40%)] opacity-[0.07] blur-[120px]" />
+            <div className="mesh-orb-delayed absolute bottom-1/4 right-1/4 h-[350px] w-[350px] rounded-full bg-[hsl(45,93%,58%)] opacity-[0.05] blur-[100px]" />
+          </div>
+
+          <div className="relative mx-auto max-w-4xl">
+            <FadeIn delay={0.1} direction="none">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-5 py-2 text-xs font-semibold tracking-widest uppercase text-[hsl(166,72%,50%)] mb-6 backdrop-blur-sm border border-white/[0.08]">
+                <Globe2 className="h-3.5 w-3.5" />
+                <span>Global Horizons</span>
+              </div>
+            </FadeIn>
+            <FadeIn delay={0.2}>
+              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-[1.1]">
+                Top Study Abroad Destinations
+              </h1>
+            </FadeIn>
+            <FadeIn delay={0.35}>
+              <p className="mt-5 text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
+                Compare costs, post-study work rights, typical intakes, and program structures
+                across the world&apos;s leading education destinations.
+              </p>
+            </FadeIn>
           </div>
         </section>
 
-        <section className="py-20 px-6 lg:px-8">
+        <section className="bg-[hsl(220,14%,96%)] py-24 px-6 lg:px-8">
           <div className="mx-auto max-w-7xl">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {DESTINATIONS.map((dest, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-2xl border border-gray-100 bg-white p-7 shadow-sm flex flex-col justify-between hover:shadow-md transition hover:border-gray-200"
-                >
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <h2 className="text-2xl font-bold text-[hsl(215,50%,12%)]">
-                        {dest.name}
-                      </h2>
+                <StaggerItem key={idx} className="flex">
+                  <div className="group w-full rounded-2xl border border-[hsl(220,13%,91%)] bg-white p-7 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/5 hover:border-[hsl(166,72%,40%)]/30">
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <h2 className="text-2xl font-bold text-[hsl(222,47%,11%)]">
+                          {dest.name}
+                        </h2>
+                      </div>
+
+                      <span className="inline-block rounded-full bg-[hsl(166,72%,40%)]/10 px-3 py-1 text-xs font-semibold text-[hsl(166,72%,40%)] mb-4">
+                        {dest.badge}
+                      </span>
+
+                      <p className="text-xs text-[hsl(220,13%,46%)] mb-6 leading-relaxed">
+                        {dest.overview}
+                      </p>
+
+                      <div className="space-y-3 border-t border-[hsl(220,13%,91%)] pt-4 text-xs text-[hsl(222,47%,20%)]">
+                        <div>
+                          <span className="font-semibold text-[hsl(222,47%,11%)] block">Est. Tuition Fee:</span>
+                          <span className="text-[hsl(220,13%,46%)]">{dest.tuition}</span>
+                        </div>
+                        <div>
+                          <span className="font-semibold text-[hsl(222,47%,11%)] block">Living Cost / Proof of Funds:</span>
+                          <span className="text-[hsl(220,13%,46%)]">{dest.living}</span>
+                        </div>
+                        <div>
+                          <span className="font-semibold text-[hsl(222,47%,11%)] block">Key Intake Seasons:</span>
+                          <span className="text-[hsl(220,13%,46%)]">{dest.intakes}</span>
+                        </div>
+                        <div>
+                          <span className="font-semibold text-[hsl(222,47%,11%)] block">Work Rights & Post-Study Visa:</span>
+                          <span className="text-[hsl(220,13%,46%)]">{dest.workRights}</span>
+                        </div>
+                        <div>
+                          <span className="font-semibold text-[hsl(222,47%,11%)] block">High Demand Fields:</span>
+                          <span className="text-[hsl(220,13%,46%)]">{dest.popularCourses}</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <span className="inline-block rounded-full bg-[hsl(174,85%,32%)]/10 px-3 py-1 text-xs font-semibold text-[hsl(174,85%,32%)] mb-4">
-                      {dest.badge}
-                    </span>
-
-                    <p className="text-xs text-gray-600 mb-6 leading-relaxed">
-                      {dest.overview}
-                    </p>
-
-                    <div className="space-y-3 border-t border-gray-100 pt-4 text-xs text-gray-700">
-                      <div>
-                        <span className="font-semibold text-gray-900 block">Est. Tuition Fee:</span>
-                        <span className="text-gray-600">{dest.tuition}</span>
-                      </div>
-                      <div>
-                        <span className="font-semibold text-gray-900 block">Living Cost / Proof of Funds:</span>
-                        <span className="text-gray-600">{dest.living}</span>
-                      </div>
-                      <div>
-                        <span className="font-semibold text-gray-900 block">Key Intake Seasons:</span>
-                        <span className="text-gray-600">{dest.intakes}</span>
-                      </div>
-                      <div>
-                        <span className="font-semibold text-gray-900 block">Work Rights & Post-Study Visa:</span>
-                        <span className="text-gray-600">{dest.workRights}</span>
-                      </div>
-                      <div>
-                        <span className="font-semibold text-gray-900 block">High Demand Fields:</span>
-                        <span className="text-gray-600">{dest.popularCourses}</span>
-                      </div>
+                    <div className="pt-6 border-t border-[hsl(220,13%,91%)] mt-6">
+                      <Link
+                        href={`/book-consultation?country=${encodeURIComponent(dest.name)}`}
+                        className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(222,47%,11%)] px-4 py-3 text-xs font-semibold text-white transition-all hover:bg-[hsl(166,72%,40%)] active:scale-[0.98]"
+                      >
+                        Plan Your {dest.name} Application <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                      </Link>
                     </div>
                   </div>
-
-                  <div className="pt-6 border-t border-gray-100 mt-6">
-                    <Link
-                      href={`/book-consultation?country=${encodeURIComponent(dest.name)}`}
-                      className="w-full inline-flex items-center justify-center gap-1.5 rounded-lg bg-[hsl(215,50%,12%)] px-4 py-2.5 text-xs font-semibold text-white hover:bg-[hsl(215,50%,18%)] transition"
-                    >
-                      Plan Your {dest.name} Application <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
-                  </div>
-                </div>
+                </StaggerItem>
               ))}
-            </div>
+            </StaggerContainer>
           </div>
         </section>
       </main>

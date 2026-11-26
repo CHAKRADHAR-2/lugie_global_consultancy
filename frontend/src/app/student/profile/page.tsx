@@ -332,7 +332,7 @@ export default function StudentProfilePage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -344,12 +344,12 @@ export default function StudentProfilePage() {
       {/* Top Profile Header with Plan & Completion */}
       <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="h-16 w-16 rounded-2xl bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)] flex items-center justify-center text-xl font-bold border border-[hsl(174,85%,32%)]/20 shadow-inner">
+          <div className="h-16 w-16 rounded-2xl bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] flex items-center justify-center text-xl font-bold border border-[hsl(166,72%,40%)]/20 shadow-inner">
             {user?.first_name ? user.first_name[0] : "S"}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-[hsl(215,50%,12%)]">
+              <h1 className="text-xl font-bold text-[hsl(222,47%,11%)]">
                 {user?.first_name} {user?.last_name}
               </h1>
               <span className="rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 border border-emerald-200">
@@ -373,7 +373,7 @@ export default function StudentProfilePage() {
               </div>
               <div className="text-[10px] text-gray-500 mt-0.5 flex items-center gap-2">
                 <span>Inv: #{activePackage.invoice_number?.slice(0, 10)}</span>
-                <Link href="/student/payments" className="text-[hsl(174,85%,32%)] font-bold hover:underline">
+                <Link href="/student/payments" className="text-[hsl(166,72%,40%)] font-bold hover:underline">
                   Upgrade Plan &rarr;
                 </Link>
               </div>
@@ -384,7 +384,7 @@ export default function StudentProfilePage() {
                 Consultancy Plan
               </div>
               <div className="text-xs font-bold text-gray-800 mt-0.5">Free Evaluation</div>
-              <Link href="/pricing" className="text-[11px] text-[hsl(174,85%,32%)] font-bold hover:underline block mt-0.5">
+              <Link href="/pricing" className="text-[11px] text-[hsl(166,72%,40%)] font-bold hover:underline block mt-0.5">
                 Enroll in Package &rarr;
               </Link>
             </div>
@@ -394,11 +394,11 @@ export default function StudentProfilePage() {
           <div className="rounded-xl border border-gray-100 bg-gray-50 p-3 min-w-[140px]">
             <div className="flex items-center justify-between text-xs mb-1">
               <span className="text-[11px] font-semibold text-gray-600">Dossier Strength</span>
-              <span className="font-bold text-[hsl(174,85%,32%)]">{completion}%</span>
+              <span className="font-bold text-[hsl(166,72%,40%)]">{completion}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
               <div
-                className="bg-[hsl(174,85%,32%)] h-1.5 rounded-full transition-all duration-500"
+                className="bg-[hsl(166,72%,40%)] h-1.5 rounded-full transition-all duration-500"
                 style={{ width: `${completion}%` }}
               />
             </div>
@@ -412,7 +412,7 @@ export default function StudentProfilePage() {
           onClick={() => setActiveTab("personal")}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
             activeTab === "personal"
-              ? "bg-[hsl(174,85%,32%)] text-white shadow-sm"
+              ? "bg-[hsl(166,72%,40%)] text-white shadow-sm"
               : "text-gray-600 hover:bg-gray-100"
           }`}
         >
@@ -424,7 +424,7 @@ export default function StudentProfilePage() {
           onClick={() => setActiveTab("academics")}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
             activeTab === "academics"
-              ? "bg-[hsl(174,85%,32%)] text-white shadow-sm"
+              ? "bg-[hsl(166,72%,40%)] text-white shadow-sm"
               : "text-gray-600 hover:bg-gray-100"
           }`}
         >
@@ -436,7 +436,7 @@ export default function StudentProfilePage() {
           onClick={() => setActiveTab("tests")}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
             activeTab === "tests"
-              ? "bg-[hsl(174,85%,32%)] text-white shadow-sm"
+              ? "bg-[hsl(166,72%,40%)] text-white shadow-sm"
               : "text-gray-600 hover:bg-gray-100"
           }`}
         >
@@ -448,7 +448,7 @@ export default function StudentProfilePage() {
           onClick={() => setActiveTab("experience")}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
             activeTab === "experience"
-              ? "bg-[hsl(174,85%,32%)] text-white shadow-sm"
+              ? "bg-[hsl(166,72%,40%)] text-white shadow-sm"
               : "text-gray-600 hover:bg-gray-100"
           }`}
         >
@@ -460,7 +460,7 @@ export default function StudentProfilePage() {
           onClick={() => setActiveTab("goals")}
           className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
             activeTab === "goals"
-              ? "bg-[hsl(174,85%,32%)] text-white shadow-sm"
+              ? "bg-[hsl(166,72%,40%)] text-white shadow-sm"
               : "text-gray-600 hover:bg-gray-100"
           }`}
         >
@@ -480,7 +480,7 @@ export default function StudentProfilePage() {
                 <input
                   type="text"
                   placeholder="Indian"
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(166,72%,40%)]"
                   {...register("nationality")}
                 />
               </div>
@@ -490,7 +490,7 @@ export default function StudentProfilePage() {
                 <input
                   type="text"
                   placeholder="Hyderabad"
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(166,72%,40%)]"
                   {...register("current_city")}
                 />
               </div>
@@ -500,7 +500,7 @@ export default function StudentProfilePage() {
                 <input
                   type="text"
                   placeholder="India"
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(166,72%,40%)]"
                   {...register("current_country")}
                 />
               </div>
@@ -510,7 +510,7 @@ export default function StudentProfilePage() {
                 <input
                   type="text"
                   placeholder="Z1234567"
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 uppercase font-mono focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 uppercase font-mono focus:outline-none focus:border-[hsl(166,72%,40%)]"
                   {...register("passport_number")}
                 />
               </div>
@@ -520,7 +520,7 @@ export default function StudentProfilePage() {
               <button
                 type="submit"
                 disabled={savingProfile}
-                className="flex items-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] disabled:opacity-50 transition"
+                className="flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] disabled:opacity-50 transition"
               >
                 {savingProfile ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                 Save Personal Details
@@ -543,7 +543,7 @@ export default function StudentProfilePage() {
               </div>
               <button
                 onClick={() => setAddingAcademic(true)}
-                className="flex items-center gap-1 rounded-lg bg-[hsl(174,85%,32%)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[hsl(174,85%,38%)] transition"
+                className="flex items-center gap-1 rounded-lg bg-[hsl(166,72%,40%)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[hsl(166,72%,46%)] transition"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Qualification
@@ -595,7 +595,7 @@ export default function StudentProfilePage() {
                 {academics.map((rec) => (
                   <div key={rec.id} className="py-3 flex items-start justify-between gap-4">
                     <div>
-                      <span className="inline-block rounded bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)] font-bold text-[10px] px-2 py-0.5 mb-1">
+                      <span className="inline-block rounded bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] font-bold text-[10px] px-2 py-0.5 mb-1">
                         {rec.qualification}
                       </span>
                       <h4 className="text-xs font-bold text-gray-900">{rec.institution}</h4>
@@ -622,7 +622,7 @@ export default function StudentProfilePage() {
 
           {/* Add Academic Modal / Form */}
           {addingAcademic && (
-            <div className="rounded-2xl border border-[hsl(174,85%,32%)]/30 bg-white p-6 shadow-md">
+            <div className="rounded-2xl border border-[hsl(166,72%,40%)]/30 bg-white p-6 shadow-md">
               <h3 className="text-sm font-bold text-gray-900 mb-3">Add Academic Qualification</h3>
               <form onSubmit={handleAddAcademic} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div>
@@ -688,7 +688,7 @@ export default function StudentProfilePage() {
                 <div className="flex items-end gap-2">
                   <button
                     type="submit"
-                    className="rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)]"
+                    className="rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)]"
                   >
                     Save Qualification
                   </button>
@@ -719,7 +719,7 @@ export default function StudentProfilePage() {
               </div>
               <button
                 onClick={() => setAddingTest(true)}
-                className="flex items-center gap-1 rounded-lg bg-[hsl(174,85%,32%)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[hsl(174,85%,38%)] transition"
+                className="flex items-center gap-1 rounded-lg bg-[hsl(166,72%,40%)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[hsl(166,72%,46%)] transition"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Test Score
@@ -744,7 +744,7 @@ export default function StudentProfilePage() {
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="rounded bg-teal-50 text-[hsl(174,85%,32%)] font-bold text-xs px-2 py-0.5 border border-teal-200">
+                      <span className="rounded bg-teal-50 text-[hsl(166,72%,40%)] font-bold text-xs px-2 py-0.5 border border-teal-200">
                         {t.test_type}
                       </span>
                       <span className="text-sm font-black text-gray-900">
@@ -778,7 +778,7 @@ export default function StudentProfilePage() {
 
           {/* Add Test Form */}
           {addingTest && (
-            <div className="rounded-2xl border border-[hsl(174,85%,32%)]/30 bg-white p-6 shadow-md">
+            <div className="rounded-2xl border border-[hsl(166,72%,40%)]/30 bg-white p-6 shadow-md">
               <h3 className="text-sm font-bold text-gray-900 mb-3">Add Test Score</h3>
               <form onSubmit={handleAddTest} className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                 <div>
@@ -860,7 +860,7 @@ export default function StudentProfilePage() {
                 <div className="md:col-span-3 flex items-center gap-2">
                   <button
                     type="submit"
-                    className="rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)]"
+                    className="rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)]"
                   >
                     Save Test Score
                   </button>
@@ -891,7 +891,7 @@ export default function StudentProfilePage() {
               </div>
               <button
                 onClick={() => setAddingExp(true)}
-                className="flex items-center gap-1 rounded-lg bg-[hsl(174,85%,32%)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[hsl(174,85%,38%)] transition"
+                className="flex items-center gap-1 rounded-lg bg-[hsl(166,72%,40%)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[hsl(166,72%,46%)] transition"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Experience
@@ -914,7 +914,7 @@ export default function StudentProfilePage() {
                           {exp.employment_type || "Full-time"}
                         </span>
                       </div>
-                      <p className="text-xs font-semibold text-[hsl(174,85%,32%)] mt-0.5">{exp.company}</p>
+                      <p className="text-xs font-semibold text-[hsl(166,72%,40%)] mt-0.5">{exp.company}</p>
                       <p className="text-[11px] text-gray-500 mt-0.5">
                         {exp.start_date} &bull; {exp.is_current ? "Present" : exp.end_date || "Completed"}
                       </p>
@@ -936,7 +936,7 @@ export default function StudentProfilePage() {
 
           {/* Add Experience Modal */}
           {addingExp && (
-            <div className="rounded-2xl border border-[hsl(174,85%,32%)]/30 bg-white p-6 shadow-md">
+            <div className="rounded-2xl border border-[hsl(166,72%,40%)]/30 bg-white p-6 shadow-md">
               <h3 className="text-sm font-bold text-gray-900 mb-3">Add Work Experience</h3>
               <form onSubmit={handleAddExperience} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div>
@@ -1002,7 +1002,7 @@ export default function StudentProfilePage() {
                 <div className="md:col-span-2 flex items-center gap-2">
                   <button
                     type="submit"
-                    className="rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)]"
+                    className="rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)]"
                   >
                     Save Experience
                   </button>
@@ -1029,7 +1029,7 @@ export default function StudentProfilePage() {
               <div>
                 <label className="block font-semibold text-gray-700 mb-1">Target Intake</label>
                 <select
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(166,72%,40%)]"
                   {...register("preferred_intake")}
                 >
                   <option value="Spring 2027">Spring 2027 (Jan/Feb)</option>
@@ -1043,7 +1043,7 @@ export default function StudentProfilePage() {
               <div>
                 <label className="block font-semibold text-gray-700 mb-1">Funding & Financial Source</label>
                 <select
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(166,72%,40%)]"
                   {...register("funding_preference")}
                 >
                   <option value="Education Loan">Education Loan (Non-collateral / Collateral)</option>
@@ -1078,7 +1078,7 @@ export default function StudentProfilePage() {
               <button
                 type="submit"
                 disabled={savingProfile}
-                className="flex items-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] disabled:opacity-50 transition"
+                className="flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] disabled:opacity-50 transition"
               >
                 {savingProfile ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                 Save Study Goals

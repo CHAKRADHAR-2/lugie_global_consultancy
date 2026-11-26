@@ -76,7 +76,7 @@ export default function AdminDashboard() {
   if (authLoading || (loading && user)) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)]">Admin Operations Console</h1>
+          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">Admin Operations Console</h1>
           <p className="mt-1 text-sm text-gray-500">
             Welcome, {user?.first_name}. Real-time CRM leads, student profiles, and university directories.
           </p>
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
         <div className="flex items-center gap-3">
           <Link
             href="/admin/leads"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
           >
             <Users className="h-4 w-4" />
             Manage CRM Leads
@@ -125,7 +125,7 @@ export default function AdminDashboard() {
             </span>
             <Users className="h-5 w-5 text-blue-600" />
           </div>
-          <p className="mt-4 text-3xl font-extrabold text-[hsl(215,50%,12%)]">{totalLeads}</p>
+          <p className="mt-4 text-3xl font-extrabold text-[hsl(222,47%,11%)]">{totalLeads}</p>
           <div className="mt-2 flex items-center justify-between text-xs">
             <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded">
               {newLeads} New
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
             </span>
             <TrendingUp className="h-5 w-5 text-emerald-600" />
           </div>
-          <p className="mt-4 text-3xl font-extrabold text-[hsl(215,50%,12%)]">{convRate}%</p>
+          <p className="mt-4 text-3xl font-extrabold text-[hsl(222,47%,11%)]">{convRate}%</p>
           <p className="mt-2 text-xs text-gray-500">
             {convertedLeads} leads converted to active students
           </p>
@@ -156,7 +156,7 @@ export default function AdminDashboard() {
             </span>
             <GraduationCap className="h-5 w-5 text-purple-600" />
           </div>
-          <p className="mt-4 text-3xl font-extrabold text-[hsl(215,50%,12%)]">{studentCount}</p>
+          <p className="mt-4 text-3xl font-extrabold text-[hsl(222,47%,11%)]">{studentCount}</p>
           <Link
             href="/admin/students"
             className="mt-2 inline-block text-xs font-semibold text-purple-600 hover:underline"
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
             </span>
             <Building2 className="h-5 w-5 text-amber-600" />
           </div>
-          <p className="mt-4 text-3xl font-extrabold text-[hsl(215,50%,12%)]">{uniCount}</p>
+          <p className="mt-4 text-3xl font-extrabold text-[hsl(222,47%,11%)]">{uniCount}</p>
           <Link
             href="/admin/universities"
             className="mt-2 inline-block text-xs font-semibold text-amber-600 hover:underline"
@@ -187,7 +187,7 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Link
           href="/admin/leads"
-          className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:border-[hsl(174,85%,32%)] transition flex flex-col justify-between"
+          className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:border-[hsl(166,72%,40%)] transition flex flex-col justify-between"
         >
           <div>
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700 mb-4">
@@ -198,14 +198,14 @@ export default function AdminDashboard() {
               Review new website enquiries, assign counsellors, schedule follow-ups, and convert leads into registered students.
             </p>
           </div>
-          <span className="text-xs font-bold text-[hsl(174,85%,32%)] mt-4 inline-flex items-center gap-1">
+          <span className="text-xs font-bold text-[hsl(166,72%,40%)] mt-4 inline-flex items-center gap-1">
             Open Leads CRM <ArrowRight className="h-3 w-3" />
           </span>
         </Link>
 
         <Link
           href="/admin/packages"
-          className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:border-[hsl(174,85%,32%)] transition flex flex-col justify-between"
+          className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:border-[hsl(166,72%,40%)] transition flex flex-col justify-between"
         >
           <div>
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 mb-4">
@@ -216,14 +216,14 @@ export default function AdminDashboard() {
               Maintain published pricing for Basic (₹7,999), Standard (₹13,999), and Premium (₹24,999) packages and 14 add-on services.
             </p>
           </div>
-          <span className="text-xs font-bold text-[hsl(174,85%,32%)] mt-4 inline-flex items-center gap-1">
+          <span className="text-xs font-bold text-[hsl(166,72%,40%)] mt-4 inline-flex items-center gap-1">
             Review Pricing <ArrowRight className="h-3 w-3" />
           </span>
         </Link>
 
         <Link
           href="/admin/documents"
-          className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:border-[hsl(174,85%,32%)] transition flex flex-col justify-between"
+          className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:border-[hsl(166,72%,40%)] transition flex flex-col justify-between"
         >
           <div>
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-50 text-purple-700 mb-4">
@@ -234,7 +234,7 @@ export default function AdminDashboard() {
               Monitor incoming academic files, inspect automated ClamAV scan flags, and verify documents before university filing.
             </p>
           </div>
-          <span className="text-xs font-bold text-[hsl(174,85%,32%)] mt-4 inline-flex items-center gap-1">
+          <span className="text-xs font-bold text-[hsl(166,72%,40%)] mt-4 inline-flex items-center gap-1">
             Inspect Documents <ArrowRight className="h-3 w-3" />
           </span>
         </Link>

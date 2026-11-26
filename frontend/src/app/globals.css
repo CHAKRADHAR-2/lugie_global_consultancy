@@ -33,59 +33,68 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+
+  /* Brand tokens */
+  --color-navy: hsl(222, 47%, 11%);
+  --color-navy-light: hsl(215, 25%, 18%);
+  --color-teal: hsl(166, 72%, 40%);
+  --color-teal-light: hsl(166, 72%, 50%);
+  --color-gold: hsl(45, 93%, 58%);
+  --color-gold-light: hsl(45, 93%, 68%);
+  --color-surface: hsl(210, 20%, 98%);
+  --color-surface-alt: hsl(220, 14%, 96%);
 }
 
-/* === LUGIE Design System === */
-/* Brand: Deep Navy primary, Teal accent */
+/* === LUGIE Design System v2 — Premium Midnight Navy + Emerald Teal + Gold === */
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 215 28% 11%;
+  --background: 210 20% 98%;
+  --foreground: 222 47% 11%;
   --card: 0 0% 100%;
-  --card-foreground: 215 28% 11%;
+  --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
-  --popover-foreground: 215 28% 11%;
-  --primary: 215 50% 12%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 222 47% 11%;
   --primary-foreground: 210 40% 98%;
-  --secondary: 210 20% 96%;
-  --secondary-foreground: 215 28% 11%;
-  --muted: 210 20% 96%;
-  --muted-foreground: 215 16% 47%;
-  --accent: 174 85% 32%;
+  --secondary: 220 14% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --muted: 220 14% 96%;
+  --muted-foreground: 220 13% 46%;
+  --accent: 166 72% 40%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --border: 214 20% 90%;
-  --input: 214 20% 90%;
-  --ring: 174 85% 32%;
-  --radius: 0.5rem;
-  --chart-1: 215 50% 12%;
-  --chart-2: 174 85% 32%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 166 72% 40%;
+  --radius: 0.625rem;
+  --chart-1: 222 47% 11%;
+  --chart-2: 166 72% 40%;
   --chart-3: 199 89% 48%;
-  --chart-4: 43 96% 56%;
+  --chart-4: 45 93% 58%;
   --chart-5: 27 87% 67%;
 }
 
 .dark {
-  --background: 215 28% 7%;
+  --background: 222 47% 7%;
   --foreground: 210 20% 96%;
-  --card: 215 28% 10%;
+  --card: 222 47% 10%;
   --card-foreground: 210 20% 96%;
-  --popover: 215 28% 10%;
+  --popover: 222 47% 10%;
   --popover-foreground: 210 20% 96%;
-  --primary: 174 85% 42%;
-  --primary-foreground: 215 28% 7%;
-  --secondary: 215 28% 15%;
+  --primary: 166 72% 45%;
+  --primary-foreground: 222 47% 7%;
+  --secondary: 222 30% 15%;
   --secondary-foreground: 210 20% 96%;
-  --muted: 215 28% 15%;
-  --muted-foreground: 215 16% 60%;
-  --accent: 174 85% 32%;
+  --muted: 222 30% 15%;
+  --muted-foreground: 220 13% 60%;
+  --accent: 166 72% 40%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 62% 50%;
   --destructive-foreground: 0 0% 100%;
-  --border: 215 28% 18%;
-  --input: 215 28% 18%;
-  --ring: 174 85% 42%;
+  --border: 222 30% 18%;
+  --input: 222 30% 18%;
+  --ring: 166 72% 45%;
 }
 
 * {
@@ -96,4 +105,121 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* === Smooth scroll === */
+html {
+  scroll-behavior: smooth;
+}
+
+/* === Page transition progress bar === */
+@keyframes progress-indeterminate {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(0%); }
+  100% { transform: translateX(100%); }
+}
+
+.progress-bar-animate {
+  animation: progress-indeterminate 1.4s ease-in-out infinite;
+}
+
+/* === Skeleton shimmer === */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(220 14% 96%) 25%,
+    hsl(220 14% 92%) 50%,
+    hsl(220 14% 96%) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* === Gradient mesh for hero === */
+@keyframes mesh-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
+}
+
+.mesh-orb {
+  animation: mesh-float 15s ease-in-out infinite;
+}
+
+.mesh-orb-delayed {
+  animation: mesh-float 18s ease-in-out infinite;
+  animation-delay: -5s;
+}
+
+.mesh-orb-slow {
+  animation: mesh-float 22s ease-in-out infinite;
+  animation-delay: -10s;
+}
+
+/* === Animated gradient border === */
+@keyframes gradient-rotate {
+  0% { --angle: 0deg; }
+  100% { --angle: 360deg; }
+}
+
+/* === Pulsing ring for CTA === */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.pulse-ring::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid hsl(166 72% 40%);
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* === Counter animation === */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === Splash screen === */
+@keyframes splash-reveal {
+  from { clip-path: circle(0% at 50% 50%); }
+  to { clip-path: circle(150% at 50% 50%); }
+}
+
+/* === Selection color === */
+::selection {
+  background-color: hsl(166 72% 40% / 0.2);
+  color: hsl(222 47% 11%);
+}
+
+/* === Focus ring === */
+*:focus-visible {
+  outline: 2px solid hsl(166 72% 40%);
+  outline-offset: 2px;
+}
+
+/* === Scrollbar === */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(220 14% 96%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(220 13% 80%);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(220 13% 65%);
 }

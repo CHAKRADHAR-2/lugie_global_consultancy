@@ -57,9 +57,9 @@ export function DashboardLayout({ children, navItems, portalName }: DashboardLay
 
   if (loading || !authorized) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="flex flex-col items-center gap-3 text-gray-500">
-          <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+      <div className="flex min-h-screen items-center justify-center bg-[hsl(210,20%,98%)]">
+        <div className="flex flex-col items-center gap-3 text-[hsl(220,13%,46%)]">
+          <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
           <p className="text-xs font-medium">Verifying portal session...</p>
         </div>
       </div>
@@ -67,7 +67,7 @@ export function DashboardLayout({ children, navItems, portalName }: DashboardLay
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen bg-[hsl(210,20%,98%)] text-[hsl(222,47%,11%)]">
       <Sidebar items={navItems} portalName={portalName} />
       <main className="flex-1 lg:ml-64">
         <div className="p-6 pt-20 lg:pt-6">{children}</div>

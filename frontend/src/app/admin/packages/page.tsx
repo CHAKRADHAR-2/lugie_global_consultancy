@@ -86,7 +86,7 @@ export default function AdminPackagesPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -94,7 +94,7 @@ export default function AdminPackagesPage() {
   return (
     <div className="space-y-8 max-w-5xl">
       <div>
-        <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)]">Packages & Pricing Manager</h1>
+        <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">Packages & Pricing Manager</h1>
         <p className="mt-1 text-sm text-gray-500">
           Manage live pricing for standard consultancy packages and 14 standalone modular services.
         </p>
@@ -131,14 +131,14 @@ export default function AdminPackagesPage() {
                           className="w-28 rounded border border-gray-300 px-2 py-1 text-xs focus:outline-none"
                         />
                       ) : (
-                        <span className="font-extrabold text-[hsl(215,50%,12%)]">
+                        <span className="font-extrabold text-[hsl(222,47%,11%)]">
                           ₹{pkg.price.toLocaleString("en-IN")}
                         </span>
                       )}
                     </td>
                     <td className="p-3">
                       {pkg.is_recommended ? (
-                        <span className="rounded bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)] px-2 py-0.5 font-bold text-[10px]">
+                        <span className="rounded bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] px-2 py-0.5 font-bold text-[10px]">
                           Recommended
                         </span>
                       ) : (
@@ -167,7 +167,7 @@ export default function AdminPackagesPage() {
                       ) : (
                         <button
                           onClick={() => handleStartEdit(pkg)}
-                          className="inline-flex items-center gap-1 text-[hsl(174,85%,32%)] font-semibold hover:underline"
+                          className="inline-flex items-center gap-1 text-[hsl(166,72%,40%)] font-semibold hover:underline"
                         >
                           <Edit2 className="h-3 w-3" /> Edit Price
                         </button>

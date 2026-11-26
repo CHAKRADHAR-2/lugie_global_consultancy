@@ -4,6 +4,7 @@ import { QueryProvider } from "@/providers/query-provider";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { AuthProvider } from "@/providers/auth-provider";
 import { Toaster } from "sonner";
+import { IntroSplash } from "@/components/splash/intro-splash";
 
 export const metadata: Metadata = {
   title: {
@@ -25,6 +26,7 @@ export default function RootLayout({
         <ThemeProvider>
           <QueryProvider>
             <AuthProvider>
+              <IntroSplash />
               {children}
               <Toaster position="top-right" richColors />
             </AuthProvider>

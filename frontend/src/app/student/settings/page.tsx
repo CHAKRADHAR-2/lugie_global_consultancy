@@ -132,7 +132,7 @@ export default function StudentSettingsPage() {
     <div className="space-y-8 max-w-4xl">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)]">Settings & Preferences</h1>
+        <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">Settings & Preferences</h1>
         <p className="mt-1 text-sm text-gray-500">
           Manage your emergency contacts, study abroad preferences, notification channels, and account security.
         </p>
@@ -143,7 +143,7 @@ export default function StudentSettingsPage() {
       {/* =================================================================== */}
       <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <User className="h-5 w-5 text-[hsl(174,85%,32%)]" />
+          <User className="h-5 w-5 text-[hsl(166,72%,40%)]" />
           Account & Channel Verification
         </h2>
 
@@ -166,7 +166,7 @@ export default function StudentSettingsPage() {
 
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
             <span className="text-gray-400 block mb-1">Platform Role & Access</span>
-            <span className="font-semibold text-[hsl(174,85%,32%)] uppercase block">Student Portal</span>
+            <span className="font-semibold text-[hsl(166,72%,40%)] uppercase block">Student Portal</span>
             <span className="inline-flex items-center gap-1 text-[10px] text-teal-800 font-bold bg-teal-50 px-2 py-0.5 rounded border border-teal-200 mt-2">
               <Shield className="h-3 w-3" /> Full Admissions Desk
             </span>
@@ -180,7 +180,7 @@ export default function StudentSettingsPage() {
       <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <HeartHandshake className="h-5 w-5 text-[hsl(174,85%,32%)]" />
+            <HeartHandshake className="h-5 w-5 text-[hsl(166,72%,40%)]" />
             <h2 className="text-base font-bold text-gray-900">
               Emergency & Guardian Contacts
             </h2>
@@ -199,7 +199,7 @@ export default function StudentSettingsPage() {
                 required
                 value={guardianForm.guardian_name}
                 onChange={(e) => setGuardianForm({ ...guardianForm, guardian_name: e.target.value })}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
 
@@ -210,7 +210,7 @@ export default function StudentSettingsPage() {
               <select
                 value={guardianForm.relationship}
                 onChange={(e) => setGuardianForm({ ...guardianForm, relationship: e.target.value })}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(174,85%,32%)] bg-white"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)] bg-white"
               >
                 <option value="Father">Father</option>
                 <option value="Mother">Mother</option>
@@ -229,7 +229,7 @@ export default function StudentSettingsPage() {
                 required
                 value={guardianForm.guardian_phone}
                 onChange={(e) => setGuardianForm({ ...guardianForm, guardian_phone: e.target.value })}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
 
@@ -242,7 +242,7 @@ export default function StudentSettingsPage() {
                 required
                 value={guardianForm.guardian_email}
                 onChange={(e) => setGuardianForm({ ...guardianForm, guardian_email: e.target.value })}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
               />
             </div>
           </div>
@@ -251,7 +251,7 @@ export default function StudentSettingsPage() {
             <button
               type="submit"
               disabled={savingGuardian}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition disabled:opacity-50"
             >
               {savingGuardian ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -269,7 +269,7 @@ export default function StudentSettingsPage() {
       {/* =================================================================== */}
       <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
-          <Sliders className="h-5 w-5 text-[hsl(174,85%,32%)]" />
+          <Sliders className="h-5 w-5 text-[hsl(166,72%,40%)]" />
           <h2 className="text-base font-bold text-gray-900">
             Admissions & Notification Channels
           </h2>
@@ -285,7 +285,7 @@ export default function StudentSettingsPage() {
                 onChange={(e) =>
                   setPreferences({ ...preferences, email_updates: e.target.checked })
                 }
-                className="rounded border-gray-300 text-[hsl(174,85%,32%)] mt-0.5"
+                className="rounded border-gray-300 text-[hsl(166,72%,40%)] mt-0.5"
               />
               <div>
                 <span className="font-bold text-gray-900 block">Email Admissions Updates</span>
@@ -302,7 +302,7 @@ export default function StudentSettingsPage() {
                 onChange={(e) =>
                   setPreferences({ ...preferences, whatsapp_alerts: e.target.checked })
                 }
-                className="rounded border-gray-300 text-[hsl(174,85%,32%)] mt-0.5"
+                className="rounded border-gray-300 text-[hsl(166,72%,40%)] mt-0.5"
               />
               <div>
                 <span className="font-bold text-gray-900 block">WhatsApp Instant Alerts</span>
@@ -319,7 +319,7 @@ export default function StudentSettingsPage() {
                 onChange={(e) =>
                   setPreferences({ ...preferences, chat_notifications: e.target.checked })
                 }
-                className="rounded border-gray-300 text-[hsl(174,85%,32%)] mt-0.5"
+                className="rounded border-gray-300 text-[hsl(166,72%,40%)] mt-0.5"
               />
               <div>
                 <span className="font-bold text-gray-900 block">Real-Time Chat Notifications</span>
@@ -336,7 +336,7 @@ export default function StudentSettingsPage() {
                 onChange={(e) =>
                   setPreferences({ ...preferences, loan_assistance_required: e.target.checked })
                 }
-                className="rounded border-gray-300 text-[hsl(174,85%,32%)] mt-0.5"
+                className="rounded border-gray-300 text-[hsl(166,72%,40%)] mt-0.5"
               />
               <div>
                 <span className="font-bold text-gray-900 block">Education Loan Assistance</span>
@@ -352,7 +352,7 @@ export default function StudentSettingsPage() {
               type="button"
               onClick={handleSavePreferences}
               disabled={savingPreferences}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition disabled:opacity-50"
             >
               {savingPreferences ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -379,7 +379,7 @@ export default function StudentSettingsPage() {
             <label className="block text-xs font-semibold text-gray-700">Current Password</label>
             <input
               type="password"
-              className="mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(174,85%,32%)]"
+              className="mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
               {...register("current_password")}
             />
             {errors.current_password && (
@@ -391,7 +391,7 @@ export default function StudentSettingsPage() {
             <label className="block text-xs font-semibold text-gray-700">New Password</label>
             <input
               type="password"
-              className="mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(174,85%,32%)]"
+              className="mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
               {...register("new_password")}
             />
             {errors.new_password && (
@@ -403,7 +403,7 @@ export default function StudentSettingsPage() {
             <label className="block text-xs font-semibold text-gray-700">Confirm New Password</label>
             <input
               type="password"
-              className="mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(174,85%,32%)]"
+              className="mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
               {...register("confirm_password")}
             />
             {errors.confirm_password && (
@@ -414,7 +414,7 @@ export default function StudentSettingsPage() {
           <button
             type="submit"
             disabled={updatingPass}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(215,50%,12%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(215,50%,18%)] transition disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(222,47%,11%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(222,47%,18%)] transition disabled:opacity-50"
           >
             {updatingPass ? (
               <>
@@ -434,7 +434,7 @@ export default function StudentSettingsPage() {
       <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-            <FileDown className="h-5 w-5 text-[hsl(174,85%,32%)]" />
+            <FileDown className="h-5 w-5 text-[hsl(166,72%,40%)]" />
             Export Complete Student Dossier
           </h2>
           <p className="text-xs text-gray-500 mt-0.5">
@@ -446,7 +446,7 @@ export default function StudentSettingsPage() {
           onClick={handleExportDossier}
           className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 shadow-xs hover:bg-gray-50 transition shrink-0"
         >
-          <Download className="h-4 w-4 text-[hsl(174,85%,32%)]" />
+          <Download className="h-4 w-4 text-[hsl(166,72%,40%)]" />
           Export JSON Dossier
         </button>
       </div>

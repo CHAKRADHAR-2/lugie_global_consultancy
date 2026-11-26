@@ -188,7 +188,7 @@ export default function StudentDocumentsPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -197,7 +197,7 @@ export default function StudentDocumentsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)]">Document Dossier</h1>
+        <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">Document Dossier</h1>
         <p className="mt-1 text-sm text-gray-500">
           Upload, manage, and verify your transcripts, test scorecards, passport, and admissions documents.
         </p>
@@ -206,7 +206,7 @@ export default function StudentDocumentsPage() {
       {/* Upload Box */}
       <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
         <div className="flex items-center gap-2 mb-4">
-          <FileCheck2 className="h-5 w-5 text-[hsl(174,85%,32%)]" />
+          <FileCheck2 className="h-5 w-5 text-[hsl(166,72%,40%)]" />
           <h2 className="text-base font-bold text-gray-900">Upload New Document</h2>
         </div>
 
@@ -218,7 +218,7 @@ export default function StudentDocumentsPage() {
             <select
               value={docType}
               onChange={(e) => setDocType(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(174,85%,32%)] bg-white"
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)] bg-white"
             >
               {DOCUMENT_TYPES.map((t) => (
                 <option key={t} value={t}>
@@ -245,7 +245,7 @@ export default function StudentDocumentsPage() {
             <button
               type="submit"
               disabled={uploading || !selectedFile}
-              className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] disabled:opacity-50 transition"
+              className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] disabled:opacity-50 transition"
             >
               {uploading ? (
                 <>
@@ -264,7 +264,7 @@ export default function StudentDocumentsPage() {
 
         <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200/80 p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-600">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-[hsl(174,85%,32%)] shrink-0" />
+            <ShieldCheck className="h-4 w-4 text-[hsl(166,72%,40%)] shrink-0" />
             <span>
               <strong>Active 4-Layer Security Scanner:</strong> Magic Byte Header Verification &bull; EICAR / Malicious Script Quarantine &bull; SHA-256 Cryptographic Hash &bull; Isolated Disk Vault.
             </span>
@@ -296,13 +296,13 @@ export default function StudentDocumentsPage() {
                 placeholder="Search documents..."
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)] w-44"
+                className="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)] w-44"
               />
             </div>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="py-1.5 px-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)] max-w-[150px]"
+              className="py-1.5 px-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)] max-w-[150px]"
             >
               <option value="all">All Categories</option>
               {DOCUMENT_TYPES.map((t) => (
@@ -388,7 +388,7 @@ export default function StudentDocumentsPage() {
                             onClick={() => handleDownload(doc.id, doc.original_filename)}
                             disabled={!isClean}
                             title="Open document in a new tab"
-                            className="inline-flex items-center gap-1 rounded-lg bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)] px-2.5 py-1 font-semibold hover:bg-[hsl(174,85%,32%)] hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed text-[11px]"
+                            className="inline-flex items-center gap-1 rounded-lg bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] px-2.5 py-1 font-semibold hover:bg-[hsl(166,72%,40%)] hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed text-[11px]"
                           >
                             <Download className="h-3 w-3" />
                             View / Download

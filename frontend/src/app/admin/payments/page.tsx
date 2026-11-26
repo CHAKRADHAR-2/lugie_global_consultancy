@@ -82,7 +82,7 @@ export default function AdminPaymentsPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -101,7 +101,7 @@ export default function AdminPaymentsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)]">Financial Ledger & Payments</h1>
+          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">Financial Ledger & Payments</h1>
           <p className="mt-1 text-sm text-gray-500">
             Audit student tuition advisory package enrollments, simulated sandbox transactions, and settlement receipts.
           </p>
@@ -119,11 +119,11 @@ export default function AdminPaymentsPage() {
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex items-center justify-between text-gray-500 mb-2">
             <span className="text-xs font-medium uppercase tracking-wider">Gross Revenue</span>
-            <div className="h-8 w-8 rounded-xl bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)] flex items-center justify-center">
+            <div className="h-8 w-8 rounded-xl bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] flex items-center justify-center">
               <Wallet className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-[hsl(215,50%,12%)]">
+          <div className="text-2xl font-bold text-[hsl(222,47%,11%)]">
             ₹{summary.total_revenue.toLocaleString("en-IN")}
           </div>
           <div className="mt-1 text-xs text-emerald-600 font-medium flex items-center gap-1">
@@ -138,7 +138,7 @@ export default function AdminPaymentsPage() {
               <CheckCircle2 className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-[hsl(215,50%,12%)]">
+          <div className="text-2xl font-bold text-[hsl(222,47%,11%)]">
             {summary.paid_count}
           </div>
           <div className="mt-1 text-xs text-gray-400">
@@ -153,7 +153,7 @@ export default function AdminPaymentsPage() {
               <Clock className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-[hsl(215,50%,12%)]">
+          <div className="text-2xl font-bold text-[hsl(222,47%,11%)]">
             {summary.pending_count}
           </div>
           <div className="mt-1 text-xs text-gray-400">Awaiting payment completion</div>
@@ -166,7 +166,7 @@ export default function AdminPaymentsPage() {
               <CreditCard className="h-4 w-4" />
             </div>
           </div>
-          <div className="text-base font-bold text-[hsl(215,50%,12%)]">
+          <div className="text-base font-bold text-[hsl(222,47%,11%)]">
             Pre-Production
           </div>
           <div className="mt-1 text-[11px] text-gray-400">Ready for Razorpay / Stripe Keys</div>
@@ -182,7 +182,7 @@ export default function AdminPaymentsPage() {
             placeholder="Search student, email, ref #, or package..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+            className="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
           />
         </div>
 
@@ -192,7 +192,7 @@ export default function AdminPaymentsPage() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="py-2 px-3 text-xs rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)]"
+            className="py-2 px-3 text-xs rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
           >
             <option value="all">All Statuses</option>
             <option value="paid">Paid Only</option>
@@ -239,7 +239,7 @@ export default function AdminPaymentsPage() {
                       })}
                     </td>
                     <td className="py-4 px-6">
-                      <div className="font-bold text-[hsl(215,50%,12%)]">{item.student_name}</div>
+                      <div className="font-bold text-[hsl(222,47%,11%)]">{item.student_name}</div>
                       <div className="text-gray-400 text-[11px]">{item.student_email}</div>
                     </td>
                     <td className="py-4 px-6">
@@ -299,10 +299,10 @@ export default function AdminPaymentsPage() {
             </button>
 
             <div className="text-center pb-4 border-b border-gray-100">
-              <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)] mb-2">
+              <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] mb-2">
                 <Receipt className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-bold text-[hsl(215,50%,12%)]">Official Tax Invoice</h3>
+              <h3 className="text-lg font-bold text-[hsl(222,47%,11%)]">Official Tax Invoice</h3>
               <p className="text-xs text-gray-400 font-mono">
                 REF: {selectedReceipt.gateway_payment_id || selectedReceipt.id.slice(0, 8)}
               </p>
@@ -319,7 +319,7 @@ export default function AdminPaymentsPage() {
               </div>
               <div className="flex justify-between py-1 border-b border-dashed border-gray-100">
                 <span className="text-gray-500">Plan Enrolled</span>
-                <span className="font-bold text-[hsl(174,85%,32%)]">
+                <span className="font-bold text-[hsl(166,72%,40%)]">
                   {selectedReceipt.package_name} Package
                 </span>
               </div>
@@ -337,7 +337,7 @@ export default function AdminPaymentsPage() {
               </div>
               <div className="flex justify-between pt-2 text-sm font-bold">
                 <span className="text-gray-800">Total Billed</span>
-                <span className="text-[hsl(215,50%,12%)]">
+                <span className="text-[hsl(222,47%,11%)]">
                   ₹{selectedReceipt.amount.toLocaleString("en-IN")}
                 </span>
               </div>

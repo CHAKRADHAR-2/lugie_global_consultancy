@@ -71,7 +71,7 @@ export default function StudentAssessmentPage() {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(174,85%,32%)]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
       </div>
     );
   }
@@ -84,8 +84,8 @@ export default function StudentAssessmentPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-[hsl(215,50%,12%)] flex items-center gap-2">
-              <ClipboardCheck className="h-6 w-6 text-[hsl(174,85%,32%)]" />
+            <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)] flex items-center gap-2">
+              <ClipboardCheck className="h-6 w-6 text-[hsl(166,72%,40%)]" />
               Counsellor Profile Assessment & Capacity Evaluation
             </h1>
           </div>
@@ -101,7 +101,7 @@ export default function StudentAssessmentPage() {
           </span>
           <Link
             href="/student/messages"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(174,85%,32%)] px-3.5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-3.5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
           >
             <MessageSquare className="h-3.5 w-3.5" />
             Discuss with Counsellor
@@ -112,7 +112,7 @@ export default function StudentAssessmentPage() {
       {/* Official Advisory Banner */}
       <div className="rounded-2xl bg-teal-50/70 border border-teal-200/80 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3">
-          <ShieldCheck className="h-5 w-5 text-[hsl(174,85%,32%)] shrink-0 mt-0.5" />
+          <ShieldCheck className="h-5 w-5 text-[hsl(166,72%,40%)] shrink-0 mt-0.5" />
           <div className="text-xs text-teal-950">
             <span className="font-bold text-sm block mb-0.5">
               Official Counsellor Advisory Record — Formally Reviewed & Approved
@@ -137,7 +137,7 @@ export default function StudentAssessmentPage() {
           <div className="flex items-center justify-center gap-3">
             <Link
               href="/student/profile"
-              className="rounded-lg bg-[hsl(215,50%,12%)] px-5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(215,50%,18%)]"
+              className="rounded-lg bg-[hsl(222,47%,11%)] px-5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(222,47%,18%)]"
             >
               Update Academic History
             </Link>
@@ -155,8 +155,8 @@ export default function StudentAssessmentPage() {
           {/* Section 1: Candidate Capacity Rating Matrix                      */}
           {/* =============================================================== */}
           <div>
-            <h2 className="text-base font-bold text-[hsl(215,50%,12%)] mb-4 flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-[hsl(174,85%,32%)]" />
+            <h2 className="text-base font-bold text-[hsl(222,47%,11%)] mb-4 flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-[hsl(166,72%,40%)]" />
               Candidate Capacity Rating & Profile Competitiveness
             </h2>
 
@@ -167,7 +167,7 @@ export default function StudentAssessmentPage() {
                   Overall Readiness Score
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-extrabold text-[hsl(174,85%,32%)]">88%</span>
+                  <span className="text-3xl font-extrabold text-[hsl(166,72%,40%)]">88%</span>
                   <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
                     Strong Tier
                   </span>
@@ -183,7 +183,7 @@ export default function StudentAssessmentPage() {
                   Academic Capacity
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-extrabold text-[hsl(215,50%,12%)]">8.4 / 10</span>
+                  <span className="text-2xl font-extrabold text-[hsl(222,47%,11%)]">8.4 / 10</span>
                   <span className="text-xs font-semibold text-gray-500">CGPA</span>
                 </div>
                 <p className="text-[11px] text-gray-500 mt-2">
@@ -197,7 +197,7 @@ export default function StudentAssessmentPage() {
                   Standardized Test Capacity
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-extrabold text-[hsl(215,50%,12%)]">314</span>
+                  <span className="text-2xl font-extrabold text-[hsl(222,47%,11%)]">314</span>
                   <span className="text-xs font-semibold text-gray-500">GRE / 7.5 IELTS</span>
                 </div>
                 <p className="text-[11px] text-gray-500 mt-2">
@@ -331,7 +331,7 @@ export default function StudentAssessmentPage() {
           <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
               <div>
-                <h2 className="text-base font-bold text-[hsl(215,50%,12%)]">
+                <h2 className="text-base font-bold text-[hsl(222,47%,11%)]">
                   Counsellor Stratified University Matrix (Dream • Target • Safe)
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5">
@@ -341,7 +341,7 @@ export default function StudentAssessmentPage() {
 
               <Link
                 href="/student/universities"
-                className="text-xs font-semibold text-[hsl(174,85%,32%)] hover:underline inline-flex items-center gap-1"
+                className="text-xs font-semibold text-[hsl(166,72%,40%)] hover:underline inline-flex items-center gap-1"
               >
                 Manage Shortlist <ArrowRight className="h-3.5 w-3.5" />
               </Link>
@@ -356,7 +356,7 @@ export default function StudentAssessmentPage() {
                   </span>
                   <Award className="h-4 w-4 text-purple-600" />
                 </div>
-                <h4 className="text-sm font-bold text-[hsl(215,50%,12%)]">
+                <h4 className="text-sm font-bold text-[hsl(222,47%,11%)]">
                   Technical University of Munich (TUM)
                 </h4>
                 <p className="text-xs text-gray-500">Germany • M.Sc. Informatics</p>
@@ -373,7 +373,7 @@ export default function StudentAssessmentPage() {
                   </span>
                   <Building2 className="h-4 w-4 text-blue-600" />
                 </div>
-                <h4 className="text-sm font-bold text-[hsl(215,50%,12%)]">
+                <h4 className="text-sm font-bold text-[hsl(222,47%,11%)]">
                   RWTH Aachen University
                 </h4>
                 <p className="text-xs text-gray-500">Germany • M.Sc. Software Systems Eng.</p>
@@ -390,7 +390,7 @@ export default function StudentAssessmentPage() {
                   </span>
                   <CheckCircle2 className="h-4 w-4 text-emerald-600" />
                 </div>
-                <h4 className="text-sm font-bold text-[hsl(215,50%,12%)]">
+                <h4 className="text-sm font-bold text-[hsl(222,47%,11%)]">
                   University of Glasgow
                 </h4>
                 <p className="text-xs text-gray-500">United Kingdom • MSc Data Science</p>
@@ -407,8 +407,8 @@ export default function StudentAssessmentPage() {
           <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <UserCheck className="h-5 w-5 text-[hsl(174,85%,32%)]" />
-                <h3 className="text-base font-bold text-[hsl(215,50%,12%)]">
+                <UserCheck className="h-5 w-5 text-[hsl(166,72%,40%)]" />
+                <h3 className="text-base font-bold text-[hsl(222,47%,11%)]">
                   Senior Counsellor Advisory Remarks & Roadmap
                 </h3>
               </div>
@@ -432,7 +432,7 @@ export default function StudentAssessmentPage() {
               </span>
               <Link
                 href="/student/messages"
-                className="inline-flex items-center gap-2 rounded-lg bg-[hsl(174,85%,32%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(174,85%,38%)] transition self-start"
+                className="inline-flex items-center gap-2 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition self-start"
               >
                 <MessageSquare className="h-3.5 w-3.5" />
                 Chat with Your Assigned Counsellor

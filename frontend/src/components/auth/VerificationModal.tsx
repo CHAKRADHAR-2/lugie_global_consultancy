@@ -248,39 +248,39 @@ export function VerificationModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 md:p-8 shadow-2xl border border-gray-100 animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-lg rounded-3xl bg-white p-6 md:p-8 shadow-2xl border border-[hsl(220,13%,91%)] animate-in fade-in zoom-in-95 duration-200">
         <button
           onClick={onClose}
-          className="absolute right-5 top-5 p-2 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition"
+          className="absolute right-5 top-5 p-2 rounded-full text-[hsl(220,13%,46%)] hover:text-[hsl(222,47%,11%)] hover:bg-[hsl(220,14%,96%)] transition"
         >
           <X className="h-5 w-5" />
         </button>
 
         {/* Header */}
-        <div className="text-center pb-4 border-b border-gray-100">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[hsl(174,85%,32%)]/10 text-[hsl(174,85%,32%)] mb-2">
+        <div className="text-center pb-4 border-b border-[hsl(220,13%,91%)]">
+          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] mb-2">
             <ShieldCheck className="h-6 w-6" />
           </div>
-          <h2 className="text-xl font-bold text-[hsl(215,50%,12%)]">Candidate Verification Desk</h2>
-          <p className="text-xs text-gray-500 mt-1">
+          <h2 className="text-xl font-bold text-[hsl(222,47%,11%)]">Candidate Verification Desk</h2>
+          <p className="text-xs text-[hsl(220,13%,46%)] mt-1">
             Verify your official contact channels for visa documentation and admission committee tracking.
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="grid grid-cols-2 gap-2 p-1.5 bg-gray-100/75 rounded-2xl my-5 text-xs font-semibold">
+        <div className="grid grid-cols-2 gap-2 p-1.5 bg-[hsl(220,14%,96%)] rounded-2xl my-5 text-xs font-semibold">
           <button
             type="button"
             onClick={() => setActiveTab("email")}
             className={`py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition ${
               activeTab === "email"
-                ? "bg-white text-[hsl(215,50%,12%)] shadow-sm"
-                : "text-gray-500 hover:text-gray-800"
+                ? "bg-white text-[hsl(222,47%,11%)] shadow-sm"
+                : "text-[hsl(220,13%,46%)] hover:text-[hsl(222,47%,11%)]"
             }`}
           >
             <Mail className="h-3.5 w-3.5" />
             <span>Email (Brevo)</span>
-            {emailVerified && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 ml-auto" />}
+            {emailVerified && <CheckCircle2 className="h-3.5 w-3.5 text-[hsl(166,72%,40%)] ml-auto" />}
           </button>
 
           <button
@@ -288,13 +288,13 @@ export function VerificationModal({
             onClick={() => setActiveTab("phone")}
             className={`py-2 px-3 rounded-xl flex items-center justify-center gap-2 transition ${
               activeTab === "phone"
-                ? "bg-white text-[hsl(215,50%,12%)] shadow-sm"
-                : "text-gray-500 hover:text-gray-800"
+                ? "bg-white text-[hsl(222,47%,11%)] shadow-sm"
+                : "text-[hsl(220,13%,46%)] hover:text-[hsl(222,47%,11%)]"
             }`}
           >
             <Smartphone className="h-3.5 w-3.5" />
             <span>Phone (Firebase)</span>
-            {phoneVerified && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 ml-auto" />}
+            {phoneVerified && <CheckCircle2 className="h-3.5 w-3.5 text-[hsl(166,72%,40%)] ml-auto" />}
           </button>
         </div>
 
@@ -303,7 +303,7 @@ export function VerificationModal({
           <div className="space-y-4 text-xs">
             {emailVerified ? (
               <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-2">
-                <CheckCircle2 className="h-8 w-8 text-emerald-600 mx-auto" />
+                <CheckCircle2 className="h-8 w-8 text-[hsl(166,72%,40%)] mx-auto" />
                 <h4 className="font-bold text-emerald-900 text-sm">Email Address Verified</h4>
                 <p className="text-emerald-700 font-mono text-[11px]">{email}</p>
                 <p className="text-emerald-600/80 text-[11px]">
@@ -313,7 +313,7 @@ export function VerificationModal({
             ) : (
               <>
                 <div>
-                  <label className="font-semibold text-gray-700 block mb-1">
+                  <label className="font-semibold text-[hsl(222,47%,11%)] block mb-1">
                     Registered Email Address:
                   </label>
                   <div className="flex gap-2">
@@ -322,18 +322,18 @@ export function VerificationModal({
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="student@example.com"
-                      className="flex-1 p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)] font-mono text-xs"
+                      className="flex-1 p-2.5 rounded-xl border border-[hsl(220,13%,91%)] text-[hsl(222,47%,11%)] focus:outline-none focus:border-[hsl(166,72%,40%)] font-mono text-xs"
                     />
                     <button
                       type="button"
                       disabled={emailSending}
                       onClick={handleSendEmailOtp}
-                      className="px-4 py-2.5 rounded-xl bg-[hsl(215,50%,12%)] text-white text-xs font-semibold hover:bg-[hsl(215,50%,18%)] transition disabled:opacity-50 whitespace-nowrap"
+                      className="px-4 py-2.5 rounded-xl bg-[hsl(222,47%,11%)] text-white text-xs font-semibold hover:bg-[hsl(215,25%,18%)] transition disabled:opacity-50 whitespace-nowrap"
                     >
                       {emailSending ? <Loader2 className="h-4 w-4 animate-spin" /> : emailSent ? "Resend Code" : "Send Code"}
                     </button>
                   </div>
-                  <p className="text-[11px] text-gray-400 mt-1">
+                  <p className="text-[11px] text-[hsl(220,13%,46%)] mt-1">
                     Powered by Brevo transactional relay. Please check your <strong>Spam/Junk</strong> folder if delayed.
                   </p>
                   {emailOtpHint && (
@@ -345,7 +345,7 @@ export function VerificationModal({
 
                 {emailSent && (
                   <div className="pt-2 space-y-3">
-                    <label className="font-semibold text-gray-700 block">
+                    <label className="font-semibold text-[hsl(222,47%,11%)] block">
                       Enter 6-Digit Email Verification Code:
                     </label>
                     <div className="flex gap-2">
@@ -355,13 +355,13 @@ export function VerificationModal({
                         value={emailOtp}
                         onChange={(e) => setEmailOtp(e.target.value)}
                         placeholder="123456"
-                        className="flex-1 p-3 rounded-xl border border-gray-200 text-center font-mono text-base tracking-widest focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                        className="flex-1 p-3 rounded-xl border border-[hsl(220,13%,91%)] text-[hsl(222,47%,11%)] text-center font-mono text-base tracking-widest focus:outline-none focus:border-[hsl(166,72%,40%)]"
                       />
                       <button
                         type="button"
                         disabled={emailVerifying}
                         onClick={handleVerifyEmailOtp}
-                        className="px-6 py-2.5 rounded-xl bg-[hsl(174,85%,32%)] text-white text-xs font-semibold hover:bg-[hsl(174,85%,28%)] transition disabled:opacity-50"
+                        className="px-6 py-2.5 rounded-xl bg-[hsl(166,72%,40%)] text-white text-xs font-semibold hover:bg-[hsl(166,72%,50%)] transition disabled:opacity-50"
                       >
                         {emailVerifying ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verify Email"}
                       </button>
@@ -378,7 +378,7 @@ export function VerificationModal({
           <div className="space-y-4 text-xs">
             {phoneVerified ? (
               <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-2">
-                <CheckCircle2 className="h-8 w-8 text-emerald-600 mx-auto" />
+                <CheckCircle2 className="h-8 w-8 text-[hsl(166,72%,40%)] mx-auto" />
                 <h4 className="font-bold text-emerald-900 text-sm">Mobile Number Verified</h4>
                 <p className="text-emerald-700 font-mono text-[11px]">{phone}</p>
                 <p className="text-emerald-600/80 text-[11px]">
@@ -388,7 +388,7 @@ export function VerificationModal({
             ) : (
               <>
                 <div>
-                  <label className="font-semibold text-gray-700 block mb-1">
+                  <label className="font-semibold text-[hsl(222,47%,11%)] block mb-1">
                     Mobile Phone Number (with Country Code):
                   </label>
                   <div className="flex gap-2">
@@ -397,19 +397,19 @@ export function VerificationModal({
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="+91 98765 43210"
-                      className="flex-1 p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(174,85%,32%)] font-mono text-xs"
+                      className="flex-1 p-2.5 rounded-xl border border-[hsl(220,13%,91%)] text-[hsl(222,47%,11%)] focus:outline-none focus:border-[hsl(166,72%,40%)] font-mono text-xs"
                     />
                     <button
                       type="button"
                       disabled={phoneSending}
                       onClick={handleSendPhoneOtp}
-                      className="px-4 py-2.5 rounded-xl bg-[hsl(215,50%,12%)] text-white text-xs font-semibold hover:bg-[hsl(215,50%,18%)] transition disabled:opacity-50 whitespace-nowrap"
+                      className="px-4 py-2.5 rounded-xl bg-[hsl(222,47%,11%)] text-white text-xs font-semibold hover:bg-[hsl(215,25%,18%)] transition disabled:opacity-50 whitespace-nowrap"
                     >
                       {phoneSending ? <Loader2 className="h-4 w-4 animate-spin" /> : phoneSent ? "Resend OTP" : "Send OTP"}
                     </button>
                   </div>
                   <div id="recaptcha-container"></div>
-                  <p className="text-[11px] text-gray-400 mt-1">
+                  <p className="text-[11px] text-[hsl(220,13%,46%)] mt-1">
                     Powered by Firebase Phone Auth. Dispatches 6-digit SMS code to your phone.
                   </p>
                   {firebaseError && (
@@ -427,7 +427,7 @@ export function VerificationModal({
 
                 {phoneSent && (
                   <div className="pt-2 space-y-3">
-                    <label className="font-semibold text-gray-700 block">
+                    <label className="font-semibold text-[hsl(222,47%,11%)] block">
                       Enter 6-Digit SMS Verification OTP:
                     </label>
                     <div className="flex gap-2">
@@ -437,13 +437,13 @@ export function VerificationModal({
                         value={phoneOtp}
                         onChange={(e) => setPhoneOtp(e.target.value)}
                         placeholder="123456"
-                        className="flex-1 p-3 rounded-xl border border-gray-200 text-center font-mono text-base tracking-widest focus:outline-none focus:border-[hsl(174,85%,32%)]"
+                        className="flex-1 p-3 rounded-xl border border-[hsl(220,13%,91%)] text-[hsl(222,47%,11%)] text-center font-mono text-base tracking-widest focus:outline-none focus:border-[hsl(166,72%,40%)]"
                       />
                       <button
                         type="button"
                         disabled={phoneVerifying}
                         onClick={handleVerifyPhoneOtp}
-                        className="px-6 py-2.5 rounded-xl bg-[hsl(174,85%,32%)] text-white text-xs font-semibold hover:bg-[hsl(174,85%,28%)] transition disabled:opacity-50"
+                        className="px-6 py-2.5 rounded-xl bg-[hsl(166,72%,40%)] text-white text-xs font-semibold hover:bg-[hsl(166,72%,50%)] transition disabled:opacity-50"
                       >
                         {phoneVerifying ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verify Mobile"}
                       </button>
@@ -456,14 +456,14 @@ export function VerificationModal({
         )}
 
         {/* Footer */}
-        <div className="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-[11px] text-gray-400">
+        <div className="mt-6 pt-4 border-t border-[hsl(220,13%,91%)] flex items-center justify-between">
+          <div className="flex items-center gap-2 text-[11px] text-[hsl(220,13%,46%)]">
             <span>Status:</span>
-            <span className={`font-semibold ${emailVerified ? "text-emerald-600" : "text-amber-600"}`}>
+            <span className={`font-semibold ${emailVerified ? "text-[hsl(166,72%,40%)]" : "text-amber-600"}`}>
               Email {emailVerified ? "✓" : "Pending"}
             </span>
             <span>•</span>
-            <span className={`font-semibold ${phoneVerified ? "text-emerald-600" : "text-amber-600"}`}>
+            <span className={`font-semibold ${phoneVerified ? "text-[hsl(166,72%,40%)]" : "text-amber-600"}`}>
               Phone {phoneVerified ? "✓" : "Pending"}
             </span>
           </div>
@@ -471,7 +471,7 @@ export function VerificationModal({
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-gray-900 text-white text-xs font-semibold hover:bg-black transition"
+            className="px-5 py-2 rounded-xl bg-[hsl(222,47%,11%)] text-white text-xs font-semibold hover:bg-[hsl(215,25%,18%)] transition"
           >
             {allVerified ? "Done" : "Continue to Portal"}
           </button>
