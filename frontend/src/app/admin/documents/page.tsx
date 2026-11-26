@@ -4,21 +4,20 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/api-client";
 import { openAuthenticatedUrl } from "@/lib/auth-tokens";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { ModalShell, StatusBadge } from "@/components/ui/feedback";
+import { DocumentRevealLoader } from "@/components/ui/loading-concepts";
+import { SkeletonRow } from "@/components/ui/skeleton";
 import {
   FileText,
-  CheckCircle2,
   AlertTriangle,
   Clock,
-  Download,
-  ShieldAlert,
   ShieldCheck,
   Search,
-  Filter,
-  Loader2,
-  XCircle,
   User,
   Mail,
   Eye,
+  ShieldAlert,
 } from "lucide-react";
 
 interface DocumentItem {
@@ -50,6 +49,8 @@ export default function AdminDocumentsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [scanFilter, setScanFilter] = useState("");
   const [search, setSearch] = useState("");
+  const [quarantineTarget, setQuarantineTarget] = useState<DocumentItem | null>(null);
+  const [quarantining, setQuarantining] = useState(false);
 
   useEffect(() => {
     fetchDocuments();
@@ -78,7 +79,7 @@ export default function AdminDocumentsPage() {
 
   const handleVerify = async (docId: string) => {
     try {
-      const updated = await api.post<DocumentItem>(`documents/${docId}/verify`);
+      await api.post<DocumentItem>(`documents/${docId}/verify`);
       setDocuments(documents.map((d) => (d.id === docId ? { ...d, status: "verified" } : d)));
       toast.success("Document marked as verified!");
     } catch (err: any) {
@@ -88,7 +89,7 @@ export default function AdminDocumentsPage() {
 
   const handleReject = async (docId: string) => {
     try {
-      const updated = await api.post<DocumentItem>(`documents/${docId}/reject`);
+      await api.post<DocumentItem>(`documents/${docId}/reject`);
       setDocuments(documents.map((d) => (d.id === docId ? { ...d, status: "rejected" } : d)));
       toast.success("Document marked as rejected.");
     } catch (err: any) {
@@ -96,16 +97,22 @@ export default function AdminDocumentsPage() {
     }
   };
 
-  const handleQuarantine = async (docId: string) => {
-    if (!confirm("Are you sure you want to quarantine this file due to suspected malware/security risk?")) {
-      return;
-    }
+  const handleQuarantineConfirm = async () => {
+    if (!quarantineTarget) return;
+    setQuarantining(true);
     try {
-      const updated = await api.post<DocumentItem>(`documents/${docId}/quarantine`);
-      setDocuments(documents.map((d) => (d.id === docId ? { ...d, scan_status: "quarantined" } : d)));
+      await api.post<DocumentItem>(`documents/${quarantineTarget.id}/quarantine`);
+      setDocuments(
+        documents.map((d) =>
+          d.id === quarantineTarget.id ? { ...d, scan_status: "quarantined" } : d
+        )
+      );
       toast.warning("Document quarantined by Security System.");
+      setQuarantineTarget(null);
     } catch (err: any) {
       toast.error(err?.message || "Failed to quarantine document.");
+    } finally {
+      setQuarantining(false);
     }
   };
 
@@ -121,178 +128,239 @@ export default function AdminDocumentsPage() {
     return !search || studentMatch || fileMatch;
   });
 
+  const hasScanningFiles = filtered.some(
+    (doc) =>
+      doc.scan_status !== "clean" &&
+      doc.scan_status !== "scan_disabled" &&
+      doc.scan_status !== "quarantined"
+  );
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <FileText className="h-6 w-6 text-primary" />
-          Central Document & Security Audit Desk
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Total {total} verified files, academic marksheets, and passport copies uploaded by registered candidates.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8E572C]">
+            Security &amp; Compliance
+          </span>
+          <h1 className="font-editorial text-2xl sm:text-3xl tracking-tight text-[#263331] mt-0.5">
+            Central Document &amp; Security Audit Desk
+          </h1>
+          <p className="mt-1 text-sm text-[#546866]">
+            Total {total} files, academic marksheets, and passport copies uploaded by registered candidates.
+          </p>
+        </div>
+        <StatusBadge tone="sage" className="self-start sm:self-center">
+          {total} Queued Files
+        </StatusBadge>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-card p-4 rounded-2xl border border-border shadow-sm flex flex-col md:flex-row gap-3 items-center justify-between">
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+      <div className="bg-[#F3F0E8]/75 border border-[#DCE5E8] p-4 rounded-2xl flex flex-col lg:flex-row gap-3 items-center justify-between">
+        <div className="relative w-full lg:w-96">
+          <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#546866]" />
           <input
             type="text"
             placeholder="Search by student name, email, or file name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-border bg-background pl-9 pr-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-xl border border-[#DCE5E8] bg-white pl-10 pr-3.5 py-2.5 text-sm text-[#394B49] placeholder:text-[#546866]/70 focus:border-[#394B49] focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <label className="text-xs font-semibold text-muted-foreground">Verification:</label>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="text-xs rounded-xl border border-border bg-background px-3 py-1.5 focus:outline-none"
-          >
-            <option value="">All Verification States</option>
-            <option value="uploaded">Uploaded / Pending</option>
-            <option value="verified">Verified</option>
-            <option value="rejected">Rejected</option>
-          </select>
+        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold text-[#546866]">Verification:</label>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="rounded-xl border border-[#DCE5E8] bg-white px-3 py-2 text-xs font-medium text-[#394B49] focus:border-[#394B49] focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+            >
+              <option value="">All Verification States</option>
+              <option value="uploaded">Uploaded / Pending</option>
+              <option value="verified">Verified</option>
+              <option value="rejected">Rejected</option>
+            </select>
+          </div>
 
-          <label className="text-xs font-semibold text-muted-foreground">Scan:</label>
-          <select
-            value={scanFilter}
-            onChange={(e) => setScanFilter(e.target.value)}
-            className="text-xs rounded-xl border border-border bg-background px-3 py-1.5 focus:outline-none"
-          >
-            <option value="">All Security States</option>
-            <option value="clean">Clean</option>
-            <option value="scan_disabled">Scan Disabled</option>
-            <option value="pending">Scan Pending</option>
-            <option value="quarantined">Quarantined</option>
-          </select>
+          <div className="flex items-center gap-2">
+            <label className="text-xs font-semibold text-[#546866]">Scan:</label>
+            <select
+              value={scanFilter}
+              onChange={(e) => setScanFilter(e.target.value)}
+              className="rounded-xl border border-[#DCE5E8] bg-white px-3 py-2 text-xs font-medium text-[#394B49] focus:border-[#394B49] focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+            >
+              <option value="">All Security States</option>
+              <option value="clean">Clean</option>
+              <option value="scan_disabled">Scan Disabled</option>
+              <option value="pending">Scan Pending</option>
+              <option value="quarantined">Quarantined</option>
+            </select>
+          </div>
         </div>
       </div>
 
+      {/* Live Scanning Indicator Strip when pending scans exist */}
+      {!loading && hasScanningFiles && (
+        <div className="beyond-card p-4 bg-[#FCF6EC]/70 border-[#D9A879] flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <DocumentRevealLoader size="sm" label="" />
+            <div>
+              <p className="text-xs font-semibold text-[#8A5A1E]">
+                Automated ClamAV Security Scan Active
+              </p>
+              <p className="text-[11px] text-[#546866]">
+                One or more uploaded dossiers are currently awaiting integrity verification.
+              </p>
+            </div>
+          </div>
+          <Button variant="secondary" size="sm" onClick={fetchDocuments}>
+            Refresh Queue
+          </Button>
+        </div>
+      )}
+
       {/* Table */}
-      <div className="rounded-2xl border border-border bg-card p-5 shadow-sm overflow-hidden">
+      <div className="beyond-card overflow-hidden">
         {loading ? (
-          <div className="py-20 text-center">
-            <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
-            <p className="text-xs text-muted-foreground">Loading audit records...</p>
+          <div className="p-6 space-y-4">
+            <DocumentRevealLoader label="Reviewing document audit records…" size="md" className="py-4" />
+            <SkeletonRow cols={6} />
+            <SkeletonRow cols={6} />
+            <SkeletonRow cols={6} />
+            <SkeletonRow cols={6} />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-12 text-center">
-            <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2 opacity-40" />
-            <p className="text-sm font-semibold text-foreground">No documents in queue</p>
+          <div className="py-14 text-center px-4">
+            <FileText className="h-10 w-10 text-[#546866]/45 mx-auto mb-3" />
+            <p className="text-sm font-semibold text-[#263331]">No documents in queue</p>
+            <p className="text-xs text-[#546866] mt-1">
+              No uploaded candidate documents match the selected filters.
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-muted/50 text-muted-foreground uppercase font-semibold text-[10px] tracking-wider border-b border-border">
+              <thead className="bg-[#F3F0E8]/75 border-b border-[#DCE5E8] text-[11px] font-semibold uppercase tracking-wider text-[#546866]">
                 <tr>
-                  <th className="p-3.5">Candidate Details</th>
-                  <th className="p-3.5">File Name & Size</th>
-                  <th className="p-3.5">Category</th>
-                  <th className="p-3.5">Security Scan</th>
-                  <th className="p-3.5">Status</th>
-                  <th className="p-3.5 text-right">Actions</th>
+                  <th className="py-3.5 px-4">Candidate Details</th>
+                  <th className="py-3.5 px-4">File Name &amp; Size</th>
+                  <th className="py-3.5 px-4">Category</th>
+                  <th className="py-3.5 px-4">Security Scan</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border text-foreground">
+              <tbody className="divide-y divide-[#DCE5E8]/80 text-[#394B49]">
                 {filtered.map((doc) => {
-                  const isClean = doc.scan_status === "clean" || doc.scan_status === "scan_disabled";
+                  const isClean =
+                    doc.scan_status === "clean" || doc.scan_status === "scan_disabled";
                   const isQuarantined = doc.scan_status === "quarantined";
                   return (
-                    <tr key={doc.id} className="hover:bg-muted/30 transition">
-                      <td className="p-3.5">
-                        <div className="font-bold text-sm text-foreground flex items-center gap-1.5">
-                          <User className="h-3.5 w-3.5 text-primary" />
-                          <span>{doc.student_name || `Candidate #${doc.student_id.slice(0, 8)}`}</span>
+                    <tr key={doc.id} className="hover:bg-[#EEF3F5]/45 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-sm text-[#263331] flex items-center gap-1.5">
+                          <User className="h-3.5 w-3.5 text-[#3F6258] shrink-0" />
+                          <span>
+                            {doc.student_name || `Candidate #${doc.student_id.slice(0, 8)}`}
+                          </span>
                         </div>
-                        <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                          <Mail className="h-3 w-3 text-muted-foreground" />
+                        <div className="text-xs text-[#546866] flex items-center gap-1 mt-0.5">
+                          <Mail className="h-3 w-3 shrink-0" />
                           <span>{doc.student_email || "Email on file"}</span>
                         </div>
                       </td>
-                      <td className="p-3.5">
-                        <span className="font-bold text-foreground block">{doc.file_name}</span>
-                        <span className="text-[10px] text-muted-foreground">
-                          {(doc.file_size / 1024).toFixed(0)} KB · {new Date(doc.uploaded_at).toLocaleDateString()}
+                      <td className="py-3.5 px-4">
+                        <span className="font-semibold text-[#263331] block">{doc.file_name}</span>
+                        <span className="text-[11px] text-[#546866]">
+                          {(doc.file_size / 1024).toFixed(0)} KB ·{" "}
+                          {new Date(doc.uploaded_at).toLocaleDateString()}
                         </span>
                       </td>
-                      <td className="p-3.5 font-semibold text-foreground uppercase text-[11px]">
+                      <td className="py-3.5 px-4 font-semibold text-[#394B49] uppercase text-[11px]">
                         {doc.document_type.replace(/_/g, " ")}
                       </td>
-                      <td className="p-3.5">
+                      <td className="py-3.5 px-4">
                         {isClean ? (
-                          <span className="inline-flex items-center gap-1 text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded text-[10px] border border-emerald-200">
-                            <ShieldCheck className="h-3 w-3" /> Safe & Clean
-                          </span>
+                          <StatusBadge tone="success">
+                            <ShieldCheck className="h-3 w-3" /> Safe &amp; Clean
+                          </StatusBadge>
                         ) : isQuarantined ? (
-                          <span className="inline-flex items-center gap-1 text-rose-700 font-bold bg-rose-50 px-2 py-0.5 rounded text-[10px] border border-rose-200">
+                          <StatusBadge tone="error">
                             <AlertTriangle className="h-3 w-3" /> Quarantined
-                          </span>
+                          </StatusBadge>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded text-[10px]">
+                          <StatusBadge tone="warning">
                             <Clock className="h-3 w-3" /> Scanning
-                          </span>
+                          </StatusBadge>
                         )}
                       </td>
-                      <td className="p-3.5">
-                        <span
-                          className={`rounded-full px-2.5 py-0.5 font-bold text-[10px] uppercase border ${
+                      <td className="py-3.5 px-4">
+                        <StatusBadge
+                          tone={
                             doc.status === "verified"
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                              ? "success"
                               : doc.status === "rejected"
-                              ? "bg-rose-50 text-rose-700 border-rose-200"
-                              : "bg-muted text-foreground border-border"
-                          }`}
+                              ? "error"
+                              : "misty"
+                          }
+                          className="uppercase text-[10px]"
                         >
                           {doc.status}
-                        </span>
+                        </StatusBadge>
                       </td>
-                      <td className="p-3.5 text-right space-x-1.5">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            openAuthenticatedUrl(`/api/proxy/documents/${doc.id}/file`, doc.file_name).catch((e) =>
-                              toast.error(e instanceof Error ? e.message : "Unable to open document.")
-                            )
-                          }
-                          className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-lg border border-border text-foreground hover:bg-muted transition font-medium"
-                          title="Inspect document"
-                        >
-                          <Eye className="h-3.5 w-3.5" /> Inspect
-                        </button>
-
-                        {doc.status !== "verified" && (
-                          <button
-                            onClick={() => handleVerify(doc.id)}
-                            className="px-2 py-1 rounded-lg bg-emerald-600 text-white font-semibold text-[11px] hover:bg-emerald-700 transition"
+                      <td className="py-3.5 px-4 text-right">
+                        <div className="inline-flex flex-wrap items-center justify-end gap-1.5">
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() =>
+                              openAuthenticatedUrl(
+                                `/api/proxy/documents/${doc.id}/file`,
+                                doc.file_name
+                              ).catch((e) =>
+                                toast.error(
+                                  e instanceof Error ? e.message : "Unable to open document."
+                                )
+                              )
+                            }
+                            title="Inspect document"
                           >
-                            Verify
-                          </button>
-                        )}
+                            <Eye className="h-3.5 w-3.5" /> Inspect
+                          </Button>
 
-                        {doc.status !== "rejected" && (
-                          <button
-                            onClick={() => handleReject(doc.id)}
-                            className="px-2 py-1 rounded-lg border border-rose-200 text-rose-600 font-medium text-[11px] hover:bg-rose-50 transition"
-                          >
-                            Reject
-                          </button>
-                        )}
+                          {doc.status !== "verified" && (
+                            <Button
+                              variant="sage"
+                              size="sm"
+                              onClick={() => handleVerify(doc.id)}
+                            >
+                              Verify
+                            </Button>
+                          )}
 
-                        {doc.scan_status !== "quarantined" && (
-                          <button
-                            onClick={() => handleQuarantine(doc.id)}
-                            className="px-2 py-1 rounded-lg border border-amber-300 text-amber-700 font-medium text-[11px] hover:bg-amber-50 transition"
-                            title="Quarantine file"
-                          >
-                            Quarantine
-                          </button>
-                        )}
+                          {doc.status !== "rejected" && (
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => handleReject(doc.id)}
+                              className="border-[#E7BABA] text-[#A63A3A] hover:bg-[#FDF2F2] hover:border-[#A63A3A]"
+                            >
+                              Reject
+                            </Button>
+                          )}
+
+                          {doc.scan_status !== "quarantined" && (
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => setQuarantineTarget(doc)}
+                              className="border-[#D9A879] text-[#8A5A1E] hover:bg-[#FCF6EC]"
+                              title="Quarantine file"
+                            >
+                              Quarantine
+                            </Button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   );
@@ -302,6 +370,44 @@ export default function AdminDocumentsPage() {
           </div>
         )}
       </div>
+
+      {/* Quarantine Confirmation Modal */}
+      <ModalShell
+        isOpen={Boolean(quarantineTarget)}
+        onClose={() => setQuarantineTarget(null)}
+        title="Confirm File Quarantine"
+        subtitle="Restrict access to suspected or non-compliant files."
+        maxWidth="max-w-md"
+      >
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 rounded-xl border border-[#D9A879] bg-[#FCF6EC] p-3.5 text-xs text-[#8A5A1E]">
+            <ShieldAlert className="h-5 w-5 shrink-0 mt-0.5" />
+            <p className="leading-relaxed">
+              Are you sure you want to quarantine{" "}
+              <strong className="text-[#263331]">{quarantineTarget?.file_name}</strong> due to
+              suspected malware or security risk?
+            </p>
+          </div>
+          <div className="flex items-center justify-end gap-2.5 pt-2">
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={() => setQuarantineTarget(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              size="md"
+              loading={quarantining}
+              loadingText="Quarantining…"
+              onClick={handleQuarantineConfirm}
+            >
+              Confirm Quarantine
+            </Button>
+          </div>
+        </div>
+      </ModalShell>
     </div>
   );
 }

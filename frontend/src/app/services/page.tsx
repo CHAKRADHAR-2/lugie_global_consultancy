@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/fade-in";
+import { HorizonPath } from "@/components/ui/horizon-path";
+import { buttonVariants } from "@/components/ui/button";
 import {
   GraduationCap,
   FileText,
@@ -13,7 +15,7 @@ import {
   Award,
   Home,
   Plane,
-  CheckCircle,
+  CheckCircle2,
   Sparkles,
   ArrowRight,
 } from "lucide-react";
@@ -119,62 +121,58 @@ const SERVICES = [
 
 export default function ServicesPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-[hsl(210,20%,98%)]">
+    <div className="flex min-h-screen flex-col bg-[#F3F0E8] text-[#394B49]">
       <Header />
 
       <main className="flex-1">
         {/* Banner */}
-        <section className="relative overflow-hidden bg-[hsl(222,47%,11%)] py-24 px-6 lg:px-8 text-center text-white">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="mesh-orb absolute top-1/4 left-1/3 h-[420px] w-[420px] rounded-full bg-[hsl(166,72%,40%)] opacity-[0.07] blur-[120px]" />
-            <div className="mesh-orb-delayed absolute bottom-1/4 right-1/4 h-[350px] w-[350px] rounded-full bg-[hsl(45,93%,58%)] opacity-[0.05] blur-[100px]" />
-          </div>
-
-          <div className="relative mx-auto max-w-4xl">
-            <FadeIn delay={0.1} direction="none">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-5 py-2 text-xs font-semibold tracking-widest uppercase text-[hsl(166,72%,50%)] mb-6 backdrop-blur-sm border border-white/[0.08]">
-                <Sparkles className="h-3.5 w-3.5" />
+        <section className="beyond-surface border-b border-[#DCE5E8] py-20 sm:py-24 px-6 lg:px-8 text-center">
+          <div className="mx-auto max-w-4xl">
+            <FadeIn delay={0.05} direction="none">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#B7CBC2] bg-[#E6EFEA] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#3F6258] mb-6">
+                <Sparkles className="h-3.5 w-3.5 text-[#8E572C]" aria-hidden="true" />
                 <span>Comprehensive Guidance</span>
               </div>
             </FadeIn>
-            <FadeIn delay={0.2}>
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-[1.1]">
+            <FadeIn delay={0.12}>
+              <h1 className="font-editorial text-4xl sm:text-5xl lg:text-6xl leading-[1.1] text-[#394B49]">
                 Overseas Education Services
               </h1>
             </FadeIn>
-            <FadeIn delay={0.35}>
-              <p className="mt-5 text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
+            <FadeIn delay={0.22}>
+              <p className="mt-5 text-base sm:text-lg text-[#546866] max-w-2xl mx-auto leading-relaxed">
                 From your very first eligibility check to your first week on campus, Lugie provides
                 transparent, methodical support at every milestone.
               </p>
             </FadeIn>
           </div>
+          <HorizonPath variant="divider" className="mt-12" />
         </section>
 
         {/* Services List */}
-        <section className="bg-white py-24 px-6 lg:px-8 border-b border-[hsl(220,13%,91%)]">
+        <section className="bg-white py-20 sm:py-24 px-6 lg:px-8 border-b border-[#DCE5E8]">
           <div className="mx-auto max-w-7xl">
             <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
               {SERVICES.map((service, index) => {
                 const Icon = service.icon;
                 return (
                   <StaggerItem key={index} className="flex">
-                    <div className="group w-full flex flex-col justify-between rounded-2xl border border-[hsl(220,13%,91%)] bg-[hsl(210,20%,98%)] p-8 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-[hsl(166,72%,40%)]/5 hover:border-[hsl(166,72%,40%)]/30">
+                    <div className="group w-full flex flex-col justify-between rounded-2xl border border-[#DCE5E8] bg-[#F3F0E8]/55 p-8 transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:border-[#B7CBC2] hover:shadow-md">
                       <div>
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] mb-6 transition-transform duration-300 group-hover:scale-105">
-                          <Icon className="h-6 w-6" />
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl border border-[#B7CBC2] bg-[#E6EFEA] text-[#3F6258] mb-6 transition-colors group-hover:bg-[#394B49] group-hover:text-white group-hover:border-[#394B49]">
+                          <Icon className="h-6 w-6" aria-hidden="true" />
                         </div>
-                        <h2 className="text-xl font-bold text-[hsl(222,47%,11%)] mb-3">
+                        <h2 className="text-xl font-semibold text-[#394B49] mb-3">
                           {service.title}
                         </h2>
-                        <p className="text-sm text-[hsl(220,13%,46%)] leading-relaxed mb-6">
+                        <p className="text-sm text-[#546866] leading-relaxed mb-6">
                           {service.description}
                         </p>
 
-                        <div className="space-y-2.5 border-t border-[hsl(220,13%,91%)] pt-5 mb-6">
+                        <div className="space-y-2.5 border-t border-[#DCE5E8] pt-5 mb-6">
                           {service.details.map((detail, idx) => (
-                            <div key={idx} className="flex items-start gap-2.5 text-xs text-[hsl(222,47%,20%)]">
-                              <CheckCircle className="h-4 w-4 shrink-0 text-[hsl(160,84%,39%)] mt-0.5" />
+                            <div key={idx} className="flex items-start gap-2.5 text-xs text-[#394B49]">
+                              <CheckCircle2 className="h-4 w-4 shrink-0 text-[#2F6B55] mt-0.5" aria-hidden="true" />
                               <span>{detail}</span>
                             </div>
                           ))}
@@ -185,7 +183,7 @@ export default function ServicesPage() {
                         <div className="pt-2">
                           <Link
                             href={service.link}
-                            className="text-xs font-semibold text-[hsl(166,72%,40%)] hover:text-[hsl(166,72%,50%)] inline-flex items-center gap-1 transition-colors"
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-[#8E572C] hover:text-[#394B49] transition-colors"
                           >
                             {service.linkText}
                           </Link>
@@ -200,33 +198,34 @@ export default function ServicesPage() {
         </section>
 
         {/* Package CTA */}
-        <section className="bg-[hsl(220,14%,96%)] py-20 px-6 lg:px-8 text-center">
+        <section className="bg-[#394B49] py-20 px-6 lg:px-8 text-center text-white">
           <div className="mx-auto max-w-3xl">
             <FadeIn>
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[hsl(166,72%,40%)]">
+              <span className="inline-block rounded-full border border-[#B7CBC2]/30 bg-white/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#E5BE99] mb-4">
                 Flexible Advisory
               </span>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight text-[hsl(222,47%,11%)] sm:text-4xl">
+              <h2 className="font-editorial text-3xl sm:text-4xl text-white">
                 Bundled Packages or Standalone Services
               </h2>
             </FadeIn>
-            <FadeIn delay={0.15}>
-              <p className="mt-4 text-[hsl(220,13%,46%)] leading-relaxed">
+            <FadeIn delay={0.12}>
+              <p className="mt-4 text-[#F3F0E8]/80 leading-relaxed">
                 Need complete end-to-end support or just assistance with your SOP and visa? We offer
                 structured packages as well as individual standalone services at flat, transparent fees.
               </p>
             </FadeIn>
-            <FadeIn delay={0.3}>
+            <FadeIn delay={0.2}>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href="/pricing"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[hsl(166,72%,40%)] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[hsl(166,72%,40%)]/20 transition-all hover:bg-[hsl(166,72%,50%)] hover:shadow-xl active:scale-[0.98]"
+                  className={buttonVariants({ variant: "warm", size: "lg" })}
                 >
-                  View Transparent Pricing (From ₹7,999) <ArrowRight className="h-4 w-4" />
+                  <span>View Transparent Pricing (From ₹7,999)</span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
                 <Link
                   href="/book-consultation"
-                  className="rounded-xl border border-[hsl(220,13%,91%)] bg-white px-6 py-3.5 text-sm font-semibold text-[hsl(222,47%,11%)] transition-all hover:bg-[hsl(210,20%,98%)]"
+                  className="rounded-xl border border-white/25 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/15"
                 >
                   Book Free Consultation
                 </Link>

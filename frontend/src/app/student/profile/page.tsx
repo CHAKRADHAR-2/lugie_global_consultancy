@@ -10,21 +10,16 @@ import {
   User,
   GraduationCap,
   Globe2,
-  BookOpen,
   Plus,
   Trash2,
-  CheckCircle2,
   Save,
-  Loader2,
-  Calendar,
   Award,
   Briefcase,
-  Layers,
   Sparkles,
-  ArrowUpRight,
-  ShieldCheck,
-  FileCheck,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { SkeletonJourney } from "@/components/ui/skeleton";
+import { StatusBadge } from "@/components/ui/feedback";
 
 interface StudentProfile {
   id: string;
@@ -92,6 +87,12 @@ interface ActivePackage {
   package_price?: number;
   invoice_number?: string;
 }
+
+const INPUT_CLASS =
+  "w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/50 px-3.5 py-2.5 text-xs text-[#394B49] placeholder:text-[#546866]/70 focus:outline-none focus:border-[#394B49] focus:bg-white transition";
+
+const SELECT_CLASS =
+  "w-full rounded-xl border border-[#DCE5E8] bg-white px-3.5 py-2.5 text-xs text-[#394B49] focus:outline-none focus:border-[#394B49] transition";
 
 export default function StudentProfilePage() {
   const { user } = useAuth();
@@ -330,11 +331,7 @@ export default function StudentProfilePage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
-      </div>
-    );
+    return <SkeletonJourney />;
   }
 
   const completion = profile?.profile_completion || 35;
@@ -342,63 +339,63 @@ export default function StudentProfilePage() {
   return (
     <div className="space-y-6 max-w-5xl">
       {/* Top Profile Header with Plan & Completion */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="beyond-card p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
         <div className="flex items-center gap-4">
-          <div className="h-16 w-16 rounded-2xl bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] flex items-center justify-center text-xl font-bold border border-[hsl(166,72%,40%)]/20 shadow-inner">
+          <div className="h-16 w-16 rounded-2xl bg-[#E6EFEA] text-[#263331] flex items-center justify-center text-xl font-bold border border-[#B7CBC2] shrink-0">
             {user?.first_name ? user.first_name[0] : "S"}
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold text-[hsl(222,47%,11%)]">
+            <div className="flex flex-wrap items-center gap-2">
+              <h1 className="font-editorial text-2xl sm:text-3xl text-[#263331]">
                 {user?.first_name} {user?.last_name}
               </h1>
-              <span className="rounded bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 border border-emerald-200">
-                Verified Student
-              </span>
+              <StatusBadge tone="success">Verified Student</StatusBadge>
             </div>
-            <p className="text-xs text-gray-500 mt-0.5">{user?.email} &bull; {user?.phone || "No phone linked"}</p>
+            <p className="text-xs text-[#546866] mt-1">
+              {user?.email} &bull; {user?.phone || "No phone linked"}
+            </p>
           </div>
         </div>
 
-        {/* Subscribed Plan Badge */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        {/* Subscribed Plan Badge & Dossier Strength */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full md:w-auto">
           {activePackage?.has_active_package ? (
-            <div className="rounded-xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 border border-emerald-200 p-3">
-              <div className="text-[10px] text-emerald-800 font-semibold uppercase tracking-wider flex items-center gap-1">
-                <Sparkles className="h-3.5 w-3.5 text-emerald-600" />
+            <div className="rounded-xl bg-[#E6EFEA] border border-[#B7CBC2] p-3.5">
+              <div className="text-[10px] text-[#3F6258] font-semibold uppercase tracking-wider flex items-center gap-1">
+                <Sparkles className="h-3.5 w-3.5 text-[#2F6B55]" />
                 Active Plan
               </div>
-              <div className="text-sm font-bold text-gray-900 mt-0.5">
+              <div className="text-sm font-bold text-[#263331] mt-0.5">
                 {activePackage.package_name}
               </div>
-              <div className="text-[10px] text-gray-500 mt-0.5 flex items-center gap-2">
+              <div className="text-[10px] text-[#546866] mt-0.5 flex items-center gap-2">
                 <span>Inv: #{activePackage.invoice_number?.slice(0, 10)}</span>
-                <Link href="/student/payments" className="text-[hsl(166,72%,40%)] font-bold hover:underline">
+                <Link href="/student/payments" className="text-[#394B49] font-bold hover:text-[#8E572C] hover:underline">
                   Upgrade Plan &rarr;
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="rounded-xl bg-amber-50 border border-amber-200 p-3">
-              <div className="text-[10px] text-amber-800 font-semibold uppercase tracking-wider">
+            <div className="rounded-xl bg-[#F6EDE4] border border-[#D9A879]/80 p-3.5">
+              <div className="text-[10px] text-[#8E572C] font-semibold uppercase tracking-wider">
                 Consultancy Plan
               </div>
-              <div className="text-xs font-bold text-gray-800 mt-0.5">Free Evaluation</div>
-              <Link href="/pricing" className="text-[11px] text-[hsl(166,72%,40%)] font-bold hover:underline block mt-0.5">
+              <div className="text-xs font-bold text-[#263331] mt-0.5">Free Evaluation</div>
+              <Link href="/pricing" className="text-[11px] text-[#8E572C] font-bold hover:underline block mt-0.5">
                 Enroll in Package &rarr;
               </Link>
             </div>
           )}
 
           {/* Profile Completion Card */}
-          <div className="rounded-xl border border-gray-100 bg-gray-50 p-3 min-w-[140px]">
-            <div className="flex items-center justify-between text-xs mb-1">
-              <span className="text-[11px] font-semibold text-gray-600">Dossier Strength</span>
-              <span className="font-bold text-[hsl(166,72%,40%)]">{completion}%</span>
+          <div className="rounded-xl border border-[#DCE5E8] bg-[#F3F0E8]/60 p-3.5 min-w-[155px]">
+            <div className="flex items-center justify-between text-xs mb-1.5">
+              <span className="text-[11px] font-semibold text-[#546866]">Dossier Strength</span>
+              <span className="font-bold text-[#394B49] tabular-nums">{completion}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+            <div className="w-full bg-[#B7CBC2]/40 rounded-full h-2 overflow-hidden">
               <div
-                className="bg-[hsl(166,72%,40%)] h-1.5 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-[#394B49] via-[#6E8B82] to-[#D9A879] h-2 rounded-full transition-all duration-500"
                 style={{ width: `${completion}%` }}
               />
             </div>
@@ -407,25 +404,27 @@ export default function StudentProfilePage() {
       </div>
 
       {/* Profile Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-gray-200 pb-2 overflow-x-auto text-xs font-semibold">
+      <div className="flex items-center gap-2 rounded-2xl border border-[#DCE5E8] bg-white p-1.5 overflow-x-auto text-xs font-semibold">
         <button
+          type="button"
           onClick={() => setActiveTab("personal")}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition whitespace-nowrap cursor-pointer ${
             activeTab === "personal"
-              ? "bg-[hsl(166,72%,40%)] text-white shadow-sm"
-              : "text-gray-600 hover:bg-gray-100"
+              ? "bg-[#394B49] text-white shadow-xs"
+              : "text-[#546866] hover:bg-[#F3F0E8] hover:text-[#394B49]"
           }`}
         >
           <User className="h-3.5 w-3.5" />
-          Personal & Passport
+          Personal &amp; Passport
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab("academics")}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition whitespace-nowrap cursor-pointer ${
             activeTab === "academics"
-              ? "bg-[hsl(166,72%,40%)] text-white shadow-sm"
-              : "text-gray-600 hover:bg-gray-100"
+              ? "bg-[#394B49] text-white shadow-xs"
+              : "text-[#546866] hover:bg-[#F3F0E8] hover:text-[#394B49]"
           }`}
         >
           <GraduationCap className="h-3.5 w-3.5" />
@@ -433,98 +432,105 @@ export default function StudentProfilePage() {
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab("tests")}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition whitespace-nowrap cursor-pointer ${
             activeTab === "tests"
-              ? "bg-[hsl(166,72%,40%)] text-white shadow-sm"
-              : "text-gray-600 hover:bg-gray-100"
+              ? "bg-[#394B49] text-white shadow-xs"
+              : "text-[#546866] hover:bg-[#F3F0E8] hover:text-[#394B49]"
           }`}
         >
           <Award className="h-3.5 w-3.5" />
-          Tests & Scores ({languageTests.length})
+          Tests &amp; Scores ({languageTests.length})
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab("experience")}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition whitespace-nowrap cursor-pointer ${
             activeTab === "experience"
-              ? "bg-[hsl(166,72%,40%)] text-white shadow-sm"
-              : "text-gray-600 hover:bg-gray-100"
+              ? "bg-[#394B49] text-white shadow-xs"
+              : "text-[#546866] hover:bg-[#F3F0E8] hover:text-[#394B49]"
           }`}
         >
           <Briefcase className="h-3.5 w-3.5" />
-          Experience & Projects ({experiences.length})
+          Experience &amp; Projects ({experiences.length})
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab("goals")}
-          className={`flex items-center gap-1.5 px-3 py-2 rounded-lg transition whitespace-nowrap ${
+          className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl transition whitespace-nowrap cursor-pointer ${
             activeTab === "goals"
-              ? "bg-[hsl(166,72%,40%)] text-white shadow-sm"
-              : "text-gray-600 hover:bg-gray-100"
+              ? "bg-[#394B49] text-white shadow-xs"
+              : "text-[#546866] hover:bg-[#F3F0E8] hover:text-[#394B49]"
           }`}
         >
           <Globe2 className="h-3.5 w-3.5" />
-          Destinations & Budget
+          Destinations &amp; Budget
         </button>
       </div>
 
       {/* Tab 1: Personal & Passport Info */}
       {activeTab === "personal" && (
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-          <h2 className="text-base font-bold text-gray-900 mb-4">Personal Identification & Passport</h2>
+        <div className="beyond-card p-6">
+          <h2 className="text-base font-bold text-[#263331] mb-4">
+            Personal Identification &amp; Passport
+          </h2>
           <form onSubmit={handleSubmit(onSaveProfile)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Nationality</label>
+                <label className="block font-semibold text-[#394B49] mb-1.5">Nationality</label>
                 <input
                   type="text"
                   placeholder="Indian"
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                  className={INPUT_CLASS}
                   {...register("nationality")}
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Current City</label>
+                <label className="block font-semibold text-[#394B49] mb-1.5">Current City</label>
                 <input
                   type="text"
                   placeholder="Hyderabad"
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                  className={INPUT_CLASS}
                   {...register("current_city")}
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Current Country</label>
+                <label className="block font-semibold text-[#394B49] mb-1.5">Current Country</label>
                 <input
                   type="text"
                   placeholder="India"
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                  className={INPUT_CLASS}
                   {...register("current_country")}
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Passport Number</label>
+                <label className="block font-semibold text-[#394B49] mb-1.5">Passport Number</label>
                 <input
                   type="text"
                   placeholder="Z1234567"
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 uppercase font-mono focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                  className={`${INPUT_CLASS} uppercase font-mono`}
                   {...register("passport_number")}
                 />
               </div>
             </div>
 
             <div className="pt-2">
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="sm"
+                loading={savingProfile}
                 disabled={savingProfile}
-                className="flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] disabled:opacity-50 transition"
               >
-                {savingProfile ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                <Save className="h-3.5 w-3.5" />
                 Save Personal Details
-              </button>
+              </Button>
             </div>
           </form>
         </div>
@@ -533,32 +539,34 @@ export default function StudentProfilePage() {
       {/* Tab 2: Academic History (Class X, Class XII, Undergrad, Postgrad) */}
       {activeTab === "academics" && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
+          <div className="beyond-card p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
               <div>
-                <h2 className="text-base font-bold text-gray-900">Academic History</h2>
-                <p className="text-xs text-gray-500">
+                <h2 className="text-base font-bold text-[#263331]">Academic History</h2>
+                <p className="text-xs text-[#546866]">
                   Record your Class X, Class XII / Intermediate, and Undergraduate Bachelor&apos;s credentials.
                 </p>
               </div>
-              <button
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
                 onClick={() => setAddingAcademic(true)}
-                className="flex items-center gap-1 rounded-lg bg-[hsl(166,72%,40%)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[hsl(166,72%,46%)] transition"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Qualification
-              </button>
+              </Button>
             </div>
 
             {/* Quick Add Presets */}
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-5">
               <button
                 type="button"
                 onClick={() => {
                   setAcademicForm({ ...academicForm, qualification: "Class X (10th Standard)" });
                   setAddingAcademic(true);
                 }}
-                className="rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-700"
+                className="rounded-lg border border-[#DCE5E8] bg-[#F3F0E8]/70 hover:bg-[#E6EFEA] hover:border-[#B7CBC2] px-3 py-1.5 text-[11px] font-semibold text-[#394B49] transition cursor-pointer"
               >
                 + Add Class X
               </button>
@@ -568,7 +576,7 @@ export default function StudentProfilePage() {
                   setAcademicForm({ ...academicForm, qualification: "Class XII (12th / Intermediate)" });
                   setAddingAcademic(true);
                 }}
-                className="rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-700"
+                className="rounded-lg border border-[#DCE5E8] bg-[#F3F0E8]/70 hover:bg-[#E6EFEA] hover:border-[#B7CBC2] px-3 py-1.5 text-[11px] font-semibold text-[#394B49] transition cursor-pointer"
               >
                 + Add Class XII
               </button>
@@ -578,7 +586,7 @@ export default function StudentProfilePage() {
                   setAcademicForm({ ...academicForm, qualification: "Undergraduate / Bachelor's Degree" });
                   setAddingAcademic(true);
                 }}
-                className="rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 px-2.5 py-1 text-[11px] font-semibold text-gray-700"
+                className="rounded-lg border border-[#DCE5E8] bg-[#F3F0E8]/70 hover:bg-[#E6EFEA] hover:border-[#B7CBC2] px-3 py-1.5 text-[11px] font-semibold text-[#394B49] transition cursor-pointer"
               >
                 + Add Bachelor&apos;s
               </button>
@@ -586,30 +594,31 @@ export default function StudentProfilePage() {
 
             {/* Existing Academic Records List */}
             {academics.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-gray-200 p-8 text-center text-xs text-gray-500">
-                <GraduationCap className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+              <div className="rounded-xl border border-dashed border-[#B7CBC2] bg-[#F3F0E8]/50 p-8 text-center text-xs text-[#546866]">
+                <GraduationCap className="h-8 w-8 text-[#546866] mx-auto mb-2" />
                 No qualifications recorded yet. Add your Class X, Class XII, and Bachelor&apos;s details.
               </div>
             ) : (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-[#DCE5E8]">
                 {academics.map((rec) => (
-                  <div key={rec.id} className="py-3 flex items-start justify-between gap-4">
+                  <div key={rec.id} className="py-3.5 flex items-start justify-between gap-4">
                     <div>
-                      <span className="inline-block rounded bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] font-bold text-[10px] px-2 py-0.5 mb-1">
+                      <StatusBadge tone="sage" className="mb-1.5">
                         {rec.qualification}
-                      </span>
-                      <h4 className="text-xs font-bold text-gray-900">{rec.institution}</h4>
-                      <p className="text-[11px] text-gray-500">
+                      </StatusBadge>
+                      <h4 className="text-xs font-bold text-[#263331]">{rec.institution}</h4>
+                      <p className="text-[11px] text-[#546866] mt-0.5">
                         {rec.degree ? `${rec.degree} ` : ""}
                         {rec.specialisation ? `in ${rec.specialisation} ` : ""}
-                        {rec.percentage ? `&bull; Score: ${rec.percentage}%` : ""}
-                        {rec.cgpa ? `&bull; CGPA: ${rec.cgpa}` : ""}
-                        {rec.backlogs > 0 ? ` &bull; ${rec.backlogs} Backlog(s)` : " &bull; 0 Backlogs"}
+                        {rec.percentage ? ` • Score: ${rec.percentage}%` : ""}
+                        {rec.cgpa ? ` • CGPA: ${rec.cgpa}` : ""}
+                        {rec.backlogs > 0 ? ` • ${rec.backlogs} Backlog(s)` : " • 0 Backlogs"}
                       </p>
                     </div>
                     <button
+                      type="button"
                       onClick={() => handleDeleteAcademic(rec.id)}
-                      className="text-gray-400 hover:text-rose-600 p-1 rounded transition"
+                      className="text-[#546866] hover:text-[#A63A3A] p-1.5 rounded-lg hover:bg-[#FDF2F2] transition cursor-pointer"
                       title="Delete record"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -622,15 +631,15 @@ export default function StudentProfilePage() {
 
           {/* Add Academic Modal / Form */}
           {addingAcademic && (
-            <div className="rounded-2xl border border-[hsl(166,72%,40%)]/30 bg-white p-6 shadow-md">
-              <h3 className="text-sm font-bold text-gray-900 mb-3">Add Academic Qualification</h3>
+            <div className="beyond-card border-[#B7CBC2] p-6">
+              <h3 className="text-sm font-bold text-[#263331] mb-4">Add Academic Qualification</h3>
               <form onSubmit={handleAddAcademic} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Qualification Level</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Qualification Level</label>
                   <select
                     value={academicForm.qualification}
                     onChange={(e) => setAcademicForm({ ...academicForm, qualification: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={SELECT_CLASS}
                   >
                     <option value="Class X (10th Standard)">Class X (10th Standard)</option>
                     <option value="Class XII (12th / Intermediate)">Class XII (12th / Intermediate)</option>
@@ -641,64 +650,62 @@ export default function StudentProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Institution / School / Board</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Institution / School / Board</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. CBSE Board / Delhi Public School / JNTU"
                     value={academicForm.institution}
                     onChange={(e) => setAcademicForm({ ...academicForm, institution: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Degree / Stream</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Degree / Stream</label>
                   <input
                     type="text"
                     placeholder="e.g. Science (MPC) / B.Tech Computer Science"
                     value={academicForm.degree}
                     onChange={(e) => setAcademicForm({ ...academicForm, degree: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Percentage / CGPA</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Percentage / CGPA</label>
                   <input
                     type="text"
                     placeholder="e.g. 88.5% or 8.4 CGPA"
                     value={academicForm.percentage}
                     onChange={(e) => setAcademicForm({ ...academicForm, percentage: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Backlogs Count</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Backlogs Count</label>
                   <input
                     type="number"
                     min="0"
                     value={academicForm.backlogs}
                     onChange={(e) => setAcademicForm({ ...academicForm, backlogs: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
-                <div className="flex items-end gap-2">
-                  <button
-                    type="submit"
-                    className="rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)]"
-                  >
+                <div className="flex items-end gap-2.5">
+                  <Button type="submit" variant="primary" size="sm">
                     Save Qualification
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="secondary"
+                    size="sm"
                     onClick={() => setAddingAcademic(false)}
-                    className="rounded-lg border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50"
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -709,65 +716,68 @@ export default function StudentProfilePage() {
       {/* Tab 3: Tests (IELTS, TOEFL, PTE, Duolingo, GRE, GMAT, SAT) */}
       {activeTab === "tests" && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
+          <div className="beyond-card p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
               <div>
-                <h2 className="text-base font-bold text-gray-900">Standardized & English Language Tests</h2>
-                <p className="text-xs text-gray-500">
+                <h2 className="text-base font-bold text-[#263331]">
+                  Standardized &amp; English Language Tests
+                </h2>
+                <p className="text-xs text-[#546866]">
                   Record test scores for IELTS, TOEFL, PTE, Duolingo, GRE, GMAT, and SAT.
                 </p>
               </div>
-              <button
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
                 onClick={() => setAddingTest(true)}
-                className="flex items-center gap-1 rounded-lg bg-[hsl(166,72%,40%)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[hsl(166,72%,46%)] transition"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Test Score
-              </button>
+              </Button>
             </div>
 
             {/* Test Cards List */}
             {languageTests.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-gray-200 p-8 text-center text-xs text-gray-500">
-                <Award className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+              <div className="rounded-xl border border-dashed border-[#B7CBC2] bg-[#F3F0E8]/50 p-8 text-center text-xs text-[#546866]">
+                <Award className="h-8 w-8 text-[#546866] mx-auto mb-2" />
                 No standardized tests added yet. Click &quot;Add Test Score&quot; to log your IELTS, TOEFL, PTE, or GRE.
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {languageTests.map((t) => (
-                  <div key={t.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm relative">
+                  <div key={t.id} className="rounded-xl border border-[#DCE5E8] bg-[#F3F0E8]/45 p-4 relative">
                     <button
+                      type="button"
                       onClick={() => handleDeleteTest(t.id)}
-                      className="absolute top-3 right-3 text-gray-400 hover:text-rose-600 p-1"
+                      className="absolute top-3 right-3 text-[#546866] hover:text-[#A63A3A] p-1 rounded-lg hover:bg-[#FDF2F2] transition cursor-pointer"
                       title="Delete test"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="rounded bg-teal-50 text-[hsl(166,72%,40%)] font-bold text-xs px-2 py-0.5 border border-teal-200">
-                        {t.test_type}
-                      </span>
-                      <span className="text-sm font-black text-gray-900">
+                    <div className="flex items-center gap-2 mb-2 pr-6">
+                      <StatusBadge tone="sage">{t.test_type}</StatusBadge>
+                      <span className="text-sm font-bold text-[#263331] tabular-nums">
                         Overall: {t.overall_score}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-4 gap-2 text-[10px] text-gray-600 font-mono mt-3 border-t border-gray-100 pt-2">
+                    <div className="grid grid-cols-4 gap-2 text-[10px] text-[#546866] font-mono mt-3 border-t border-[#DCE5E8] pt-2.5">
                       <div>
-                        <span className="block text-gray-400">L / Quant</span>
-                        <span className="font-bold text-gray-800">{t.listening ?? "—"}</span>
+                        <span className="block text-[#546866]">L / Quant</span>
+                        <span className="font-bold text-[#263331]">{t.listening ?? "—"}</span>
                       </div>
                       <div>
-                        <span className="block text-gray-400">R / Verbal</span>
-                        <span className="font-bold text-gray-800">{t.reading ?? "—"}</span>
+                        <span className="block text-[#546866]">R / Verbal</span>
+                        <span className="font-bold text-[#263331]">{t.reading ?? "—"}</span>
                       </div>
                       <div>
-                        <span className="block text-gray-400">W / AWA</span>
-                        <span className="font-bold text-gray-800">{t.writing ?? "—"}</span>
+                        <span className="block text-[#546866]">W / AWA</span>
+                        <span className="font-bold text-[#263331]">{t.writing ?? "—"}</span>
                       </div>
                       <div>
-                        <span className="block text-gray-400">Speaking</span>
-                        <span className="font-bold text-gray-800">{t.speaking ?? "—"}</span>
+                        <span className="block text-[#546866]">Speaking</span>
+                        <span className="font-bold text-[#263331]">{t.speaking ?? "—"}</span>
                       </div>
                     </div>
                   </div>
@@ -778,15 +788,15 @@ export default function StudentProfilePage() {
 
           {/* Add Test Form */}
           {addingTest && (
-            <div className="rounded-2xl border border-[hsl(166,72%,40%)]/30 bg-white p-6 shadow-md">
-              <h3 className="text-sm font-bold text-gray-900 mb-3">Add Test Score</h3>
+            <div className="beyond-card border-[#B7CBC2] p-6">
+              <h3 className="text-sm font-bold text-[#263331] mb-4">Add Test Score</h3>
               <form onSubmit={handleAddTest} className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Test Type</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Test Type</label>
                   <select
                     value={testForm.test_type}
                     onChange={(e) => setTestForm({ ...testForm, test_type: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={SELECT_CLASS}
                   >
                     <option value="IELTS">IELTS Academic</option>
                     <option value="TOEFL">TOEFL iBT</option>
@@ -799,7 +809,7 @@ export default function StudentProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Overall Band / Score</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Overall Band / Score</label>
                   <input
                     type="number"
                     step="0.5"
@@ -807,70 +817,68 @@ export default function StudentProfilePage() {
                     placeholder="e.g. 7.5 or 320"
                     value={testForm.overall_score}
                     onChange={(e) => setTestForm({ ...testForm, overall_score: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 font-mono font-bold"
+                    className={`${INPUT_CLASS} font-mono font-bold`}
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Test Date</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Test Date</label>
                   <input
                     type="date"
                     value={testForm.test_date}
                     onChange={(e) => setTestForm({ ...testForm, test_date: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Listening / Quant</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Listening / Quant</label>
                   <input
                     type="number"
                     step="0.5"
                     placeholder="8.0 / 165"
                     value={testForm.listening}
                     onChange={(e) => setTestForm({ ...testForm, listening: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Reading / Verbal</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Reading / Verbal</label>
                   <input
                     type="number"
                     step="0.5"
                     placeholder="7.5 / 158"
                     value={testForm.reading}
                     onChange={(e) => setTestForm({ ...testForm, reading: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Writing / Speaking</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Writing / Speaking</label>
                   <input
                     type="number"
                     step="0.5"
                     placeholder="7.0"
                     value={testForm.writing}
                     onChange={(e) => setTestForm({ ...testForm, writing: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
-                <div className="md:col-span-3 flex items-center gap-2">
-                  <button
-                    type="submit"
-                    className="rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)]"
-                  >
+                <div className="md:col-span-3 flex items-center gap-2.5">
+                  <Button type="submit" variant="primary" size="sm">
                     Save Test Score
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="secondary"
+                    size="sm"
                     onClick={() => setAddingTest(false)}
-                    className="rounded-lg border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50"
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -881,50 +889,58 @@ export default function StudentProfilePage() {
       {/* Tab 4: Work Experience & Projects */}
       {activeTab === "experience" && (
         <div className="space-y-6">
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
+          <div className="beyond-card p-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
               <div>
-                <h2 className="text-base font-bold text-gray-900">Work Experience & Internships</h2>
-                <p className="text-xs text-gray-500">
+                <h2 className="text-base font-bold text-[#263331]">
+                  Work Experience &amp; Internships
+                </h2>
+                <p className="text-xs text-[#546866]">
                   Highlight relevant industry experience, internships, and technical roles.
                 </p>
               </div>
-              <button
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
                 onClick={() => setAddingExp(true)}
-                className="flex items-center gap-1 rounded-lg bg-[hsl(166,72%,40%)] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[hsl(166,72%,46%)] transition"
               >
                 <Plus className="h-3.5 w-3.5" />
                 Add Experience
-              </button>
+              </Button>
             </div>
 
             {experiences.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-gray-200 p-8 text-center text-xs text-gray-500">
-                <Briefcase className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+              <div className="rounded-xl border border-dashed border-[#B7CBC2] bg-[#F3F0E8]/50 p-8 text-center text-xs text-[#546866]">
+                <Briefcase className="h-8 w-8 text-[#546866] mx-auto mb-2" />
                 No professional experience recorded. Click &quot;Add Experience&quot; to log your internships or full-time roles.
               </div>
             ) : (
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-[#DCE5E8]">
                 {experiences.map((exp) => (
-                  <div key={exp.id} className="py-3 flex items-start justify-between gap-4">
+                  <div key={exp.id} className="py-3.5 flex items-start justify-between gap-4">
                     <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-xs font-bold text-gray-900">{exp.designation}</h4>
-                        <span className="rounded bg-gray-100 text-gray-700 text-[10px] px-1.5 py-0.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h4 className="text-xs font-bold text-[#263331]">{exp.designation}</h4>
+                        <StatusBadge tone="misty">
                           {exp.employment_type || "Full-time"}
-                        </span>
+                        </StatusBadge>
                       </div>
-                      <p className="text-xs font-semibold text-[hsl(166,72%,40%)] mt-0.5">{exp.company}</p>
-                      <p className="text-[11px] text-gray-500 mt-0.5">
+                      <p className="text-xs font-semibold text-[#3F6258] mt-1">{exp.company}</p>
+                      <p className="text-[11px] text-[#546866] mt-0.5">
                         {exp.start_date} &bull; {exp.is_current ? "Present" : exp.end_date || "Completed"}
                       </p>
                       {exp.description && (
-                        <p className="text-xs text-gray-600 mt-1 max-w-2xl">{exp.description}</p>
+                        <p className="text-xs text-[#394B49] mt-1.5 max-w-2xl leading-relaxed">
+                          {exp.description}
+                        </p>
                       )}
                     </div>
                     <button
+                      type="button"
                       onClick={() => handleDeleteExperience(exp.id)}
-                      className="text-gray-400 hover:text-rose-600 p-1 rounded"
+                      className="text-[#546866] hover:text-[#A63A3A] p-1.5 rounded-lg hover:bg-[#FDF2F2] transition cursor-pointer"
+                      title="Delete experience"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
@@ -934,41 +950,45 @@ export default function StudentProfilePage() {
             )}
           </div>
 
-          {/* Add Experience Modal */}
+          {/* Add Experience Form */}
           {addingExp && (
-            <div className="rounded-2xl border border-[hsl(166,72%,40%)]/30 bg-white p-6 shadow-md">
-              <h3 className="text-sm font-bold text-gray-900 mb-3">Add Work Experience</h3>
+            <div className="beyond-card border-[#B7CBC2] p-6">
+              <h3 className="text-sm font-bold text-[#263331] mb-4">Add Work Experience</h3>
               <form onSubmit={handleAddExperience} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Company / Organization Name</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">
+                    Company / Organization Name
+                  </label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Infosys / Google / Start-up"
                     value={expForm.company}
                     onChange={(e) => setExpForm({ ...expForm, company: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Job Title / Designation</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">
+                    Job Title / Designation
+                  </label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Software Engineer Intern"
                     value={expForm.designation}
                     onChange={(e) => setExpForm({ ...expForm, designation: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Employment Type</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Employment Type</label>
                   <select
                     value={expForm.employment_type}
                     onChange={(e) => setExpForm({ ...expForm, employment_type: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={SELECT_CLASS}
                   >
                     <option value="Full-time">Full-time</option>
                     <option value="Part-time">Part-time</option>
@@ -978,41 +998,41 @@ export default function StudentProfilePage() {
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700 mb-1">Start Date</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">Start Date</label>
                   <input
                     type="date"
                     required
                     value={expForm.start_date}
                     onChange={(e) => setExpForm({ ...expForm, start_date: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block font-semibold text-gray-700 mb-1">Key Responsibilities & Impact</label>
+                  <label className="block font-semibold text-[#394B49] mb-1.5">
+                    Key Responsibilities &amp; Impact
+                  </label>
                   <textarea
                     rows={2}
                     placeholder="Briefly describe your projects, tech stack, and achievements..."
                     value={expForm.description}
                     onChange={(e) => setExpForm({ ...expForm, description: e.target.value })}
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                    className={INPUT_CLASS}
                   />
                 </div>
 
-                <div className="md:col-span-2 flex items-center gap-2">
-                  <button
-                    type="submit"
-                    className="rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)]"
-                  >
+                <div className="md:col-span-2 flex items-center gap-2.5">
+                  <Button type="submit" variant="primary" size="sm">
                     Save Experience
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="secondary"
+                    size="sm"
                     onClick={() => setAddingExp(false)}
-                    className="rounded-lg border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-50"
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </form>
             </div>
@@ -1022,16 +1042,15 @@ export default function StudentProfilePage() {
 
       {/* Tab 5: Goals & Budget */}
       {activeTab === "goals" && (
-        <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-          <h2 className="text-base font-bold text-gray-900 mb-4">Study Abroad Destinations & Budget</h2>
+        <div className="beyond-card p-6">
+          <h2 className="text-base font-bold text-[#263331] mb-4">
+            Study Abroad Destinations &amp; Budget
+          </h2>
           <form onSubmit={handleSubmit(onSaveProfile)} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Target Intake</label>
-                <select
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(166,72%,40%)]"
-                  {...register("preferred_intake")}
-                >
+                <label className="block font-semibold text-[#394B49] mb-1.5">Target Intake</label>
+                <select className={SELECT_CLASS} {...register("preferred_intake")}>
                   <option value="Spring 2027">Spring 2027 (Jan/Feb)</option>
                   <option value="Fall 2027">Fall 2027 (Aug/Sep)</option>
                   <option value="Spring 2028">Spring 2028 (Jan/Feb)</option>
@@ -1041,11 +1060,10 @@ export default function StudentProfilePage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Funding & Financial Source</label>
-                <select
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 focus:outline-none focus:border-[hsl(166,72%,40%)]"
-                  {...register("funding_preference")}
-                >
+                <label className="block font-semibold text-[#394B49] mb-1.5">
+                  Funding &amp; Financial Source
+                </label>
+                <select className={SELECT_CLASS} {...register("funding_preference")}>
                   <option value="Education Loan">Education Loan (Non-collateral / Collateral)</option>
                   <option value="Self / Family Funded">Self / Family Funded</option>
                   <option value="Merit Scholarship Dependent">Merit Scholarship Dependent</option>
@@ -1054,35 +1072,41 @@ export default function StudentProfilePage() {
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Estimated Tuition Budget (Min INR)</label>
+                <label className="block font-semibold text-[#394B49] mb-1.5">
+                  Estimated Tuition Budget (Min INR)
+                </label>
                 <input
                   type="number"
                   placeholder="1500000"
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                  className={INPUT_CLASS}
                   {...register("budget_min")}
                 />
               </div>
 
               <div>
-                <label className="block font-semibold text-gray-700 mb-1">Estimated Tuition Budget (Max INR)</label>
+                <label className="block font-semibold text-[#394B49] mb-1.5">
+                  Estimated Tuition Budget (Max INR)
+                </label>
                 <input
                   type="number"
                   placeholder="3500000"
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2"
+                  className={INPUT_CLASS}
                   {...register("budget_max")}
                 />
               </div>
             </div>
 
             <div className="pt-2">
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="sm"
+                loading={savingProfile}
                 disabled={savingProfile}
-                className="flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] disabled:opacity-50 transition"
               >
-                {savingProfile ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                <Save className="h-3.5 w-3.5" />
                 Save Study Goals
-              </button>
+              </Button>
             </div>
           </form>
         </div>

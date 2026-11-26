@@ -3,15 +3,11 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
+import { StatusBadge } from "@/components/ui/feedback";
+import { SkeletonRow } from "@/components/ui/skeleton";
 import {
-  ScrollText,
   Search,
-  ShieldAlert,
-  Clock,
-  User,
   Activity,
-  Loader2,
-  Filter,
 } from "lucide-react";
 
 interface SystemAuditLog {
@@ -81,76 +77,96 @@ export default function AdminAuditLogsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-          <ScrollText className="h-6 w-6 text-primary" />
-          Audit Trail & Security Logs
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8E572C]">
+          Governance &amp; Security
+        </span>
+        <h1 className="font-editorial text-2xl sm:text-3xl tracking-tight text-[#263331] mt-0.5">
+          Audit Trail &amp; Security Logs
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-[#546866]">
           Immutable event ledger tracking administrative operations, lead assignments, and security events.
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex border-b border-border">
-        <button
-          onClick={() => {
-            setTab("system");
-            setSearch("");
-          }}
-          className={`pb-3 px-4 font-semibold text-sm border-b-2 transition-colors ${
-            tab === "system"
-              ? "border-primary text-primary"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
+      {/* Tabs + Search Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[#F3F0E8]/75 border border-[#DCE5E8] p-4 rounded-2xl">
+        <div
+          className="inline-flex rounded-xl bg-[#EAE5D9]/70 border border-[#DCE5E8] p-1 self-start"
+          role="tablist"
+          aria-label="Audit log streams"
         >
-          System Logs
-        </button>
-        <button
-          onClick={() => {
-            setTab("leads");
-            setSearch("");
-          }}
-          className={`pb-3 px-4 font-semibold text-sm border-b-2 transition-colors ${
-            tab === "leads"
-              ? "border-primary text-primary"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          CRM & Lead Activity
-        </button>
-      </div>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "system"}
+            onClick={() => {
+              setTab("system");
+              setSearch("");
+            }}
+            className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              tab === "system"
+                ? "bg-white text-[#263331] shadow-2xs border border-[#DCE5E8]"
+                : "text-[#546866] hover:text-[#394B49]"
+            }`}
+          >
+            System Logs
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "leads"}
+            onClick={() => {
+              setTab("leads");
+              setSearch("");
+            }}
+            className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              tab === "leads"
+                ? "bg-white text-[#263331] shadow-2xs border border-[#DCE5E8]"
+                : "text-[#546866] hover:text-[#394B49]"
+            }`}
+          >
+            CRM &amp; Lead Activity
+          </button>
+        </div>
 
-      {/* Filter / Search Bar */}
-      <div className="flex items-center gap-3 bg-card p-3 rounded-2xl border border-border">
-        <Search className="h-4 w-4 text-muted-foreground ml-2" />
-        <input
-          type="text"
-          placeholder={tab === "system" ? "Search action, resource, or IP..." : "Search field, old or new value..."}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="bg-transparent border-none text-sm focus:outline-none w-full text-foreground placeholder:text-muted-foreground"
-        />
+        <div className="relative w-full md:w-96">
+          <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#546866]" />
+          <input
+            type="text"
+            placeholder={
+              tab === "system"
+                ? "Search action, resource, or IP..."
+                : "Search field, old or new value..."
+            }
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-xl border border-[#DCE5E8] bg-white pl-10 pr-3.5 py-2.5 text-sm text-[#394B49] placeholder:text-[#546866]/70 focus:border-[#394B49] focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+          />
+        </div>
       </div>
 
       {/* Logs Table */}
       {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <div className="beyond-card p-6 space-y-2">
+          <SkeletonRow cols={5} />
+          <SkeletonRow cols={5} />
+          <SkeletonRow cols={5} />
+          <SkeletonRow cols={5} />
         </div>
       ) : tab === "system" ? (
         filteredSystemLogs.length === 0 ? (
-          <div className="text-center py-16 bg-card rounded-2xl border border-border">
-            <Activity className="h-10 w-10 text-muted-foreground mx-auto mb-2 opacity-40" />
-            <h3 className="font-semibold text-foreground">No system logs recorded</h3>
-            <p className="text-sm text-muted-foreground mt-1">
+          <div className="beyond-card text-center py-16 px-4">
+            <Activity className="h-10 w-10 text-[#546866]/45 mx-auto mb-3" />
+            <h3 className="font-semibold text-[#263331]">No system logs recorded</h3>
+            <p className="text-sm text-[#546866] mt-1">
               Actions will appear here as administrative events occur.
             </p>
           </div>
         ) : (
-          <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+          <div className="beyond-card overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <thead className="bg-muted/50 border-b border-border text-xs uppercase text-muted-foreground font-semibold">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#F3F0E8]/75 border-b border-[#DCE5E8] text-[11px] font-semibold uppercase tracking-wider text-[#546866]">
                   <tr>
                     <th className="px-5 py-3.5">Action</th>
                     <th className="px-5 py-3.5">Resource</th>
@@ -159,24 +175,24 @@ export default function AdminAuditLogsPage() {
                     <th className="px-5 py-3.5">Timestamp</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border">
+                <tbody className="divide-y divide-[#DCE5E8]/80 text-[#394B49]">
                   {filteredSystemLogs.map((log) => (
-                    <tr key={log.id} className="hover:bg-muted/30 transition-colors">
-                      <td className="px-5 py-3.5 font-medium text-foreground">
-                        <span className="inline-block px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-mono">
+                    <tr key={log.id} className="hover:bg-[#EEF3F5]/45 transition-colors">
+                      <td className="px-5 py-3.5 font-medium">
+                        <StatusBadge tone="sage" className="font-mono text-[11px]">
                           {log.action}
-                        </span>
+                        </StatusBadge>
                       </td>
-                      <td className="px-5 py-3.5 text-xs text-muted-foreground">
+                      <td className="px-5 py-3.5 text-xs text-[#394B49] font-medium">
                         {log.resource_type || "—"}
                       </td>
-                      <td className="px-5 py-3.5 text-xs font-mono text-muted-foreground">
+                      <td className="px-5 py-3.5 text-xs font-mono text-[#546866]">
                         {log.ip_address || "127.0.0.1"}
                       </td>
-                      <td className="px-5 py-3.5 text-xs text-muted-foreground max-w-xs truncate font-mono">
+                      <td className="px-5 py-3.5 text-xs text-[#546866] max-w-xs truncate font-mono">
                         {log.details ? JSON.stringify(log.details) : "—"}
                       </td>
-                      <td className="px-5 py-3.5 text-xs text-muted-foreground whitespace-nowrap">
+                      <td className="px-5 py-3.5 text-xs text-[#546866] whitespace-nowrap">
                         {new Date(log.created_at).toLocaleString()}
                       </td>
                     </tr>
@@ -187,18 +203,18 @@ export default function AdminAuditLogsPage() {
           </div>
         )
       ) : filteredLeadLogs.length === 0 ? (
-        <div className="text-center py-16 bg-card rounded-2xl border border-border">
-          <Activity className="h-10 w-10 text-muted-foreground mx-auto mb-2 opacity-40" />
-          <h3 className="font-semibold text-foreground">No lead activity logged</h3>
-          <p className="text-sm text-muted-foreground mt-1">
+        <div className="beyond-card text-center py-16 px-4">
+          <Activity className="h-10 w-10 text-[#546866]/45 mx-auto mb-3" />
+          <h3 className="font-semibold text-[#263331]">No lead activity logged</h3>
+          <p className="text-sm text-[#546866] mt-1">
             Status changes, assignments, and follow-ups will appear here.
           </p>
         </div>
       ) : (
-        <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
+        <div className="beyond-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-muted/50 border-b border-border text-xs uppercase text-muted-foreground font-semibold">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-[#F3F0E8]/75 border-b border-[#DCE5E8] text-[11px] font-semibold uppercase tracking-wider text-[#546866]">
                 <tr>
                   <th className="px-5 py-3.5">Field Changed</th>
                   <th className="px-5 py-3.5">Old Value</th>
@@ -206,21 +222,33 @@ export default function AdminAuditLogsPage() {
                   <th className="px-5 py-3.5">Timestamp</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border">
+              <tbody className="divide-y divide-[#DCE5E8]/80 text-[#394B49]">
                 {filteredLeadLogs.map((log) => (
-                  <tr key={log.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-5 py-3.5 font-medium text-foreground">
-                      <span className="font-mono text-xs bg-secondary text-secondary-foreground px-2 py-0.5 rounded">
+                  <tr key={log.id} className="hover:bg-[#EEF3F5]/45 transition-colors">
+                    <td className="px-5 py-3.5 font-medium">
+                      <StatusBadge tone="misty" className="font-mono text-[11px]">
                         {log.field_name}
-                      </span>
+                      </StatusBadge>
                     </td>
-                    <td className="px-5 py-3.5 text-xs text-rose-500 font-mono">
-                      {log.old_value || "—"}
+                    <td className="px-5 py-3.5 text-xs font-mono">
+                      {log.old_value ? (
+                        <span className="inline-block rounded-md bg-[#FDF2F2] text-[#A63A3A] border border-[#E7BABA] px-2 py-0.5">
+                          {log.old_value}
+                        </span>
+                      ) : (
+                        <span className="text-[#546866]">—</span>
+                      )}
                     </td>
-                    <td className="px-5 py-3.5 text-xs text-emerald-600 font-mono font-semibold">
-                      {log.new_value || "—"}
+                    <td className="px-5 py-3.5 text-xs font-mono">
+                      {log.new_value ? (
+                        <span className="inline-block rounded-md bg-[#EDF5F1] text-[#2F6B55] border border-[#B7CBC2] px-2 py-0.5 font-semibold">
+                          {log.new_value}
+                        </span>
+                      ) : (
+                        <span className="text-[#546866]">—</span>
+                      )}
                     </td>
-                    <td className="px-5 py-3.5 text-xs text-muted-foreground whitespace-nowrap">
+                    <td className="px-5 py-3.5 text-xs text-[#546866] whitespace-nowrap">
                       {new Date(log.created_at).toLocaleString()}
                     </td>
                   </tr>

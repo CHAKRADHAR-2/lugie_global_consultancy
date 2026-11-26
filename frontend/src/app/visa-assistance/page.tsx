@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/fade-in";
+import { HorizonPath } from "@/components/ui/horizon-path";
+import { buttonVariants } from "@/components/ui/button";
 import { FileBadge, CheckCircle2, AlertTriangle, ArrowRight } from "lucide-react";
 
 const VISA_DESTINATIONS = [
@@ -65,46 +67,42 @@ const VISA_DESTINATIONS = [
 
 export default function VisaAssistancePage() {
   return (
-    <div className="flex min-h-screen flex-col bg-[hsl(210,20%,98%)]">
+    <div className="flex min-h-screen flex-col bg-[#F3F0E8] text-[#394B49]">
       <Header />
 
       <main className="flex-1">
-        <section className="relative overflow-hidden bg-[hsl(222,47%,11%)] py-24 px-6 lg:px-8 text-center text-white">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="mesh-orb absolute top-1/4 left-1/3 h-[420px] w-[420px] rounded-full bg-[hsl(166,72%,40%)] opacity-[0.07] blur-[120px]" />
-            <div className="mesh-orb-delayed absolute bottom-1/4 right-1/4 h-[350px] w-[350px] rounded-full bg-[hsl(45,93%,58%)] opacity-[0.05] blur-[100px]" />
-          </div>
-
-          <div className="relative mx-auto max-w-4xl">
-            <FadeIn delay={0.1} direction="none">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-5 py-2 text-xs font-semibold tracking-widest uppercase text-[hsl(166,72%,50%)] mb-6 backdrop-blur-sm border border-white/[0.08]">
-                <FileBadge className="h-3.5 w-3.5" />
-                <span>Immigration & Compliance</span>
+        <section className="beyond-surface border-b border-[#DCE5E8] py-20 sm:py-24 px-6 lg:px-8 text-center">
+          <div className="mx-auto max-w-4xl">
+            <FadeIn delay={0.05} direction="none">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#B7CBC2] bg-[#E6EFEA] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#3F6258] mb-6">
+                <FileBadge className="h-3.5 w-3.5 text-[#8E572C]" aria-hidden="true" />
+                <span>Immigration &amp; Compliance</span>
               </div>
             </FadeIn>
-            <FadeIn delay={0.2}>
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-[1.1]">
-                Student Visa Assistance & Preparation
+            <FadeIn delay={0.12}>
+              <h1 className="font-editorial text-4xl sm:text-5xl lg:text-6xl leading-[1.1] text-[#394B49]">
+                Student Visa Assistance &amp; Preparation
               </h1>
             </FadeIn>
-            <FadeIn delay={0.35}>
-              <p className="mt-5 text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
+            <FadeIn delay={0.22}>
+              <p className="mt-5 text-base sm:text-lg text-[#546866] max-w-2xl mx-auto leading-relaxed">
                 Meticulous dossier compilation, strict financial rule compliance, and intensive mock interviews
                 to ensure your application meets international immigration standards.
               </p>
             </FadeIn>
           </div>
+          <HorizonPath variant="divider" className="mt-12" />
         </section>
 
-        <section className="bg-white py-24 px-6 lg:px-8">
+        <section className="bg-white py-20 sm:py-24 px-6 lg:px-8 border-b border-[#DCE5E8]">
           <div className="mx-auto max-w-6xl space-y-16">
             {/* Country Cards */}
             <div>
               <FadeIn className="text-center mb-12">
-                <span className="text-xs font-bold uppercase tracking-[0.2em] text-[hsl(166,72%,40%)]">
+                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8E572C]">
                   Country Checklists
                 </span>
-                <h2 className="mt-3 text-3xl font-bold tracking-tight text-[hsl(222,47%,11%)]">
+                <h2 className="mt-3 font-editorial text-3xl sm:text-4xl text-[#394B49]">
                   Destination-Specific Visa Guidance
                 </h2>
               </FadeIn>
@@ -112,15 +110,15 @@ export default function VisaAssistancePage() {
               <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {VISA_DESTINATIONS.map((dest, idx) => (
                   <StaggerItem key={idx} className="flex">
-                    <div className="w-full rounded-2xl border border-[hsl(220,13%,91%)] bg-[hsl(210,20%,98%)] p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/5 hover:border-[hsl(166,72%,40%)]/30">
+                    <div className="w-full rounded-2xl border border-[#DCE5E8] bg-[#F3F0E8]/55 p-6 flex flex-col justify-between transition-all duration-300 hover:bg-white hover:-translate-y-0.5 hover:border-[#B7CBC2] hover:shadow-md">
                       <div>
-                        <h3 className="text-lg font-bold text-[hsl(222,47%,11%)] mb-4 pb-3 border-b border-[hsl(220,13%,91%)]">
+                        <h3 className="text-lg font-semibold text-[#394B49] mb-4 pb-3 border-b border-[#DCE5E8]">
                           {dest.country}
                         </h3>
                         <ul className="space-y-3">
                           {dest.details.map((item, i) => (
-                            <li key={i} className="text-xs text-[hsl(220,13%,46%)] flex items-start gap-2.5 leading-relaxed">
-                              <CheckCircle2 className="h-4 w-4 text-[hsl(160,84%,39%)] shrink-0 mt-0.5" />
+                            <li key={i} className="text-xs text-[#546866] flex items-start gap-2.5 leading-relaxed">
+                              <CheckCircle2 className="h-4 w-4 text-[#2F6B55] shrink-0 mt-0.5" aria-hidden="true" />
                               <span>{item}</span>
                             </li>
                           ))}
@@ -134,32 +132,43 @@ export default function VisaAssistancePage() {
 
             {/* Mandatory Disclaimer */}
             <FadeIn>
-              <div className="rounded-2xl border border-[hsl(45,93%,58%)]/40 bg-[hsl(45,93%,58%)]/10 p-8 sm:p-10 space-y-4">
-                <div className="flex items-center gap-2.5 font-bold text-[hsl(222,47%,11%)] text-base">
-                  <AlertTriangle className="h-5 w-5 text-amber-700 shrink-0" />
-                  <span>Strict Regulatory & Sovereign Authority Notice</span>
+              <div className="rounded-2xl border border-[#D9A879] bg-[#FCF6EC] p-8 sm:p-10 space-y-4">
+                <div className="flex items-center gap-2.5 font-semibold text-[#263331] text-base">
+                  <AlertTriangle className="h-5 w-5 text-[#8A5A1E] shrink-0" aria-hidden="true" />
+                  <span>Strict Regulatory &amp; Sovereign Authority Notice</span>
                 </div>
-                <p className="text-sm text-[hsl(220,13%,46%)] leading-relaxed">
+                <p className="text-sm text-[#546866] leading-relaxed">
                   Visa issuance is the exclusive legal authority of foreign embassies, high commissions,
-                  consulates, and border control agencies (e.g. US Department of State, UK Visas & Immigration,
+                  consulates, and border control agencies (e.g. US Department of State, UK Visas &amp; Immigration,
                   IRCC Canada, Australian Department of Home Affairs).
                 </p>
-                <p className="text-sm text-[hsl(222,47%,11%)] font-medium leading-relaxed">
+                <p className="text-sm text-[#263331] font-medium leading-relaxed">
                   Lugie Global Consultancy provides procedural assistance, document verification, and
                   mock interview preparation. We do NOT and CANNOT guarantee visa issuance, visa turnaround
                   times, or bypass government visa requirements under any circumstances.
                 </p>
               </div>
             </FadeIn>
+          </div>
+        </section>
 
-            {/* CTA */}
+        {/* Bottom Editorial CTA */}
+        <section className="bg-[#394B49] py-20 px-6 lg:px-8 text-center text-white">
+          <div className="mx-auto max-w-3xl">
             <FadeIn>
-              <div className="text-center pt-4">
+              <h2 className="font-editorial text-3xl sm:text-4xl text-white">
+                Prepare Your Visa Dossier with Precision
+              </h2>
+              <p className="mt-4 text-[#F3F0E8]/80">
+                Book an advisory session to audit your financial proofs, timelines, and interview readiness.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href="/book-consultation"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[hsl(166,72%,40%)] px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-[hsl(166,72%,40%)]/20 transition-all hover:bg-[hsl(166,72%,50%)] hover:shadow-xl active:scale-[0.98]"
+                  className={buttonVariants({ variant: "warm", size: "lg" })}
                 >
-                  Schedule Visa Advisory Session <ArrowRight className="h-4 w-4" />
+                  <span>Schedule Visa Advisory Session</span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
             </FadeIn>

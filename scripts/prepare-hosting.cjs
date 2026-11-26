@@ -13,7 +13,7 @@ const outDir = path.join(projectRoot, 'deploy-public');
 
 /**
  * Generate a valid 32x32 32-bit ICO binary in frontend/public/favicon.ico
- * featuring LUGIE's navy & teal brand mark so /favicon.ico always returns 200.
+ * featuring LUGIE's Forest Slate & Soft Terracotta brand mark so /favicon.ico always returns 200.
  */
 function ensureFaviconIco() {
   const icoPath = path.join(publicDir, 'favicon.ico');
@@ -73,19 +73,22 @@ function ensureFaviconIco() {
       const inDot = dotDistSq <= 9;
 
       if (inDot) {
-        buf[idx] = 0xa6;
-        buf[idx + 1] = 0xb8;
-        buf[idx + 2] = 0x14;
+        // Soft Terracotta #D9A879 (BGRA)
+        buf[idx] = 0x79;
+        buf[idx + 1] = 0xa8;
+        buf[idx + 2] = 0xd9;
         buf[idx + 3] = 0xff;
       } else if (inVertL || inHorzL) {
-        buf[idx] = 0xff;
-        buf[idx + 1] = 0xff;
-        buf[idx + 2] = 0xff;
+        // Porcelain #F3F0E8 (BGRA)
+        buf[idx] = 0xe8;
+        buf[idx + 1] = 0xf0;
+        buf[idx + 2] = 0xf3;
         buf[idx + 3] = 0xff;
       } else {
-        buf[idx] = 0x2e;
-        buf[idx + 1] = 0x1c;
-        buf[idx + 2] = 0x0f;
+        // Forest Slate #394B49 (BGRA)
+        buf[idx] = 0x49;
+        buf[idx + 1] = 0x4b;
+        buf[idx + 2] = 0x39;
         buf[idx + 3] = 0xff;
       }
     }

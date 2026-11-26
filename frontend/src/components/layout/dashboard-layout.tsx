@@ -2,9 +2,10 @@
 
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
 import { Sidebar } from "@/components/layout/sidebar";
 import { useAuth } from "@/hooks/use-auth";
+import { GlobalOrbitLoader } from "@/components/ui/loading-concepts";
+import { PageTransition } from "@/components/ui/fade-in";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -57,20 +58,19 @@ export function DashboardLayout({ children, navItems, portalName }: DashboardLay
 
   if (loading || !authorized) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[hsl(210,20%,98%)]">
-        <div className="flex flex-col items-center gap-3 text-[hsl(220,13%,46%)]">
-          <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
-          <p className="text-xs font-medium">Verifying portal session...</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-[#F3F0E8] px-4">
+        <GlobalOrbitLoader label={`Verifying ${portalName.toLowerCase()} session…`} size="lg" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-[hsl(210,20%,98%)] text-[hsl(222,47%,11%)]">
+    <div className="flex min-h-screen bg-[#F3F0E8] text-[#394B49]">
       <Sidebar items={navItems} portalName={portalName} />
-      <main className="flex-1 lg:ml-64">
-        <div className="p-6 pt-20 lg:pt-6">{children}</div>
+      <main className="flex-1 min-w-0 lg:ml-64">
+        <PageTransition className="mx-auto max-w-7xl p-5 pt-20 sm:p-8 lg:pt-8">
+          {children}
+        </PageTransition>
       </main>
     </div>
   );

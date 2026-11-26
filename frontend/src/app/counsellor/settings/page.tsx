@@ -7,7 +7,9 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { api } from "@/lib/api-client";
 import { useAuth } from "@/hooks/use-auth";
-import { Shield, Key, Bell, Loader2, User } from "lucide-react";
+import { Shield, Key, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { FeedbackBanner, StatusBadge } from "@/components/ui/feedback";
 
 const changePasswordSchema = z
   .object({
@@ -21,6 +23,9 @@ const changePasswordSchema = z
   });
 
 type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
+
+const INPUT_CLASS =
+  "w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2.5 text-sm text-[#394B49] placeholder:text-[#546866]/70 focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition";
 
 export default function CounsellorSettingsPage() {
   const { user } = useAuth();
@@ -54,100 +59,126 @@ export default function CounsellorSettingsPage() {
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-          <Shield className="h-6 w-6 text-primary" />
-          Account & Security Settings
+        <h1 className="font-editorial text-2xl sm:text-3xl tracking-tight text-[#263331] flex items-center gap-2.5">
+          <Shield className="h-6 w-6 text-[#3F6258] shrink-0" />
+          <span>Account &amp; Security Settings</span>
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-[#546866] mt-1">
           Manage your advisor credentials and portal preferences.
         </p>
       </div>
 
       {/* Profile Overview */}
-      <div className="bg-card border border-border rounded-2xl p-6 shadow-sm space-y-4">
-        <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-          <User className="h-5 w-5 text-primary" />
-          Staff Profile
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="text-xs text-muted-foreground">Full Name</span>
-            <div className="font-semibold text-foreground">
+      <div className="beyond-card p-6 space-y-4">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-base font-bold text-[#263331] flex items-center gap-2">
+            <User className="h-5 w-5 text-[#3F6258]" />
+            Staff Profile
+          </h2>
+          <StatusBadge tone="sage">Counsellor Workspace</StatusBadge>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div className="bg-[#F3F0E8]/60 border border-[#DCE5E8] rounded-xl p-4">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-[#546866] block">
+              Full Name
+            </span>
+            <div className="font-semibold text-[#263331] mt-1">
               {user?.first_name} {user?.last_name}
             </div>
           </div>
-          <div>
-            <span className="text-xs text-muted-foreground">Work Email</span>
-            <div className="font-semibold text-foreground">{user?.email}</div>
+          <div className="bg-[#F3F0E8]/60 border border-[#DCE5E8] rounded-xl p-4">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-[#546866] block">
+              Work Email
+            </span>
+            <div className="font-semibold text-[#263331] mt-1 truncate">{user?.email}</div>
           </div>
-          <div>
-            <span className="text-xs text-muted-foreground">Assigned Role</span>
-            <div className="font-semibold text-primary capitalize">
-              {user?.roles?.join(", ") || "Counsellor"}
+          <div className="bg-[#F3F0E8]/60 border border-[#DCE5E8] rounded-xl p-4">
+            <span className="text-[11px] uppercase tracking-wider font-semibold text-[#546866] block">
+              Assigned Role
+            </span>
+            <div className="mt-1">
+              <StatusBadge tone="sage" className="capitalize">
+                {user?.roles?.join(", ") || "Counsellor"}
+              </StatusBadge>
             </div>
           </div>
         </div>
       </div>
 
       {/* Change Password Card */}
-      <div className="bg-card border border-border rounded-2xl p-6 shadow-sm space-y-6">
+      <div className="beyond-card p-6 space-y-6">
         <div>
-          <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
-            <Key className="h-5 w-5 text-primary" />
+          <h2 className="text-base font-bold text-[#263331] flex items-center gap-2">
+            <Key className="h-5 w-5 text-[#3F6258]" />
             Change Password
           </h2>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-xs text-[#546866] mt-1">
             Ensure your account uses a strong, unique password with at least 8 characters.
           </p>
         </div>
 
         <form onSubmit={handleSubmit(onChangePassword)} className="space-y-4 max-w-md">
           <div>
-            <label className="text-xs font-semibold text-foreground">Current Password</label>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              Current Password
+            </label>
             <input
               type="password"
               {...register("current_password")}
-              className="w-full mt-1 px-3 py-2 text-sm bg-muted rounded-xl border border-border focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
+              className={INPUT_CLASS}
             />
             {errors.current_password && (
-              <p className="text-xs text-rose-500 mt-1">{errors.current_password.message}</p>
+              <p className="text-xs text-[#A63A3A] mt-1">{errors.current_password.message}</p>
             )}
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-foreground">New Password</label>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              New Password
+            </label>
             <input
               type="password"
               {...register("new_password")}
-              className="w-full mt-1 px-3 py-2 text-sm bg-muted rounded-xl border border-border focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
+              className={INPUT_CLASS}
             />
             {errors.new_password && (
-              <p className="text-xs text-rose-500 mt-1">{errors.new_password.message}</p>
+              <p className="text-xs text-[#A63A3A] mt-1">{errors.new_password.message}</p>
             )}
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-foreground">Confirm New Password</label>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              Confirm New Password
+            </label>
             <input
               type="password"
               {...register("confirm_password")}
-              className="w-full mt-1 px-3 py-2 text-sm bg-muted rounded-xl border border-border focus:outline-none focus:ring-1 focus:ring-primary text-foreground"
+              className={INPUT_CLASS}
             />
             {errors.confirm_password && (
-              <p className="text-xs text-rose-500 mt-1">{errors.confirm_password.message}</p>
+              <p className="text-xs text-[#A63A3A] mt-1">{errors.confirm_password.message}</p>
             )}
           </div>
 
-          <button
+          <Button
             type="submit"
+            variant="primary"
+            size="md"
+            loading={updatingPass}
+            loadingText="Updating..."
             disabled={updatingPass}
-            className="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-2 shadow-sm"
           >
-            {updatingPass && <Loader2 className="h-4 w-4 animate-spin" />}
             Update Password
-          </button>
+          </Button>
         </form>
       </div>
+
+      <FeedbackBanner
+        tone="info"
+        title="Advisor Session Integrity"
+        message="All counsellor actions—including document verifications, shortlist opinions, and application stage updates—are logged for student audit compliance."
+      />
     </div>
   );
 }

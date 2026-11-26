@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -10,22 +10,16 @@ import { useAuth } from "@/hooks/use-auth";
 import {
   Shield,
   Key,
-  Bell,
-  Loader2,
   Save,
   User,
-  Phone,
-  Mail,
   HeartHandshake,
-  Globe,
   Sliders,
   Download,
   CheckCircle2,
-  Lock,
-  Smartphone,
   FileDown,
-  Building,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/feedback";
 
 const changePasswordSchema = z
   .object({
@@ -39,6 +33,12 @@ const changePasswordSchema = z
   });
 
 type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
+
+const INPUT_CLASS =
+  "w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/50 px-3.5 py-2.5 text-xs text-[#394B49] placeholder:text-[#546866]/70 focus:outline-none focus:border-[#394B49] focus:bg-white transition";
+
+const SELECT_CLASS =
+  "w-full rounded-xl border border-[#DCE5E8] bg-white px-3.5 py-2.5 text-xs text-[#394B49] focus:outline-none focus:border-[#394B49] transition";
 
 export default function StudentSettingsPage() {
   const { user } = useAuth();
@@ -132,8 +132,10 @@ export default function StudentSettingsPage() {
     <div className="space-y-8 max-w-4xl">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">Settings & Preferences</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="font-editorial text-2xl sm:text-3xl text-[#263331]">
+          Settings &amp; Preferences
+        </h1>
+        <p className="mt-1 text-sm text-[#546866]">
           Manage your emergency contacts, study abroad preferences, notification channels, and account security.
         </p>
       </div>
@@ -141,35 +143,37 @@ export default function StudentSettingsPage() {
       {/* =================================================================== */}
       {/* 1. Account & Multi-Channel Verification Status                     */}
       {/* =================================================================== */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-        <h2 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <User className="h-5 w-5 text-[hsl(166,72%,40%)]" />
-          Account & Channel Verification
+      <div className="beyond-card p-6">
+        <h2 className="text-base font-bold text-[#263331] mb-4 flex items-center gap-2">
+          <User className="h-5 w-5 text-[#3F6258]" />
+          Account &amp; Channel Verification
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-            <span className="text-gray-400 block mb-1">Registered Account Email</span>
-            <span className="font-semibold text-gray-900 block truncate">{user?.email}</span>
-            <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 mt-2">
+          <div className="p-4 rounded-xl bg-[#F3F0E8]/60 border border-[#DCE5E8]">
+            <span className="text-[#546866] block mb-1">Registered Account Email</span>
+            <span className="font-semibold text-[#263331] block truncate">{user?.email}</span>
+            <StatusBadge tone="success" className="mt-2.5">
               <CheckCircle2 className="h-3 w-3" /> Brevo Verified
-            </span>
+            </StatusBadge>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-            <span className="text-gray-400 block mb-1">Registered Mobile Number</span>
-            <span className="font-semibold text-gray-900 block">{user?.phone || "+91 93927 34699"}</span>
-            <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 mt-2">
+          <div className="p-4 rounded-xl bg-[#F3F0E8]/60 border border-[#DCE5E8]">
+            <span className="text-[#546866] block mb-1">Registered Mobile Number</span>
+            <span className="font-semibold text-[#263331] block">
+              {user?.phone || "+91 93927 34699"}
+            </span>
+            <StatusBadge tone="success" className="mt-2.5">
               <CheckCircle2 className="h-3 w-3" /> Firebase Phone Verified
-            </span>
+            </StatusBadge>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
-            <span className="text-gray-400 block mb-1">Platform Role & Access</span>
-            <span className="font-semibold text-[hsl(166,72%,40%)] uppercase block">Student Portal</span>
-            <span className="inline-flex items-center gap-1 text-[10px] text-teal-800 font-bold bg-teal-50 px-2 py-0.5 rounded border border-teal-200 mt-2">
+          <div className="p-4 rounded-xl bg-[#F3F0E8]/60 border border-[#DCE5E8]">
+            <span className="text-[#546866] block mb-1">Platform Role &amp; Access</span>
+            <span className="font-semibold text-[#394B49] uppercase block">Student Portal</span>
+            <StatusBadge tone="sage" className="mt-2.5">
               <Shield className="h-3 w-3" /> Full Admissions Desk
-            </span>
+            </StatusBadge>
           </div>
         </div>
       </div>
@@ -177,21 +181,21 @@ export default function StudentSettingsPage() {
       {/* =================================================================== */}
       {/* 2. Emergency & Guardian Contacts                                   */}
       {/* =================================================================== */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
+      <div className="beyond-card p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div className="flex items-center gap-2">
-            <HeartHandshake className="h-5 w-5 text-[hsl(166,72%,40%)]" />
-            <h2 className="text-base font-bold text-gray-900">
-              Emergency & Guardian Contacts
+            <HeartHandshake className="h-5 w-5 text-[#3F6258]" />
+            <h2 className="text-base font-bold text-[#263331]">
+              Emergency &amp; Guardian Contacts
             </h2>
           </div>
-          <span className="text-[11px] text-gray-400">Used for visa filing & abroad safety</span>
+          <span className="text-[11px] text-[#546866]">Used for visa filing &amp; abroad safety</span>
         </div>
 
         <form onSubmit={handleSaveGuardian} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
                 Parent / Guardian Full Name
               </label>
               <input
@@ -199,18 +203,18 @@ export default function StudentSettingsPage() {
                 required
                 value={guardianForm.guardian_name}
                 onChange={(e) => setGuardianForm({ ...guardianForm, guardian_name: e.target.value })}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={INPUT_CLASS}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
                 Relationship to Student
               </label>
               <select
                 value={guardianForm.relationship}
                 onChange={(e) => setGuardianForm({ ...guardianForm, relationship: e.target.value })}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)] bg-white"
+                className={SELECT_CLASS}
               >
                 <option value="Father">Father</option>
                 <option value="Mother">Mother</option>
@@ -221,7 +225,7 @@ export default function StudentSettingsPage() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
                 Emergency Mobile Number (WhatsApp Capable)
               </label>
               <input
@@ -229,12 +233,12 @@ export default function StudentSettingsPage() {
                 required
                 value={guardianForm.guardian_phone}
                 onChange={(e) => setGuardianForm({ ...guardianForm, guardian_phone: e.target.value })}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={INPUT_CLASS}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
                 Emergency Contact Email
               </label>
               <input
@@ -242,24 +246,22 @@ export default function StudentSettingsPage() {
                 required
                 value={guardianForm.guardian_email}
                 onChange={(e) => setGuardianForm({ ...guardianForm, guardian_email: e.target.value })}
-                className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={INPUT_CLASS}
               />
             </div>
           </div>
 
           <div className="flex justify-end pt-2">
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="sm"
+              loading={savingGuardian}
               disabled={savingGuardian}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition disabled:opacity-50"
             >
-              {savingGuardian ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Save className="h-3.5 w-3.5" />
-              )}
+              <Save className="h-3.5 w-3.5" />
               Save Guardian Details
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -267,80 +269,80 @@ export default function StudentSettingsPage() {
       {/* =================================================================== */}
       {/* 3. Study Abroad & Multi-Channel Preferences                        */}
       {/* =================================================================== */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      <div className="beyond-card p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Sliders className="h-5 w-5 text-[hsl(166,72%,40%)]" />
-          <h2 className="text-base font-bold text-gray-900">
-            Admissions & Notification Channels
+          <Sliders className="h-5 w-5 text-[#3F6258]" />
+          <h2 className="text-base font-bold text-[#263331]">
+            Admissions &amp; Notification Channels
           </h2>
         </div>
 
         <div className="space-y-4">
           {/* Toggles */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-            <label className="flex items-start gap-3 p-3 rounded-xl border border-gray-200 hover:bg-slate-50 transition cursor-pointer">
+            <label className="flex items-start gap-3 p-3.5 rounded-xl border border-[#DCE5E8] bg-[#F3F0E8]/40 hover:bg-[#E6EFEA]/50 hover:border-[#B7CBC2] transition cursor-pointer">
               <input
                 type="checkbox"
                 checked={preferences.email_updates}
                 onChange={(e) =>
                   setPreferences({ ...preferences, email_updates: e.target.checked })
                 }
-                className="rounded border-gray-300 text-[hsl(166,72%,40%)] mt-0.5"
+                className="rounded border-[#B7CBC2] accent-[#394B49] mt-0.5"
               />
               <div>
-                <span className="font-bold text-gray-900 block">Email Admissions Updates</span>
-                <span className="text-[11px] text-gray-500">
-                  Receive status changes, document scan confirmations & receipts.
+                <span className="font-bold text-[#263331] block">Email Admissions Updates</span>
+                <span className="text-[11px] text-[#546866]">
+                  Receive status changes, document scan confirmations &amp; receipts.
                 </span>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 p-3 rounded-xl border border-gray-200 hover:bg-slate-50 transition cursor-pointer">
+            <label className="flex items-start gap-3 p-3.5 rounded-xl border border-[#DCE5E8] bg-[#F3F0E8]/40 hover:bg-[#E6EFEA]/50 hover:border-[#B7CBC2] transition cursor-pointer">
               <input
                 type="checkbox"
                 checked={preferences.whatsapp_alerts}
                 onChange={(e) =>
                   setPreferences({ ...preferences, whatsapp_alerts: e.target.checked })
                 }
-                className="rounded border-gray-300 text-[hsl(166,72%,40%)] mt-0.5"
+                className="rounded border-[#B7CBC2] accent-[#394B49] mt-0.5"
               />
               <div>
-                <span className="font-bold text-gray-900 block">WhatsApp Instant Alerts</span>
-                <span className="text-[11px] text-gray-500">
+                <span className="font-bold text-[#263331] block">WhatsApp Instant Alerts</span>
+                <span className="text-[11px] text-[#546866]">
                   Instant ping when counsellor reviews an opted university.
                 </span>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 p-3 rounded-xl border border-gray-200 hover:bg-slate-50 transition cursor-pointer">
+            <label className="flex items-start gap-3 p-3.5 rounded-xl border border-[#DCE5E8] bg-[#F3F0E8]/40 hover:bg-[#E6EFEA]/50 hover:border-[#B7CBC2] transition cursor-pointer">
               <input
                 type="checkbox"
                 checked={preferences.chat_notifications}
                 onChange={(e) =>
                   setPreferences({ ...preferences, chat_notifications: e.target.checked })
                 }
-                className="rounded border-gray-300 text-[hsl(166,72%,40%)] mt-0.5"
+                className="rounded border-[#B7CBC2] accent-[#394B49] mt-0.5"
               />
               <div>
-                <span className="font-bold text-gray-900 block">Real-Time Chat Notifications</span>
-                <span className="text-[11px] text-gray-500">
+                <span className="font-bold text-[#263331] block">Real-Time Chat Notifications</span>
+                <span className="text-[11px] text-[#546866]">
                   Alert when counsellor replies in the in-app chat desk.
                 </span>
               </div>
             </label>
 
-            <label className="flex items-start gap-3 p-3 rounded-xl border border-gray-200 hover:bg-slate-50 transition cursor-pointer">
+            <label className="flex items-start gap-3 p-3.5 rounded-xl border border-[#DCE5E8] bg-[#F3F0E8]/40 hover:bg-[#E6EFEA]/50 hover:border-[#B7CBC2] transition cursor-pointer">
               <input
                 type="checkbox"
                 checked={preferences.loan_assistance_required}
                 onChange={(e) =>
                   setPreferences({ ...preferences, loan_assistance_required: e.target.checked })
                 }
-                className="rounded border-gray-300 text-[hsl(166,72%,40%)] mt-0.5"
+                className="rounded border-[#B7CBC2] accent-[#394B49] mt-0.5"
               />
               <div>
-                <span className="font-bold text-gray-900 block">Education Loan Assistance</span>
-                <span className="text-[11px] text-gray-500">
+                <span className="font-bold text-[#263331] block">Education Loan Assistance</span>
+                <span className="text-[11px] text-[#546866]">
                   Connect with partner banks (HDFC Credila, SBI, Prodigy Finance).
                 </span>
               </div>
@@ -348,19 +350,17 @@ export default function StudentSettingsPage() {
           </div>
 
           <div className="flex justify-end pt-2">
-            <button
+            <Button
               type="button"
+              variant="primary"
+              size="sm"
+              loading={savingPreferences}
               onClick={handleSavePreferences}
               disabled={savingPreferences}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition disabled:opacity-50"
             >
-              {savingPreferences ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Save className="h-3.5 w-3.5" />
-              )}
+              <Save className="h-3.5 w-3.5" />
               Save Preferences
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -368,87 +368,92 @@ export default function StudentSettingsPage() {
       {/* =================================================================== */}
       {/* 4. Change Account Password                                          */}
       {/* =================================================================== */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+      <div className="beyond-card p-6">
         <div className="flex items-center gap-2 mb-4">
-          <Key className="h-5 w-5 text-gray-700" />
-          <h2 className="text-base font-bold text-gray-900">Change Account Password</h2>
+          <Key className="h-5 w-5 text-[#394B49]" />
+          <h2 className="text-base font-bold text-[#263331]">Change Account Password</h2>
         </div>
 
         <form onSubmit={handleSubmit(onChangePassword)} className="space-y-4 max-w-md">
           <div>
-            <label className="block text-xs font-semibold text-gray-700">Current Password</label>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              Current Password
+            </label>
             <input
               type="password"
-              className="mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
+              className={INPUT_CLASS}
               {...register("current_password")}
             />
             {errors.current_password && (
-              <p className="mt-1 text-[11px] text-rose-500">{errors.current_password.message}</p>
+              <p className="mt-1 text-[11px] text-[#A63A3A]">{errors.current_password.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700">New Password</label>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              New Password
+            </label>
             <input
               type="password"
-              className="mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
+              className={INPUT_CLASS}
               {...register("new_password")}
             />
             {errors.new_password && (
-              <p className="mt-1 text-[11px] text-rose-500">{errors.new_password.message}</p>
+              <p className="mt-1 text-[11px] text-[#A63A3A]">{errors.new_password.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700">Confirm New Password</label>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              Confirm New Password
+            </label>
             <input
               type="password"
-              className="mt-1 block w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
+              className={INPUT_CLASS}
               {...register("confirm_password")}
             />
             {errors.confirm_password && (
-              <p className="mt-1 text-[11px] text-rose-500">{errors.confirm_password.message}</p>
+              <p className="mt-1 text-[11px] text-[#A63A3A]">{errors.confirm_password.message}</p>
             )}
           </div>
 
-          <button
+          <Button
             type="submit"
+            variant="primary"
+            size="sm"
+            loading={updatingPass}
+            loadingText="Updating..."
             disabled={updatingPass}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(222,47%,11%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(222,47%,18%)] transition disabled:opacity-50"
           >
-            {updatingPass ? (
-              <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                Updating...
-              </>
-            ) : (
-              "Update Password"
-            )}
-          </button>
+            Update Password
+          </Button>
         </form>
       </div>
 
       {/* =================================================================== */}
       {/* 5. Data Privacy & Student Dossier Export                            */}
       {/* =================================================================== */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="beyond-card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-            <FileDown className="h-5 w-5 text-[hsl(166,72%,40%)]" />
+          <h2 className="text-base font-bold text-[#263331] flex items-center gap-2">
+            <FileDown className="h-5 w-5 text-[#3F6258]" />
             Export Complete Student Dossier
           </h2>
-          <p className="text-xs text-gray-500 mt-0.5">
+          <p className="text-xs text-[#546866] mt-0.5">
             Download an offline cryptographic copy of your academic records, test scores, and settings.
           </p>
         </div>
 
-        <button
+        <Button
+          type="button"
+          variant="secondary"
+          size="md"
           onClick={handleExportDossier}
-          className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-xs font-bold text-gray-700 shadow-xs hover:bg-gray-50 transition shrink-0"
+          className="shrink-0"
         >
-          <Download className="h-4 w-4 text-[hsl(166,72%,40%)]" />
+          <Download className="h-4 w-4 text-[#3F6258]" />
           Export JSON Dossier
-        </button>
+        </Button>
       </div>
     </div>
   );

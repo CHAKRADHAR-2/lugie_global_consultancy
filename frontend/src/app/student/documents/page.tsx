@@ -13,11 +13,13 @@ import {
   Download,
   Trash2,
   ShieldCheck,
-  Loader2,
   Search,
-  Filter,
   FileCheck2,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { DocumentRevealLoader } from "@/components/ui/loading-concepts";
+import { SkeletonCard, SkeletonRow } from "@/components/ui/skeleton";
+import { StatusBadge } from "@/components/ui/feedback";
 
 interface DocumentItem {
   id: string;
@@ -187,8 +189,13 @@ export default function StudentDocumentsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
+      <div className="space-y-6">
+        <SkeletonCard />
+        <div className="beyond-card p-6 space-y-2">
+          <SkeletonRow cols={5} />
+          <SkeletonRow cols={5} />
+          <SkeletonRow cols={5} />
+        </div>
       </div>
     );
   }
@@ -197,28 +204,39 @@ export default function StudentDocumentsPage() {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">Document Dossier</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="font-editorial text-2xl sm:text-3xl text-[#263331]">
+          Document Dossier
+        </h1>
+        <p className="mt-1 text-sm text-[#546866]">
           Upload, manage, and verify your transcripts, test scorecards, passport, and admissions documents.
         </p>
       </div>
 
       {/* Upload Box */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-        <div className="flex items-center gap-2 mb-4">
-          <FileCheck2 className="h-5 w-5 text-[hsl(166,72%,40%)]" />
-          <h2 className="text-base font-bold text-gray-900">Upload New Document</h2>
+      <div className="beyond-card p-6 space-y-5">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#E6EFEA] border border-[#B7CBC2] text-[#2F6B55]">
+              <FileCheck2 className="h-4 w-4" />
+            </span>
+            <h2 className="text-base font-bold text-[#263331]">Upload New Document</h2>
+          </div>
+          {selectedFile && !uploading && (
+            <StatusBadge tone="warm">
+              Ready: {selectedFile.name} ({(selectedFile.size / 1024).toFixed(0)} KB)
+            </StatusBadge>
+          )}
         </div>
 
         <form onSubmit={handleUpload} className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
           <div className="md:col-span-5">
-            <label className="block text-xs font-semibold text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
               Document Category (17+ Categories Available)
             </label>
             <select
               value={docType}
               onChange={(e) => setDocType(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)] bg-white"
+              className="w-full rounded-xl border border-[#DCE5E8] bg-white px-3.5 py-2.5 text-xs text-[#394B49] focus:outline-none focus:border-[#394B49]"
             >
               {DOCUMENT_TYPES.map((t) => (
                 <option key={t} value={t}>
@@ -229,7 +247,7 @@ export default function StudentDocumentsPage() {
           </div>
 
           <div className="md:col-span-5">
-            <label className="block text-xs font-semibold text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
               Select File (PDF, JPEG, PNG, DOCX — Max 15MB)
             </label>
             <input
@@ -237,72 +255,77 @@ export default function StudentDocumentsPage() {
               type="file"
               accept=".pdf,.jpg,.jpeg,.png,.docx"
               onChange={handleFileChange}
-              className="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer"
+              className="w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/50 px-2.5 py-1.5 text-xs text-[#546866] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-[#DCE5E8] file:text-xs file:font-semibold file:bg-white file:text-[#394B49] hover:file:bg-[#F3F0E8] cursor-pointer"
             />
           </div>
 
           <div className="md:col-span-2">
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="md"
+              loading={uploading}
+              loadingText="Scanning..."
               disabled={uploading || !selectedFile}
-              className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] disabled:opacity-50 transition"
+              className="w-full"
             >
-              {uploading ? (
-                <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  Scanning...
-                </>
-              ) : (
-                <>
-                  <Upload className="h-3.5 w-3.5" />
-                  Upload
-                </>
-              )}
-            </button>
+              <Upload className="h-3.5 w-3.5" />
+              Upload
+            </Button>
           </div>
         </form>
 
-        <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200/80 p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-slate-600">
-          <div className="flex items-center gap-2">
-            <ShieldCheck className="h-4 w-4 text-[hsl(166,72%,40%)] shrink-0" />
+        {/* Active Scanning Concept Loader */}
+        {uploading && (
+          <div className="rounded-xl border border-[#B7CBC2] bg-[#F3F0E8]/70 p-5 flex items-center justify-center">
+            <DocumentRevealLoader
+              label="Running 4-layer security & SHA-256 integrity scan…"
+              size="md"
+            />
+          </div>
+        )}
+
+        <div className="rounded-xl bg-[#E6EFEA]/70 border border-[#B7CBC2] p-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-[#263331]">
+          <div className="flex items-center gap-2.5">
+            <ShieldCheck className="h-4 w-4 text-[#2F6B55] shrink-0" />
             <span>
               <strong>Active 4-Layer Security Scanner:</strong> Magic Byte Header Verification &bull; EICAR / Malicious Script Quarantine &bull; SHA-256 Cryptographic Hash &bull; Isolated Disk Vault.
             </span>
           </div>
-          <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 shrink-0">
+          <StatusBadge tone="sage" className="shrink-0">
             Real-Time Engine Active
-          </span>
+          </StatusBadge>
         </div>
       </div>
 
       {/* Document Records Table */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+      <div className="beyond-card p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-5">
           <div>
-            <h2 className="text-base font-bold text-gray-900">
+            <h2 className="text-base font-bold text-[#263331]">
               Uploaded Dossier Files ({documents.length})
             </h2>
-            <p className="text-xs text-gray-400 mt-0.5">
+            <p className="text-xs text-[#546866] mt-0.5">
               Manage your materials or delete outdated records
             </p>
           </div>
 
           {/* Search & Filter */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="relative">
-              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-gray-400" />
+              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[#546866]" />
               <input
                 type="text"
                 placeholder="Search documents..."
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)] w-44"
+                className="pl-8 pr-3 py-2 text-xs rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/50 text-[#394B49] placeholder:text-[#546866]/70 focus:outline-none focus:border-[#394B49] focus:bg-white w-48"
               />
             </div>
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="py-1.5 px-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)] max-w-[150px]"
+              className="py-2 px-3 text-xs rounded-xl border border-[#DCE5E8] bg-white text-[#394B49] focus:outline-none focus:border-[#394B49] max-w-[180px]"
             >
               <option value="all">All Categories</option>
               {DOCUMENT_TYPES.map((t) => (
@@ -315,97 +338,101 @@ export default function StudentDocumentsPage() {
         </div>
 
         {filteredDocs.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-gray-200 p-8 text-center">
-            <FileText className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-            <p className="text-xs text-gray-500">
+          <div className="rounded-xl border border-dashed border-[#B7CBC2] bg-[#F3F0E8]/50 p-8 text-center">
+            <FileText className="h-8 w-8 text-[#546866] mx-auto mb-2" />
+            <p className="text-xs text-[#546866]">
               {documents.length === 0
                 ? "No documents uploaded yet. Upload your transcripts and test scores above."
                 : "No documents match your filter."}
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 text-gray-600 uppercase font-semibold text-[10px] tracking-wider border-b border-gray-100">
+          <div className="overflow-x-auto rounded-xl border border-[#DCE5E8]">
+            <table className="w-full text-left text-xs font-sans">
+              <thead className="bg-[#F3F0E8]/80 text-[#546866] uppercase font-semibold text-[10px] tracking-wider border-b border-[#DCE5E8]">
                 <tr>
-                  <th className="p-3">Document Category</th>
-                  <th className="p-3">File Name</th>
-                  <th className="p-3">Size</th>
-                  <th className="p-3">Security Scan Status</th>
-                  <th className="p-3">Counsellor Review</th>
-                  <th className="p-3 text-right">Actions</th>
+                  <th className="p-3.5">Document Category</th>
+                  <th className="p-3.5">File Name</th>
+                  <th className="p-3.5">Size</th>
+                  <th className="p-3.5">Security Scan Status</th>
+                  <th className="p-3.5">Counsellor Review</th>
+                  <th className="p-3.5 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 text-gray-700">
+              <tbody className="divide-y divide-[#DCE5E8]/80 text-[#394B49] bg-white">
                 {filteredDocs.map((doc) => {
                   const isClean = doc.scan_status === "clean" || doc.scan_status === "scan_disabled";
                   const isQuarantined = doc.scan_status === "quarantined";
                   const isDeleting = deletingId === doc.id;
 
                   return (
-                    <tr key={doc.id} className="hover:bg-gray-50/50 transition">
-                      <td className="p-3 font-semibold text-gray-900">{doc.document_type}</td>
-                      <td className="p-3 font-mono text-[11px] text-gray-600">{doc.original_filename}</td>
-                      <td className="p-3">{(doc.file_size_bytes / 1024).toFixed(0)} KB</td>
-                      <td className="p-3">
+                    <tr key={doc.id} className="hover:bg-[#F3F0E8]/40 transition">
+                      <td className="p-3.5 font-semibold text-[#263331]">{doc.document_type}</td>
+                      <td className="p-3.5 font-mono text-[11px] text-[#546866]">{doc.original_filename}</td>
+                      <td className="p-3.5 tabular-nums text-[#546866]">
+                        {(doc.file_size_bytes / 1024).toFixed(0)} KB
+                      </td>
+                      <td className="p-3.5">
                         {isClean ? (
-                          <div className="space-y-0.5">
-                            <span className="inline-flex items-center gap-1 rounded bg-emerald-50 text-emerald-700 px-2 py-0.5 font-bold text-[10px]">
+                          <div className="space-y-1">
+                            <StatusBadge tone="success">
                               <CheckCircle2 className="h-3 w-3" /> Clean / Verified
-                            </span>
+                            </StatusBadge>
                             <div
-                              className="text-[10px] text-gray-400 font-mono flex items-center gap-1"
+                              className="text-[10px] text-[#546866] font-mono flex items-center gap-1"
                               title={doc.checksum_sha256 || "SHA-256 Validated"}
                             >
-                              <ShieldCheck className="h-3 w-3 text-emerald-600 shrink-0" />
+                              <ShieldCheck className="h-3 w-3 text-[#2F6B55] shrink-0" />
                               <span className="truncate max-w-[130px]">
                                 {doc.checksum_sha256 ? `${doc.checksum_sha256.substring(0, 10)}...` : "SHA-256 Verified"}
                               </span>
                             </div>
                           </div>
                         ) : isQuarantined ? (
-                          <span className="inline-flex items-center gap-1 rounded bg-rose-50 text-rose-700 px-2 py-0.5 font-bold text-[10px]">
+                          <StatusBadge tone="error">
                             <AlertTriangle className="h-3 w-3" /> Quarantined / Threat
-                          </span>
+                          </StatusBadge>
                         ) : (
-                          <span className="inline-flex items-center gap-1 rounded bg-amber-50 text-amber-700 px-2 py-0.5 font-bold text-[10px]">
+                          <StatusBadge tone="warning">
                             <Clock className="h-3 w-3" /> Scan Pending
-                          </span>
+                          </StatusBadge>
                         )}
                       </td>
-                      <td className="p-3">
+                      <td className="p-3.5">
                         {doc.is_verified ? (
-                          <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded text-[10px]">
+                          <StatusBadge tone="sage">
                             <CheckCircle2 className="h-3 w-3" /> Verified
-                          </span>
+                          </StatusBadge>
                         ) : (
-                          <span className="text-gray-400 text-[11px]">Under Review</span>
+                          <span className="text-[#546866] text-[11px]">Under Review</span>
                         )}
                       </td>
-                      <td className="p-3 text-right">
-                        <div className="inline-flex items-center gap-1.5 justify-end">
-                          <button
+                      <td className="p-3.5 text-right">
+                        <div className="inline-flex items-center gap-2 justify-end">
+                          <Button
+                            type="button"
+                            variant="sage"
+                            size="sm"
                             onClick={() => handleDownload(doc.id, doc.original_filename)}
                             disabled={!isClean}
                             title="Open document in a new tab"
-                            className="inline-flex items-center gap-1 rounded-lg bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] px-2.5 py-1 font-semibold hover:bg-[hsl(166,72%,40%)] hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed text-[11px]"
                           >
                             <Download className="h-3 w-3" />
                             View / Download
-                          </button>
-                          <button
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            size="sm"
+                            loading={isDeleting}
                             onClick={() => handleDelete(doc.id, doc.original_filename)}
                             disabled={isDeleting}
                             title="Delete this document from dossier"
-                            className="inline-flex items-center gap-1 rounded-lg bg-rose-50 text-rose-600 px-2.5 py-1 font-semibold hover:bg-rose-600 hover:text-white transition disabled:opacity-40 text-[11px]"
+                            className="text-[#A63A3A] hover:bg-[#FDF2F2] hover:border-[#E7BABA]"
                           >
-                            {isDeleting ? (
-                              <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                              <Trash2 className="h-3 w-3" />
-                            )}
+                            <Trash2 className="h-3 w-3" />
                             Delete
-                          </button>
+                          </Button>
                         </div>
                       </td>
                     </tr>

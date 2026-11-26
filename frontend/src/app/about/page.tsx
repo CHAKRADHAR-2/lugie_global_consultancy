@@ -5,6 +5,8 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { APP_TAGLINE } from "@/lib/constants";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/fade-in";
+import { HorizonPath } from "@/components/ui/horizon-path";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Compass,
   ShieldCheck,
@@ -16,61 +18,58 @@ import {
 
 export default function AboutPage() {
   return (
-    <div className="flex min-h-screen flex-col bg-[hsl(210,20%,98%)]">
+    <div className="flex min-h-screen flex-col bg-[#F3F0E8] text-[#394B49]">
       <Header />
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-[hsl(222,47%,11%)] py-24 px-6 lg:px-8 text-center text-white">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="mesh-orb absolute top-1/4 left-1/3 h-[420px] w-[420px] rounded-full bg-[hsl(166,72%,40%)] opacity-[0.07] blur-[120px]" />
-            <div className="mesh-orb-delayed absolute bottom-1/4 right-1/4 h-[350px] w-[350px] rounded-full bg-[hsl(45,93%,58%)] opacity-[0.05] blur-[100px]" />
-          </div>
-
-          <div className="relative mx-auto max-w-4xl">
-            <FadeIn delay={0.1} direction="none">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-5 py-2 text-xs font-semibold tracking-widest uppercase text-[hsl(166,72%,50%)] mb-6 backdrop-blur-sm border border-white/[0.08]">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>Our Story & Philosophy</span>
+        <section className="beyond-surface border-b border-[#DCE5E8] py-20 sm:py-24 px-6 lg:px-8 text-center">
+          <div className="mx-auto max-w-4xl">
+            <FadeIn delay={0.05} direction="none">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#B7CBC2] bg-[#E6EFEA] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#3F6258] mb-6">
+                <Sparkles className="h-3.5 w-3.5 text-[#8E572C]" aria-hidden="true" />
+                <span>Our Story &amp; Philosophy</span>
               </div>
             </FadeIn>
-            <FadeIn delay={0.2}>
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-[1.1]">
+            <FadeIn delay={0.12}>
+              <h1 className="font-editorial text-4xl sm:text-5xl lg:text-6xl leading-[1.1] text-[#394B49]">
                 About Lugie Global Consultancy
               </h1>
             </FadeIn>
-            <FadeIn delay={0.3}>
-              <p className="mt-4 text-xl sm:text-2xl font-light italic text-[hsl(45,93%,68%)]">
-                {APP_TAGLINE}
+            <FadeIn delay={0.2}>
+              <p className="mt-4 font-editorial italic text-xl sm:text-2xl text-[#8E572C]">
+                {APP_TAGLINE}.
               </p>
             </FadeIn>
-            <FadeIn delay={0.45}>
-              <p className="mt-6 text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
+            <FadeIn delay={0.28}>
+              <p className="mt-5 text-base sm:text-lg text-[#546866] max-w-2xl mx-auto leading-relaxed">
                 We started Lugie with a straightforward conviction: Indian students deserve honest,
                 uncompromised, and founder-driven overseas education guidance without fabricated claims or hidden commissions.
               </p>
             </FadeIn>
           </div>
+          <HorizonPath variant="divider" className="mt-12" />
         </section>
 
         {/* The Founders & Lean Model */}
-        <section className="bg-white py-24 px-6 lg:px-8 border-b border-[hsl(220,13%,91%)]">
+        <section className="bg-white py-20 sm:py-24 px-6 lg:px-8 border-b border-[#DCE5E8]">
           <div className="mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <FadeIn className="lg:col-span-6 space-y-6">
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[hsl(166,72%,40%)]">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#8E572C]">
                 Who We Are
               </span>
-              <h2 className="text-3xl font-bold tracking-tight text-[hsl(222,47%,11%)] sm:text-4xl leading-tight">
+              <h2 className="font-editorial text-3xl sm:text-4xl leading-tight text-[#394B49]">
                 Two Founders. One Obsession: Your Genuine Academic Fit.
               </h2>
-              <p className="text-[hsl(220,13%,46%)] leading-relaxed">
+              <p className="text-[#546866] leading-relaxed">
                 Lugie was founded by two international education specialists who spent years inside the overseas
                 education industry witnessing a troubling trend: high-pressure sales centers pushing students
                 into tie-up institutions purely for university commissions, while making unrealistic promises
                 about guaranteed visas and admissions.
               </p>
-              <p className="text-[hsl(220,13%,46%)] leading-relaxed">
-                We intentionally run Lugie as a <strong className="text-[hsl(222,47%,11%)]">lean, focused consultancy</strong>. You aren’t handed off
+              <p className="text-[#546866] leading-relaxed">
+                We intentionally run Lugie as a{" "}
+                <strong className="font-semibold text-[#263331]">lean, focused consultancy</strong>. You aren&apos;t handed off
                 to untrained junior call-center telemarketers. When you work with Lugie, your profile is
                 reviewed directly by experienced advisors who look at your long-term return on investment,
                 career prospects, and financial readiness.
@@ -78,26 +77,27 @@ export default function AboutPage() {
               <div className="pt-2">
                 <Link
                   href="/book-consultation"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[hsl(166,72%,40%)] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[hsl(166,72%,40%)]/20 transition-all hover:bg-[hsl(166,72%,50%)] hover:shadow-xl hover:shadow-[hsl(166,72%,40%)]/30 active:scale-[0.98]"
+                  className={buttonVariants({ variant: "warm", size: "lg" })}
                 >
-                  Talk Directly With Us <ArrowRight className="h-4 w-4" />
+                  <span>Talk Directly With Us</span>
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
             </FadeIn>
 
             <FadeIn delay={0.15} className="lg:col-span-6">
-              <div className="rounded-2xl border border-[hsl(220,13%,91%)] bg-[hsl(210,20%,98%)] p-8 sm:p-10 space-y-8 shadow-sm">
-                <h3 className="text-xl font-bold text-[hsl(222,47%,11%)]">
+              <div className="rounded-2xl border border-[#DCE5E8] bg-[#F3F0E8]/65 p-8 sm:p-10 space-y-8">
+                <h3 className="font-editorial text-2xl text-[#394B49]">
                   Our Non-Negotiable Pillars
                 </h3>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[hsl(160,84%,39%)]/10 text-[hsl(160,84%,39%)]">
-                    <ShieldCheck className="h-5 w-5" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#B7CBC2] bg-[#EDF5F1] text-[#2F6B55]">
+                    <ShieldCheck className="h-5 w-5" aria-hidden="true" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[hsl(222,47%,11%)]">Zero Fabricated Claims</h4>
-                    <p className="text-sm text-[hsl(220,13%,46%)] mt-1 leading-relaxed">
+                    <h4 className="font-semibold text-[#394B49]">Zero Fabricated Claims</h4>
+                    <p className="text-sm text-[#546866] mt-1 leading-relaxed">
                       We will never display fake student success percentages, fictitious testimonials, or
                       make up admission numbers to sway your decision.
                     </p>
@@ -105,12 +105,12 @@ export default function AboutPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)]">
-                    <Compass className="h-5 w-5" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#B7CBC2] bg-[#E6EFEA] text-[#3F6258]">
+                    <Compass className="h-5 w-5" aria-hidden="true" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[hsl(222,47%,11%)]">Transparent Fixed Pricing</h4>
-                    <p className="text-sm text-[hsl(220,13%,46%)] mt-1 leading-relaxed">
+                    <h4 className="font-semibold text-[#394B49]">Transparent Fixed Pricing</h4>
+                    <p className="text-sm text-[#546866] mt-1 leading-relaxed">
                       Our service packages (Basic ₹7,999, Standard ₹13,999, Premium ₹24,999) are published
                       openly. No hidden charges or surprise invoices.
                     </p>
@@ -118,12 +118,12 @@ export default function AboutPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[hsl(45,93%,58%)]/15 text-amber-700">
-                    <BookOpen className="h-5 w-5" />
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#D9A879]/60 bg-[#F6EDE4] text-[#8E572C]">
+                    <BookOpen className="h-5 w-5" aria-hidden="true" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-[hsl(222,47%,11%)]">Official University Sources Only</h4>
-                    <p className="text-sm text-[hsl(220,13%,46%)] mt-1 leading-relaxed">
+                    <h4 className="font-semibold text-[#394B49]">Official University Sources Only</h4>
+                    <p className="text-sm text-[#546866] mt-1 leading-relaxed">
                       Every deadline, entry criterion, and fee structure we quote is verified directly against
                       official university websites and faculty catalogs.
                     </p>
@@ -135,16 +135,16 @@ export default function AboutPage() {
         </section>
 
         {/* What We Don't Do (Honest Disclosure) */}
-        <section className="bg-[hsl(220,14%,96%)] py-20 px-6 lg:px-8 border-b border-[hsl(220,13%,91%)]">
+        <section className="bg-[#F3F0E8] py-20 px-6 lg:px-8 border-b border-[#DCE5E8]">
           <div className="mx-auto max-w-4xl text-center">
             <FadeIn>
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-rose-600">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#A63A3A]">
                 Honest Clarification
               </span>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight text-[hsl(222,47%,11%)] sm:text-4xl">
+              <h2 className="mt-3 font-editorial text-3xl sm:text-4xl text-[#394B49]">
                 What We Do NOT Promise
               </h2>
-              <p className="mt-3 text-[hsl(220,13%,46%)]">
+              <p className="mt-3 text-[#546866]">
                 Clear expectations build great partnerships. Here is our ethical boundary:
               </p>
             </FadeIn>
@@ -169,14 +169,14 @@ export default function AboutPage() {
                 },
               ].map((item) => (
                 <StaggerItem key={item.title} className="flex">
-                  <div className="w-full rounded-2xl border border-rose-200/70 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-rose-500/5">
-                    <div className="flex items-center gap-2.5 text-rose-700 font-semibold mb-2.5">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-50 text-rose-600">
-                        <AlertTriangle className="h-4 w-4" />
+                  <div className="beyond-card beyond-card-interactive w-full border-[#E7BABA] p-6">
+                    <div className="flex items-center gap-2.5 text-[#A63A3A] font-semibold mb-2.5">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[#E7BABA] bg-[#FDF2F2] text-[#A63A3A]">
+                        <AlertTriangle className="h-4 w-4" aria-hidden="true" />
                       </div>
                       <span>{item.title}</span>
                     </div>
-                    <p className="text-sm text-[hsl(220,13%,46%)] leading-relaxed">
+                    <p className="text-sm text-[#546866] leading-relaxed">
                       {item.desc}
                     </p>
                   </div>
@@ -187,36 +187,34 @@ export default function AboutPage() {
         </section>
 
         {/* Mission Banner */}
-        <section className="relative overflow-hidden bg-[hsl(222,47%,11%)] py-24 px-6 lg:px-8 text-center text-white">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="mesh-orb absolute top-0 left-1/4 h-80 w-80 rounded-full bg-[hsl(166,72%,40%)] opacity-[0.06] blur-[100px]" />
-            <div className="mesh-orb-delayed absolute bottom-0 right-1/4 h-60 w-60 rounded-full bg-[hsl(45,93%,58%)] opacity-[0.04] blur-[80px]" />
-          </div>
-
-          <div className="relative mx-auto max-w-3xl">
+        <section className="bg-[#394B49] py-20 sm:py-24 px-6 lg:px-8 text-center text-white">
+          <div className="mx-auto max-w-3xl">
             <FadeIn>
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              <span className="inline-block rounded-full border border-[#B7CBC2]/30 bg-white/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#E5BE99] mb-4">
+                Start With Clarity
+              </span>
+              <h2 className="font-editorial text-3xl sm:text-4xl lg:text-5xl text-white">
                 Dream Beyond Borders with Lugie
               </h2>
             </FadeIn>
-            <FadeIn delay={0.15}>
-              <p className="mt-4 text-lg text-white/60">
+            <FadeIn delay={0.12}>
+              <p className="mt-4 text-base sm:text-lg text-[#F3F0E8]/80">
                 Ready to explore your genuine study options with honest advisors?
               </p>
             </FadeIn>
-            <FadeIn delay={0.3}>
+            <FadeIn delay={0.2}>
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href="/book-consultation"
-                  className="rounded-xl bg-[hsl(166,72%,40%)] px-8 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[hsl(166,72%,40%)]/20 transition-all hover:bg-[hsl(166,72%,50%)] hover:shadow-xl active:scale-[0.98]"
+                  className={buttonVariants({ variant: "warm", size: "lg" })}
                 >
                   Schedule Free Profile Evaluation
                 </Link>
                 <Link
                   href="/pricing"
-                  className="rounded-xl border border-white/15 bg-white/[0.04] px-6 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/[0.08] hover:border-white/25"
+                  className="rounded-xl border border-white/25 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/15"
                 >
-                  View Packages & Pricing
+                  View Packages &amp; Pricing
                 </Link>
               </div>
             </FadeIn>

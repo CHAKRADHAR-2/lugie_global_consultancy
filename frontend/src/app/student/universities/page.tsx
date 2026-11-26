@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
@@ -10,24 +9,20 @@ import {
   Search,
   MapPin,
   ExternalLink,
-  GraduationCap,
   Plus,
-  Loader2,
   CheckCircle2,
-  X,
-  Calendar,
-  DollarSign,
   Clock,
   Sparkles,
-  ArrowRight,
   Award,
-  Shield,
   ThumbsUp,
-  MessageSquare,
   Trash2,
   Layers,
   Send,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { GlobalOrbitLoader } from "@/components/ui/loading-concepts";
+import { SkeletonCard } from "@/components/ui/skeleton";
+import { ModalShell, StatusBadge } from "@/components/ui/feedback";
 
 interface University {
   id: string;
@@ -93,6 +88,12 @@ interface CounsellorRecommendationItem {
   status: string;
   created_at: string;
 }
+
+const INPUT_CLASS =
+  "w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/50 px-3.5 py-2.5 text-xs text-[#394B49] placeholder:text-[#546866]/70 focus:outline-none focus:border-[#394B49] focus:bg-white transition";
+
+const SELECT_CLASS =
+  "w-full rounded-xl border border-[#DCE5E8] bg-white px-3.5 py-2.5 text-xs text-[#394B49] focus:outline-none focus:border-[#394B49] transition";
 
 export default function StudentUniversitiesPage() {
   const router = useRouter();
@@ -192,7 +193,7 @@ export default function StudentUniversitiesPage() {
 
     setSubmittingNomination(true);
     try {
-      const res = await api.post<StudentOptedItem>("shortlists/opted", nominateForm);
+      await api.post<StudentOptedItem>("shortlists/opted", nominateForm);
       toast.success("University nominated! Dispatched to counsellor for evaluation & opinion.");
       setIsNominateOpen(false);
       setNominateForm({
@@ -268,32 +269,36 @@ export default function StudentUniversitiesPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)] flex items-center gap-2">
-            <Building2 className="h-6 w-6 text-[hsl(166,72%,40%)]" />
-            University Strategy & Selection
+          <h1 className="font-editorial text-2xl sm:text-3xl text-[#263331] flex items-center gap-2.5">
+            <Building2 className="h-6 w-6 text-[#3F6258] shrink-0" />
+            <span>University Strategy &amp; Selection</span>
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-[#546866]">
             Submit your chosen universities for counsellor review and explore personalized recommendations.
           </p>
         </div>
 
-        <button
+        <Button
+          type="button"
+          variant="primary"
+          size="md"
           onClick={() => setIsNominateOpen(true)}
-          className="inline-flex items-center gap-2 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
+          className="shrink-0"
         >
           <Plus className="h-4 w-4" />
           Nominate University for Review
-        </button>
+        </Button>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex border-b border-gray-200 gap-8 text-xs font-bold">
+      <div className="flex border-b border-[#DCE5E8] gap-6 sm:gap-8 text-xs font-semibold overflow-x-auto">
         <button
+          type="button"
           onClick={() => setActiveTab("opted")}
-          className={`pb-3 border-b-2 transition flex items-center gap-2 ${
+          className={`pb-3 border-b-2 transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === "opted"
-              ? "border-[hsl(166,72%,40%)] text-[hsl(166,72%,40%)]"
-              : "border-transparent text-gray-400 hover:text-gray-700"
+              ? "border-[#394B49] text-[#263331]"
+              : "border-transparent text-[#546866] hover:text-[#394B49]"
           }`}
         >
           <Layers className="h-4 w-4" />
@@ -301,11 +306,12 @@ export default function StudentUniversitiesPage() {
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab("recommended")}
-          className={`pb-3 border-b-2 transition flex items-center gap-2 ${
+          className={`pb-3 border-b-2 transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === "recommended"
-              ? "border-[hsl(166,72%,40%)] text-[hsl(166,72%,40%)]"
-              : "border-transparent text-gray-400 hover:text-gray-700"
+              ? "border-[#394B49] text-[#263331]"
+              : "border-transparent text-[#546866] hover:text-[#394B49]"
           }`}
         >
           <Sparkles className="h-4 w-4" />
@@ -313,11 +319,12 @@ export default function StudentUniversitiesPage() {
         </button>
 
         <button
+          type="button"
           onClick={() => setActiveTab("catalog")}
-          className={`pb-3 border-b-2 transition flex items-center gap-2 ${
+          className={`pb-3 border-b-2 transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
             activeTab === "catalog"
-              ? "border-[hsl(166,72%,40%)] text-[hsl(166,72%,40%)]"
-              : "border-transparent text-gray-400 hover:text-gray-700"
+              ? "border-[#394B49] text-[#263331]"
+              : "border-transparent text-[#546866] hover:text-[#394B49]"
           }`}
         >
           <Search className="h-4 w-4" />
@@ -330,30 +337,32 @@ export default function StudentUniversitiesPage() {
       {/* ===================================================================== */}
       {activeTab === "opted" && (
         <div className="space-y-6">
-          <div className="rounded-2xl bg-teal-50/60 border border-teal-100 p-4 text-xs text-teal-900 flex items-start gap-3">
-            <Sparkles className="h-5 w-5 text-[hsl(166,72%,40%)] shrink-0 mt-0.5" />
-            <div>
+          <div className="rounded-2xl bg-[#E6EFEA]/80 border border-[#B7CBC2] p-4 text-xs text-[#263331] flex items-start gap-3">
+            <Sparkles className="h-5 w-5 text-[#2F6B55] shrink-0 mt-0.5" />
+            <div className="leading-relaxed">
               <strong className="font-bold">Student Opted Workflow:</strong> In this section, you nominate the institutions and programs you want to apply to. Your assigned counsellor reviews each choice against your academic transcripts, GRE/IELTS scores, and backlogs, then sends back an official admission verdict and strategic recommendations.
             </div>
           </div>
 
           {loadingOpted ? (
-            <div className="flex h-48 items-center justify-center">
-              <Loader2 className="h-7 w-7 animate-spin text-[hsl(166,72%,40%)]" />
+            <div className="beyond-card p-12 flex items-center justify-center">
+              <GlobalOrbitLoader label="Syncing your shortlisted universities…" size="md" />
             </div>
           ) : optedList.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-12 text-center">
-              <Building2 className="h-10 w-10 text-gray-300 mx-auto mb-2" />
-              <h3 className="text-sm font-bold text-gray-900">No Opted Universities Yet</h3>
-              <p className="text-xs text-gray-500 mt-1 mb-4">
+            <div className="beyond-card border-dashed border-[#B7CBC2] p-12 text-center">
+              <Building2 className="h-10 w-10 text-[#546866] mx-auto mb-2.5" />
+              <h3 className="text-sm font-bold text-[#263331]">No Opted Universities Yet</h3>
+              <p className="text-xs text-[#546866] mt-1 mb-4">
                 You haven&apos;t nominated any universities for review yet. Click below to add your dream or target choices!
               </p>
-              <button
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
                 onClick={() => setIsNominateOpen(true)}
-                className="rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)]"
               >
                 Nominate a University
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -365,69 +374,64 @@ export default function StudentUniversitiesPage() {
                 return (
                   <div
                     key={item.id}
-                    className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:shadow-md transition space-y-4"
+                    className="beyond-card beyond-card-interactive p-6 space-y-4"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span
-                            className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
-                              isDream
-                                ? "bg-purple-100 text-purple-700"
-                                : isSafe
-                                ? "bg-emerald-100 text-emerald-700"
-                                : "bg-blue-100 text-blue-700"
-                            }`}
+                        <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                          <StatusBadge
+                            tone={isDream ? "warm" : isSafe ? "sage" : "misty"}
+                            className="uppercase"
                           >
                             {item.tier} Tier
-                          </span>
-                          <span className="text-xs text-gray-500 flex items-center gap-1 font-semibold">
-                            <MapPin className="h-3 w-3 text-gray-400" />
+                          </StatusBadge>
+                          <span className="text-xs text-[#546866] flex items-center gap-1 font-medium">
+                            <MapPin className="h-3 w-3 text-[#546866]" />
                             {item.country}
                           </span>
-                          <span className="text-xs text-gray-400">• Intake: {item.intake}</span>
+                          <span className="text-xs text-[#546866]">• Intake: {item.intake}</span>
                         </div>
 
-                        <h3 className="text-lg font-bold text-[hsl(222,47%,11%)]">
+                        <h3 className="text-lg font-bold text-[#263331]">
                           {item.university_name}
                         </h3>
-                        <p className="text-xs font-semibold text-[hsl(166,72%,40%)] mt-0.5">
+                        <p className="text-xs font-semibold text-[#3F6258] mt-0.5">
                           {item.course_name}
                         </p>
                       </div>
 
                       <div className="flex items-center gap-2 self-start">
                         {isReviewed ? (
-                          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-bold border border-emerald-200">
+                          <StatusBadge tone="success" className="py-1 px-3">
                             <CheckCircle2 className="h-3.5 w-3.5" />
                             Counsellor Reviewed
-                          </span>
+                          </StatusBadge>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 text-amber-700 px-3 py-1 text-xs font-bold border border-amber-200">
+                          <StatusBadge tone="warning" className="py-1 px-3">
                             <Clock className="h-3.5 w-3.5" />
                             Under Counsellor Review
-                          </span>
+                          </StatusBadge>
                         )}
 
-                        <button
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          loading={deletingOptedId === item.id}
                           onClick={() => handleDeleteOpted(item.id, item.university_name)}
                           disabled={deletingOptedId === item.id}
                           title="Remove nomination"
-                          className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition"
+                          className="text-[#546866] hover:text-[#A63A3A] hover:bg-[#FDF2F2]"
                         >
-                          {deletingOptedId === item.id ? (
-                            <Loader2 className="h-4 w-4 animate-spin text-rose-500" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </button>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
 
                     {/* Student remarks */}
                     {item.student_notes && (
-                      <div className="rounded-xl bg-gray-50 p-3 text-xs text-gray-700">
-                        <span className="font-semibold text-gray-900 block mb-0.5">
+                      <div className="rounded-xl bg-[#F3F0E8]/60 border border-[#DCE5E8] p-3.5 text-xs text-[#394B49]">
+                        <span className="font-semibold text-[#263331] block mb-0.5">
                           Student Notes to Counsellor:
                         </span>
                         {item.student_notes}
@@ -436,30 +440,30 @@ export default function StudentUniversitiesPage() {
 
                     {/* Counsellor Opinion Box */}
                     {item.counsellor_opinion ? (
-                      <div className="rounded-xl border border-teal-200 bg-teal-50/50 p-4 space-y-2">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Award className="h-4 w-4 text-[hsl(166,72%,40%)]" />
-                            <span className="text-xs font-bold text-gray-900">
+                      <div className="rounded-xl border border-[#B7CBC2] bg-[#E6EFEA]/70 p-4 space-y-2">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Award className="h-4 w-4 text-[#2F6B55]" />
+                            <span className="text-xs font-bold text-[#263331]">
                               Counsellor Verdict:
                             </span>
-                            <span className="text-xs font-bold text-[hsl(166,72%,40%)] bg-white px-2 py-0.5 rounded border border-teal-200">
+                            <StatusBadge tone="sage">
                               {item.counsellor_verdict || "Approved for Application"}
-                            </span>
+                            </StatusBadge>
                           </div>
                           {item.reviewed_at && (
-                            <span className="text-[10px] text-gray-400">
+                            <span className="text-[10px] text-[#546866]">
                               Reviewed {new Date(item.reviewed_at).toLocaleDateString("en-IN")}
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-teal-950 leading-relaxed">
+                        <p className="text-xs text-[#263331] leading-relaxed">
                           {item.counsellor_opinion}
                         </p>
                       </div>
                     ) : (
-                      <div className="rounded-xl border border-dashed border-amber-200 bg-amber-50/30 p-3 text-xs text-amber-800 flex items-center gap-2">
-                        <Clock className="h-4 w-4 text-amber-600 shrink-0" />
+                      <div className="rounded-xl border border-dashed border-[#D9A879] bg-[#FCF6EC] p-3.5 text-xs text-[#8A5A1E] flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-[#8A5A1E] shrink-0" />
                         <span>
                           Your assigned counsellor has received this nomination and is reviewing cutoff requirements. Opinion and advice will appear here shortly.
                         </span>
@@ -478,16 +482,33 @@ export default function StudentUniversitiesPage() {
       {/* ===================================================================== */}
       {activeTab === "recommended" && (
         <div className="space-y-6">
-          <div className="rounded-2xl bg-indigo-50/60 border border-indigo-100 p-4 text-xs text-indigo-900 flex items-start gap-3">
-            <Award className="h-5 w-5 text-indigo-600 shrink-0 mt-0.5" />
-            <div>
+          <div className="rounded-2xl bg-[#EEF3F5] border border-[#DCE5E8] p-4 text-xs text-[#263331] flex items-start gap-3">
+            <Award className="h-5 w-5 text-[#394B49] shrink-0 mt-0.5" />
+            <div className="leading-relaxed">
               <strong className="font-bold">Expert Strategic Recommendations:</strong> Based on your academic history (Class X, XII, Undergrad GPA), standardized test scores (GRE/GMAT), and English proficiency (IELTS/TOEFL), your counsellor has curated this balanced portfolio across Dream, Target, and Safe tiers.
             </div>
           </div>
 
           {loadingRecs ? (
-            <div className="flex h-48 items-center justify-center">
-              <Loader2 className="h-7 w-7 animate-spin text-[hsl(166,72%,40%)]" />
+            <div className="space-y-6">
+              <div className="beyond-card p-8 flex justify-center">
+                <GlobalOrbitLoader label="Loading counsellor university recommendations…" size="md" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <SkeletonCard />
+                <SkeletonCard />
+                <SkeletonCard />
+              </div>
+            </div>
+          ) : recommendations.length === 0 ? (
+            <div className="beyond-card p-12 text-center">
+              <Sparkles className="h-9 w-9 text-[#546866] mx-auto mb-2.5" />
+              <p className="text-sm font-bold text-[#263331]">
+                No counsellor recommendations published yet
+              </p>
+              <p className="text-xs text-[#546866] mt-1">
+                Complete your profile and upload transcripts, or nominate universities in the first tab.
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -499,86 +520,81 @@ export default function StudentUniversitiesPage() {
                 return (
                   <div
                     key={rec.id}
-                    className={`rounded-2xl p-6 border shadow-sm flex flex-col justify-between transition ${
+                    className={`rounded-2xl p-6 border shadow-[0_1px_3px_rgba(57,75,73,0.04)] flex flex-col justify-between transition ${
                       isDream
-                        ? "border-purple-200 bg-purple-50/30 hover:border-purple-300"
+                        ? "border-[#D9A879] bg-[#F6EDE4]/55 hover:border-[#CFA070]"
                         : isSafe
-                        ? "border-emerald-200 bg-emerald-50/30 hover:border-emerald-300"
-                        : "border-blue-200 bg-blue-50/30 hover:border-blue-300"
+                        ? "border-[#B7CBC2] bg-[#E6EFEA]/55 hover:border-[#8FA99E]"
+                        : "border-[#DCE5E8] bg-white hover:border-[#B7CBC2]"
                     }`}
                   >
                     <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span
-                          className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
-                            isDream
-                              ? "bg-purple-100 text-purple-700"
-                              : isSafe
-                              ? "bg-emerald-100 text-emerald-700"
-                              : "bg-blue-100 text-blue-700"
-                          }`}
+                      <div className="flex items-center justify-between gap-2">
+                        <StatusBadge
+                          tone={isDream ? "warm" : isSafe ? "sage" : "misty"}
+                          className="uppercase"
                         >
                           {rec.tier} Tier
-                        </span>
-                        <span className="text-xs font-semibold text-gray-500">{rec.country}</span>
+                        </StatusBadge>
+                        <span className="text-xs font-semibold text-[#546866]">{rec.country}</span>
                       </div>
 
                       <div>
-                        <h3 className="text-base font-bold text-[hsl(222,47%,11%)]">
+                        <h3 className="text-base font-bold text-[#263331]">
                           {rec.university_name}
                         </h3>
-                        <p className="text-xs font-semibold text-[hsl(166,72%,40%)] mt-0.5">
+                        <p className="text-xs font-semibold text-[#3F6258] mt-0.5">
                           {rec.course_name}
                         </p>
-                        <p className="text-[11px] text-gray-400 mt-0.5">Intake: {rec.intake}</p>
+                        <p className="text-[11px] text-[#546866] mt-0.5">Intake: {rec.intake}</p>
                       </div>
 
                       {/* Rationale */}
-                      <div className="rounded-xl bg-white p-3 border border-gray-100 text-xs text-gray-700">
-                        <span className="font-semibold text-gray-900 block mb-1 flex items-center gap-1">
-                          <ThumbsUp className="h-3 w-3 text-[hsl(166,72%,40%)]" /> Why Recommended:
+                      <div className="rounded-xl bg-white p-3.5 border border-[#DCE5E8] text-xs text-[#394B49]">
+                        <span className="font-semibold text-[#263331] block mb-1 flex items-center gap-1">
+                          <ThumbsUp className="h-3 w-3 text-[#2F6B55]" /> Why Recommended:
                         </span>
-                        <p className="text-[11px] text-gray-600 leading-relaxed">
+                        <p className="text-[11px] text-[#546866] leading-relaxed">
                           {rec.match_reason}
                         </p>
                       </div>
 
                       {/* Metrics */}
-                      <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-gray-100">
+                      <div className="grid grid-cols-2 gap-2 text-xs pt-2.5 border-t border-[#DCE5E8]">
                         <div>
-                          <span className="text-[10px] text-gray-400 block">Tuition Estimate:</span>
-                          <span className="font-semibold text-gray-800 text-[11px]">
+                          <span className="text-[10px] text-[#546866] block">Tuition Estimate:</span>
+                          <span className="font-semibold text-[#263331] text-[11px]">
                             {rec.tuition_fee_range || "Contact Counsellor"}
                           </span>
                         </div>
                         <div>
-                          <span className="text-[10px] text-gray-400 block">Admission Chance:</span>
-                          <span className="font-bold text-[hsl(166,72%,40%)] text-[11px]">
+                          <span className="text-[10px] text-[#546866] block">Admission Chance:</span>
+                          <span className="font-bold text-[#2F6B55] text-[11px]">
                             {rec.admission_chance || "Good Fit"}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="pt-4 mt-4 border-t border-gray-100">
+                    <div className="pt-4 mt-4 border-t border-[#DCE5E8]">
                       {isShortlisted ? (
-                        <div className="flex items-center justify-center gap-1.5 py-2 text-xs font-bold text-emerald-700 bg-emerald-100/70 rounded-lg">
+                        <div className="flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold text-[#2F6B55] bg-[#EDF5F1] border border-[#B7CBC2] rounded-xl">
                           <CheckCircle2 className="h-4 w-4" />
                           Shortlisted in Your Dossier
                         </div>
                       ) : (
-                        <button
+                        <Button
+                          type="button"
+                          variant="primary"
+                          size="sm"
+                          loading={shortlistingId === rec.id}
                           onClick={() => handleShortlistRecommendation(rec.id)}
                           disabled={shortlistingId === rec.id}
-                          className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition disabled:opacity-50"
+                          className="w-full"
                         >
-                          {shortlistingId === rec.id ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <Plus className="h-3.5 w-3.5" />
-                          )}
+                          <Plus className="h-3.5 w-3.5" />
                           Shortlist This University
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </div>
@@ -595,24 +611,26 @@ export default function StudentUniversitiesPage() {
       {activeTab === "catalog" && (
         <div className="space-y-6">
           {/* Search & Filters */}
-          <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="beyond-card p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="relative w-full md:w-96">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#546866]" />
               <input
                 type="text"
                 placeholder="Search university or city..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={`${INPUT_CLASS} pl-9`}
               />
             </div>
 
-            <div className="flex items-center gap-2 w-full md:w-auto">
-              <label className="text-xs font-semibold text-gray-500 whitespace-nowrap">Country:</label>
+            <div className="flex items-center gap-2.5 w-full md:w-auto">
+              <label className="text-xs font-semibold text-[#546866] whitespace-nowrap">
+                Country:
+              </label>
               <select
                 value={selectedCountry}
                 onChange={(e) => setSelectedCountry(e.target.value)}
-                className="w-full md:w-56 py-2 px-3 text-xs rounded-lg border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={`${SELECT_CLASS} md:w-56`}
               >
                 <option value="">All Destinations</option>
                 {countries.map((c) => (
@@ -625,10 +643,21 @@ export default function StudentUniversitiesPage() {
           </div>
 
           {/* Directory Grid */}
-          {filteredCatalog.length === 0 ? (
-            <div className="p-12 text-center bg-white rounded-2xl border border-gray-100">
-              <Building2 className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-              <p className="text-sm font-semibold text-gray-700">No universities match your filter</p>
+          {loadingCatalog ? (
+            <div className="space-y-6">
+              <div className="beyond-card p-8 flex justify-center">
+                <GlobalOrbitLoader label="Syncing global university directory…" size="md" />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <SkeletonCard />
+                <SkeletonCard />
+                <SkeletonCard />
+              </div>
+            </div>
+          ) : filteredCatalog.length === 0 ? (
+            <div className="beyond-card p-12 text-center">
+              <Building2 className="h-8 w-8 text-[#546866] mx-auto mb-2" />
+              <p className="text-sm font-semibold text-[#263331]">No universities match your filter</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -637,51 +666,55 @@ export default function StudentUniversitiesPage() {
                 return (
                   <div
                     key={uni.id}
-                    className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm hover:shadow-md transition flex flex-col justify-between"
+                    className="beyond-card beyond-card-interactive p-6 flex flex-col justify-between"
                   >
                     <div>
-                      <div className="flex items-start justify-between mb-3">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 px-2.5 py-0.5 rounded-full">
+                      <div className="flex items-start justify-between gap-2 mb-3">
+                        <StatusBadge tone="sage" className="uppercase">
                           {uni.type || "Public University"}
-                        </span>
+                        </StatusBadge>
                         {uni.ranking && (
-                          <span className="text-xs font-bold text-gray-700 flex items-center gap-1">
-                            <Sparkles className="h-3 w-3 text-amber-500" />
+                          <span className="text-xs font-bold text-[#263331] flex items-center gap-1">
+                            <Sparkles className="h-3 w-3 text-[#8E572C]" />
                             Rank #{uni.ranking}
                           </span>
                         )}
                       </div>
 
-                      <h3 className="text-base font-bold text-[hsl(222,47%,11%)] leading-snug">
+                      <h3 className="text-base font-bold text-[#263331] leading-snug">
                         {uni.name}
                       </h3>
-                      <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
-                        <MapPin className="h-3.5 w-3.5 text-gray-400 shrink-0" />
+                      <p className="text-xs text-[#546866] mt-1.5 flex items-center gap-1">
+                        <MapPin className="h-3.5 w-3.5 text-[#546866] shrink-0" />
                         {uni.city ? `${uni.city}, ` : ""}
                         {countryName}
                       </p>
                     </div>
 
-                    <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between gap-2">
-                      {uni.website && (
+                    <div className="pt-4 mt-4 border-t border-[#DCE5E8] flex items-center justify-between gap-2">
+                      {uni.website ? (
                         <a
                           href={uni.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-gray-400 hover:text-[hsl(166,72%,40%)] flex items-center gap-1 transition"
+                          className="text-xs text-[#546866] hover:text-[#394B49] flex items-center gap-1 transition"
                         >
                           <ExternalLink className="h-3.5 w-3.5" />
                           Official Site
                         </a>
+                      ) : (
+                        <span />
                       )}
 
-                      <button
+                      <Button
+                        type="button"
+                        variant="sage"
+                        size="sm"
                         onClick={() => handlePreFillNominate(uni)}
-                        className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)] px-3 py-1.5 text-xs font-bold hover:bg-[hsl(166,72%,40%)] hover:text-white transition"
                       >
                         <Plus className="h-3.5 w-3.5" />
                         Nominate
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 );
@@ -694,175 +727,165 @@ export default function StudentUniversitiesPage() {
       {/* ===================================================================== */}
       {/* MODAL: Nominate University for Counsellor Review                     */}
       {/* ===================================================================== */}
-      {isNominateOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setIsNominateOpen(false)}
-              className="absolute right-5 top-5 text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-5 w-5" />
-            </button>
+      <ModalShell
+        isOpen={isNominateOpen}
+        onClose={() => setIsNominateOpen(false)}
+        title="Nominate University for Counsellor Review"
+        subtitle="Enter your target university details. Your counsellor will evaluate admission cutoffs and return their verdict."
+        maxWidth="max-w-lg"
+      >
+        <div className="max-h-[75vh] overflow-y-auto pr-1">
+          <div className="mb-4">
+            <StatusBadge tone="sage" className="uppercase tracking-wider">
+              Student Choice Nomination
+            </StatusBadge>
+          </div>
 
-            <div className="mb-6">
-              <span className="text-xs font-bold uppercase tracking-wider text-[hsl(166,72%,40%)]">
-                Student Choice Nomination
-              </span>
-              <h3 className="text-xl font-bold text-[hsl(222,47%,11%)] mt-1">
-                Nominate University for Counsellor Review
-              </h3>
-              <p className="text-xs text-gray-500 mt-1">
-                Enter your target university details. Your counsellor will evaluate admission cutoffs and return their verdict.
-              </p>
+          <form onSubmit={handleNominateSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                University Name *
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Technical University of Munich (TUM)"
+                value={nominateForm.university_name}
+                onChange={(e) =>
+                  setNominateForm({ ...nominateForm, university_name: e.target.value })
+                }
+                className={INPUT_CLASS}
+              />
             </div>
 
-            <form onSubmit={handleNominateSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  University Name *
+                <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                  Country *
                 </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Technical University of Munich (TUM)"
-                  value={nominateForm.university_name}
+                <select
+                  value={nominateForm.country}
                   onChange={(e) =>
-                    setNominateForm({ ...nominateForm, university_name: e.target.value })
+                    setNominateForm({ ...nominateForm, country: e.target.value })
                   }
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Country *
-                  </label>
-                  <select
-                    value={nominateForm.country}
-                    onChange={(e) =>
-                      setNominateForm({ ...nominateForm, country: e.target.value })
-                    }
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)] bg-white"
-                  >
-                    <option value="Germany">Germany</option>
-                    <option value="United States">United States</option>
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Australia">Australia</option>
-                    <option value="Ireland">Ireland</option>
-                    <option value="France">France</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Target Intake *
-                  </label>
-                  <select
-                    value={nominateForm.intake}
-                    onChange={(e) =>
-                      setNominateForm({ ...nominateForm, intake: e.target.value })
-                    }
-                    className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)] bg-white"
-                  >
-                    <option value="Spring 2027">Spring 2027</option>
-                    <option value="Fall 2027">Fall 2027</option>
-                    <option value="Spring 2028">Spring 2028</option>
-                    <option value="Fall 2028">Fall 2028</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  Course / Program Name *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. M.Sc. Informatics / Data Science"
-                  value={nominateForm.course_name}
-                  onChange={(e) =>
-                    setNominateForm({ ...nominateForm, course_name: e.target.value })
-                  }
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  Priority Stratification Tier
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: "dream", label: "🌟 Dream", desc: "Ambitious target" },
-                    { id: "target", label: "🎯 Target", desc: "Strong match" },
-                    { id: "safe", label: "🛡️ Safe", desc: "High probability" },
-                  ].map((t) => (
-                    <button
-                      key={t.id}
-                      type="button"
-                      onClick={() =>
-                        setNominateForm({
-                          ...nominateForm,
-                          tier: t.id as "dream" | "target" | "safe",
-                        })
-                      }
-                      className={`p-2.5 rounded-xl border text-left transition ${
-                        nominateForm.tier === t.id
-                          ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)]"
-                          : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                      }`}
-                    >
-                      <div className="text-xs font-bold">{t.label}</div>
-                      <div className="text-[10px] text-gray-400 mt-0.5">{t.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  Notes / Specific Questions for Counsellor
-                </label>
-                <textarea
-                  rows={3}
-                  placeholder="e.g. I have 8.1 CGPA and 314 GRE. Please check if fee waivers or curricular analysis are required."
-                  value={nominateForm.student_notes}
-                  onChange={(e) =>
-                    setNominateForm({ ...nominateForm, student_notes: e.target.value })
-                  }
-                  className="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs focus:outline-none focus:border-[hsl(166,72%,40%)]"
-                />
-              </div>
-
-              <div className="pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={() => setIsNominateOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-gray-600 hover:text-gray-900"
+                  className={SELECT_CLASS}
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submittingNomination}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-5 py-2 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition disabled:opacity-50"
-                >
-                  {submittingNomination ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Send className="h-3.5 w-3.5" />
-                  )}
-                  Submit for Evaluation
-                </button>
+                  <option value="Germany">Germany</option>
+                  <option value="United States">United States</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="Canada">Canada</option>
+                  <option value="Australia">Australia</option>
+                  <option value="Ireland">Ireland</option>
+                  <option value="France">France</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
-            </form>
-          </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                  Target Intake *
+                </label>
+                <select
+                  value={nominateForm.intake}
+                  onChange={(e) =>
+                    setNominateForm({ ...nominateForm, intake: e.target.value })
+                  }
+                  className={SELECT_CLASS}
+                >
+                  <option value="Spring 2027">Spring 2027</option>
+                  <option value="Fall 2027">Fall 2027</option>
+                  <option value="Spring 2028">Spring 2028</option>
+                  <option value="Fall 2028">Fall 2028</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                Course / Program Name *
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. M.Sc. Informatics / Data Science"
+                value={nominateForm.course_name}
+                onChange={(e) =>
+                  setNominateForm({ ...nominateForm, course_name: e.target.value })
+                }
+                className={INPUT_CLASS}
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                Priority Stratification Tier
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: "dream", label: "Dream", desc: "Ambitious target" },
+                  { id: "target", label: "Target", desc: "Strong match" },
+                  { id: "safe", label: "Safe", desc: "High probability" },
+                ].map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() =>
+                      setNominateForm({
+                        ...nominateForm,
+                        tier: t.id as "dream" | "target" | "safe",
+                      })
+                    }
+                    className={`p-2.5 rounded-xl border text-left transition cursor-pointer ${
+                      nominateForm.tier === t.id
+                        ? "border-[#394B49] bg-[#E6EFEA] text-[#263331]"
+                        : "border-[#DCE5E8] text-[#546866] hover:bg-[#F3F0E8]"
+                    }`}
+                  >
+                    <div className="text-xs font-bold">{t.label}</div>
+                    <div className="text-[10px] text-[#546866] mt-0.5">{t.desc}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                Notes / Specific Questions for Counsellor
+              </label>
+              <textarea
+                rows={3}
+                placeholder="e.g. I have 8.1 CGPA and 314 GRE. Please check if fee waivers or curricular analysis are required."
+                value={nominateForm.student_notes}
+                onChange={(e) =>
+                  setNominateForm({ ...nominateForm, student_notes: e.target.value })
+                }
+                className={INPUT_CLASS}
+              />
+            </div>
+
+            <div className="pt-4 border-t border-[#DCE5E8] flex items-center justify-end gap-3">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsNominateOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                size="sm"
+                loading={submittingNomination}
+                disabled={submittingNomination}
+              >
+                <Send className="h-3.5 w-3.5" />
+                Submit for Evaluation
+              </Button>
+            </div>
+          </form>
         </div>
-      )}
+      </ModalShell>
     </div>
   );
 }

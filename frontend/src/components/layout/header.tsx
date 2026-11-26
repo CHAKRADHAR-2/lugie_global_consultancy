@@ -1,199 +1,198 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import { APP_NAME, PUBLIC_NAV_ITEMS } from "@/lib/constants";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { PUBLIC_NAV_ITEMS } from "@/lib/constants";
+import { BEYOND_EASE } from "@/lib/design-tokens";
+import { buttonVariants } from "@/components/ui/button";
 
 export function Header() {
+  const pathname = usePathname();
+  const prefersReduced = useReducedMotion();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
-  const [lastY, setLastY] = useState(0);
 
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 20);
-      setHidden(y > 100 && y > lastY);
-      setLastY(y);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [lastY]);
+  }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", onKeyDown);
+    };
   }, [mobileOpen]);
 
   return (
     <>
-      <motion.header
-        className={`sticky top-0 z-50 transition-all duration-300 ${
+      <header
+        className={`sticky top-0 z-50 border-b transition-all duration-300 ${
           scrolled
-            ? "border-b border-white/5 bg-[hsl(222,47%,11%)]/95 shadow-lg shadow-black/10 backdrop-blur-xl"
-            : "bg-[hsl(222,47%,11%)] backdrop-blur-sm"
+            ? "border-[#DCE5E8] bg-[#F3F0E8]/95 backdrop-blur-md shadow-[0_4px_20px_-8px_rgba(57,75,73,0.12)]"
+            : "border-[#DCE5E8]/80 bg-[#F3F0E8]"
         }`}
-        animate={{ y: hidden ? -100 : 0 }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
       >
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
-          {/* Logo */}
-          <Link href="/" className="group flex items-center gap-1.5">
-            <span className="text-2xl font-black tracking-tight text-white">
+        <nav
+          aria-label="Primary navigation"
+          className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8"
+        >
+          {/* Editorial Brand Mark */}
+          <Link
+            href="/"
+            className="group flex items-baseline gap-1.5 rounded-lg py-0.5 focus-visible:outline-2 focus-visible:outline-[#394B49]"
+          >
+            <span className="font-editorial text-2xl tracking-tight text-[#394B49]">
               LUGIE
             </span>
-            <motion.span
-              className="inline-block h-2 w-2 rounded-full bg-[hsl(166,72%,40%)]"
-              animate={{ scale: [1, 1.3, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            <span
+              className="inline-block h-2 w-2 rounded-full bg-[#D9A879] transition-transform duration-300 group-hover:scale-125"
+              aria-hidden="true"
             />
+            <span className="hidden sm:inline-block ml-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#546866]">
+              Global Consultancy
+            </span>
           </Link>
 
-          {/* Desktop Nav */}
+          {/* Desktop Links */}
           <div className="hidden items-center gap-1 lg:flex">
-            {PUBLIC_NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="group relative px-4 py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
-              >
-                {item.label}
-                <span className="absolute bottom-0 left-1/2 h-[2px] w-0 -translate-x-1/2 rounded-full bg-[hsl(166,72%,40%)] transition-all duration-300 group-hover:w-3/4" />
-              </Link>
-            ))}
+            {PUBLIC_NAV_ITEMS.map((item) => {
+              const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`group relative px-3.5 py-2 text-sm font-medium transition-colors rounded-lg ${
+                    isActive
+                      ? "text-[#263331] font-semibold"
+                      : "text-[#546866] hover:text-[#394B49]"
+                  }`}
+                >
+                  {item.label}
+                  <span
+                    className={`absolute bottom-1 left-1/2 h-[2px] -translate-x-1/2 rounded-full bg-[#B7CBC2] transition-all duration-300 ${
+                      isActive ? "w-2/3 bg-[#D9A879]" : "w-0 group-hover:w-2/3"
+                    }`}
+                  />
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Auth & CTA buttons */}
-          <div className="hidden items-center gap-3 lg:flex">
+          {/* Auth & CTA */}
+          <div className="hidden items-center gap-2.5 lg:flex">
             <Link
               href="/login"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-white/70 transition-colors hover:bg-white/5 hover:text-white"
+              className={buttonVariants({ variant: "ghost", size: "sm" })}
             >
-              Login
+              Sign in
             </Link>
             <Link
               href="/register"
-              className="rounded-lg border border-white/15 px-4 py-2 text-xs font-semibold text-white transition-all hover:border-white/30 hover:bg-white/5"
+              className={buttonVariants({ variant: "secondary", size: "sm" })}
             >
               Register
             </Link>
             <Link
               href="/book-consultation"
-              className="relative overflow-hidden rounded-lg bg-[hsl(166,72%,40%)] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-[hsl(166,72%,40%)]/20 transition-all hover:bg-[hsl(166,72%,46%)] hover:shadow-lg hover:shadow-[hsl(166,72%,40%)]/30 active:scale-[0.98]"
+              className={buttonVariants({ variant: "warm", size: "sm" })}
             >
               Book Free Assessment
             </Link>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile Menu Trigger */}
           <button
-            className="relative z-50 lg:hidden text-white p-1"
+            type="button"
+            className="relative z-50 rounded-xl border border-[#DCE5E8] bg-white p-2 text-[#394B49] shadow-xs transition hover:bg-[#EAE5D9] lg:hidden cursor-pointer"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            aria-label={mobileOpen ? "Close navigation menu" : "Open navigation menu"}
+            aria-expanded={mobileOpen}
           >
-            <AnimatePresence mode="wait">
-              {mobileOpen ? (
-                <motion.div
-                  key="close"
-                  initial={{ rotate: -90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: 90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <X size={24} />
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="menu"
-                  initial={{ rotate: 90, opacity: 0 }}
-                  animate={{ rotate: 0, opacity: 1 }}
-                  exit={{ rotate: -90, opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Menu size={24} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </nav>
-      </motion.header>
+      </header>
 
-      {/* Mobile Nav Overlay */}
+      {/* Mobile Navigation Drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             className="fixed inset-0 z-40 lg:hidden"
-            initial={{ opacity: 0 }}
+            initial={prefersReduced ? false : { opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
           >
-            {/* Backdrop */}
             <div
-              className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+              className="absolute inset-0 bg-[#263331]/35 backdrop-blur-[2px]"
               onClick={() => setMobileOpen(false)}
             />
-
-            {/* Panel */}
             <motion.div
-              className="absolute right-0 top-0 h-full w-[280px] bg-[hsl(222,47%,11%)] shadow-2xl"
-              initial={{ x: "100%" }}
+              className="absolute right-0 top-0 h-full w-[300px] border-l border-[#DCE5E8] bg-[#F3F0E8] shadow-2xl overflow-y-auto"
+              initial={prefersReduced ? false : { x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              transition={prefersReduced ? { duration: 0.1 } : { duration: 0.3, ease: BEYOND_EASE.editorial }}
             >
-              <div className="flex flex-col gap-1 px-6 pt-20 pb-6">
-                {PUBLIC_NAV_ITEMS.map((item, i) => (
-                  <motion.div
-                    key={item.href}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 + 0.1 }}
-                  >
+              <div className="flex flex-col gap-1 px-6 pt-20 pb-8">
+                <p className="px-3 pb-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-[#546866]">
+                  Explore Lugie
+                </p>
+                {PUBLIC_NAV_ITEMS.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
                     <Link
+                      key={item.href}
                       href={item.href}
-                      className="block rounded-lg px-4 py-3 text-sm font-medium text-white/80 transition-colors hover:bg-white/5 hover:text-white"
                       onClick={() => setMobileOpen(false)}
+                      className={`block rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
+                        isActive
+                          ? "bg-[#E6EFEA] border border-[#B7CBC2] text-[#263331] font-semibold"
+                          : "text-[#394B49] hover:bg-white"
+                      }`}
                     >
                       {item.label}
                     </Link>
-                  </motion.div>
-                ))}
+                  );
+                })}
 
-                <hr className="my-4 border-white/10" />
+                <hr className="my-4 border-[#DCE5E8]" />
 
-                <motion.div
-                  className="flex flex-col gap-3"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.4 }}
-                >
+                <div className="flex flex-col gap-2.5">
                   <Link
                     href="/login"
-                    className="rounded-lg border border-white/15 py-2.5 text-center text-sm font-medium text-white/80"
+                    className={buttonVariants({ variant: "secondary", size: "md", className: "w-full" })}
                     onClick={() => setMobileOpen(false)}
                   >
-                    Login
+                    Sign in
                   </Link>
                   <Link
                     href="/register"
-                    className="rounded-lg border border-white/15 py-2.5 text-center text-sm font-semibold text-white"
+                    className={buttonVariants({ variant: "primary", size: "md", className: "w-full" })}
                     onClick={() => setMobileOpen(false)}
                   >
-                    Register
+                    Create Student Account
                   </Link>
                   <Link
                     href="/book-consultation"
-                    className="rounded-lg bg-[hsl(166,72%,40%)] py-3 text-center text-sm font-bold text-white"
+                    className={buttonVariants({ variant: "warm", size: "md", className: "w-full" })}
                     onClick={() => setMobileOpen(false)}
                   >
                     Book Free Assessment
                   </Link>
-                </motion.div>
+                </div>
               </div>
             </motion.div>
           </motion.div>

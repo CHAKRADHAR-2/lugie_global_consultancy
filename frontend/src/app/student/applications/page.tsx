@@ -9,13 +9,13 @@ import {
   Plus,
   Clock,
   CheckCircle2,
-  Calendar,
-  Building2,
-  Loader2,
-  ChevronRight,
-  AlertCircle,
-  FileText,
+  Compass,
 } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { HorizonPath } from "@/components/ui/horizon-path";
+import { GrowingHorizonLoader } from "@/components/ui/loading-concepts";
+import { SkeletonJourney } from "@/components/ui/skeleton";
+import { StatusBadge } from "@/components/ui/feedback";
 
 interface Application {
   id: string;
@@ -36,6 +36,43 @@ interface TimelineItem {
   notes: string | null;
   changed_at: string;
 }
+
+function getStatusBadgeTone(status: string): "success" | "sage" | "warm" | "misty" | "warning" | "error" {
+  const s = status.toLowerCase();
+  if (s.includes("offer") || s.includes("accept") || s.includes("enroll") || s.includes("approv")) {
+    return "success";
+  }
+  if (s.includes("submit") || s.includes("review")) {
+    return "sage";
+  }
+  if (s.includes("pending") || s.includes("wait")) {
+    return "warning";
+  }
+  if (s.includes("reject") || s.includes("declin")) {
+    return "error";
+  }
+  if (s.includes("draft")) {
+    return "warm";
+  }
+  return "misty";
+}
+
+function getStageIndex(status: string): number {
+  const s = status.toLowerCase();
+  if (s.includes("enroll") || s.includes("visa")) return 4;
+  if (s.includes("offer") || s.includes("accept") || s.includes("decision")) return 3;
+  if (s.includes("review") || s.includes("interview")) return 2;
+  if (s.includes("submit")) return 1;
+  return 0;
+}
+
+const APPLICATION_STAGES = [
+  "Draft",
+  "Submitted",
+  "Under Review",
+  "Decision / Offer",
+  "Visa & Enrolled",
+];
 
 export default function StudentApplicationsPage() {
   const [applications, setApplications] = useState<Application[]>([]);
@@ -81,26 +118,24 @@ export default function StudentApplicationsPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
-      </div>
-    );
+    return <SkeletonJourney />;
   }
 
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">My Applications</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="font-editorial text-2xl sm:text-3xl text-[#263331]">
+            My Applications
+          </h1>
+          <p className="mt-1 text-sm text-[#546866]">
             Track your submissions across international university admission committees.
           </p>
         </div>
 
         <Link
           href="/student/universities"
-          className="inline-flex items-center gap-2 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
+          className={buttonVariants({ variant: "primary", size: "md" })}
         >
           <Plus className="h-4 w-4" />
           Apply to Another University
@@ -108,15 +143,17 @@ export default function StudentApplicationsPage() {
       </div>
 
       {applications.length === 0 ? (
-        <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center max-w-lg mx-auto shadow-sm">
-          <GraduationCap className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-          <h2 className="text-lg font-bold text-gray-900">No active applications</h2>
-          <p className="text-xs text-gray-500 mt-1 mb-6">
+        <div className="beyond-card p-12 text-center max-w-lg mx-auto">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E6EFEA] border border-[#B7CBC2] text-[#3F6258]">
+            <GraduationCap className="h-6 w-6" />
+          </div>
+          <h2 className="font-editorial text-xl text-[#263331]">No active applications</h2>
+          <p className="text-xs text-[#546866] mt-1.5 mb-6">
             Browse our catalog of verified universities in the UK, USA, Germany, Canada, and Ireland.
           </p>
           <Link
             href="/student/universities"
-            className="rounded-lg bg-[hsl(166,72%,40%)] px-6 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)]"
+            className={buttonVariants({ variant: "primary", size: "md" })}
           >
             Explore University Directory
           </Link>
@@ -133,25 +170,25 @@ export default function StudentApplicationsPage() {
                   onClick={() => handleSelectApp(app)}
                   className={`cursor-pointer rounded-2xl p-5 border transition ${
                     isSelected
-                      ? "border-[hsl(166,72%,40%)] bg-white shadow-md ring-2 ring-[hsl(166,72%,40%)]/10"
-                      : "border-gray-100 bg-white hover:border-gray-200 shadow-sm"
+                      ? "border-[#394B49] bg-white shadow-md ring-2 ring-[#B7CBC2]/70"
+                      : "beyond-card beyond-card-interactive"
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-sm text-gray-900">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="font-bold text-sm text-[#263331]">
                       {app.application_reference || `Application #${app.id.slice(0, 8)}`}
                     </span>
-                    <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-blue-700">
+                    <StatusBadge tone={getStatusBadgeTone(app.status)} className="uppercase">
                       {app.status}
-                    </span>
+                    </StatusBadge>
                   </div>
 
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-[#546866]">
                     Created on {new Date(app.created_at).toLocaleDateString()}
                   </p>
 
                   {app.deadline && (
-                    <div className="mt-3 flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 px-2 py-1 rounded w-fit">
+                    <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-[#8A5A1E] bg-[#FCF6EC] border border-[#D9A879]/60 px-2.5 py-1 rounded-lg">
                       <Clock className="h-3 w-3 shrink-0" />
                       <span>Deadline: {app.deadline}</span>
                     </div>
@@ -161,57 +198,116 @@ export default function StudentApplicationsPage() {
             })}
           </div>
 
-          {/* Application Detail & Status History */}
+          {/* Application Detail & Horizon Path Status History */}
           <div className="lg:col-span-7">
             {selectedApp && (
-              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-6">
-                <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+              <div className="beyond-card p-6 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#DCE5E8]">
                   <div>
-                    <h3 className="text-lg font-bold text-[hsl(222,47%,11%)]">
+                    <h3 className="text-lg font-bold text-[#263331]">
                       {selectedApp.application_reference || `Application Details`}
                     </h3>
-                    <p className="text-xs text-gray-400 mt-0.5">ID: {selectedApp.id}</p>
+                    <p className="text-xs font-mono text-[#546866] mt-0.5">
+                      ID: {selectedApp.id}
+                    </p>
                   </div>
-                  <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
+                  <StatusBadge tone={getStatusBadgeTone(selectedApp.status)} className="uppercase self-start sm:self-auto">
                     Status: {selectedApp.status.toUpperCase()}
-                  </span>
+                  </StatusBadge>
+                </div>
+
+                {/* Calm Horizon Path Stage Progress */}
+                <div className="rounded-xl bg-[#F3F0E8]/60 border border-[#DCE5E8] p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#394B49]">
+                      <Compass className="h-3.5 w-3.5 text-[#8E572C]" />
+                      Horizon Path Milestone Tracker
+                    </span>
+                    <div className="w-28 sm:w-36">
+                      <HorizonPath variant="compact" />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                    {APPLICATION_STAGES.map((stage, idx) => {
+                      const activeIdx = getStageIndex(selectedApp.status);
+                      const isCompleted = idx < activeIdx;
+                      const isCurrent = idx === activeIdx;
+                      return (
+                        <div
+                          key={stage}
+                          className={`rounded-lg border px-2.5 py-2 text-center transition ${
+                            isCompleted
+                              ? "bg-[#E6EFEA] border-[#B7CBC2] text-[#2F6B55]"
+                              : isCurrent
+                              ? "bg-[#F6EDE4] border-[#D9A879] text-[#263331]"
+                              : "bg-white border-[#DCE5E8] text-[#546866]"
+                          }`}
+                        >
+                          <div className="text-[10px] font-bold flex items-center justify-center gap-1">
+                            {isCompleted && <CheckCircle2 className="h-3 w-3 shrink-0" />}
+                            <span>{stage}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {/* Notes or Guidance */}
                 {selectedApp.notes && (
-                  <div className="rounded-xl bg-gray-50 p-4 border border-gray-100 text-xs text-gray-600">
-                    <span className="font-bold text-gray-900 block mb-1">Counsellor Notes:</span>
+                  <div className="rounded-xl bg-[#F3F0E8]/60 p-4 border border-[#DCE5E8] text-xs text-[#394B49]">
+                    <span className="font-bold text-[#263331] block mb-1">Counsellor Notes:</span>
                     {selectedApp.notes}
                   </div>
                 )}
 
                 {/* Timeline History */}
                 <div>
-                  <h4 className="text-sm font-bold text-[hsl(222,47%,11%)] mb-4">
-                    Status History & Milestones
+                  <h4 className="text-sm font-bold text-[#263331] mb-4">
+                    Status History &amp; Milestones
                   </h4>
 
                   {loadingTimeline ? (
-                    <div className="py-8 text-center text-xs text-gray-400">Loading timeline...</div>
+                    <div className="py-8 flex justify-center">
+                      <GrowingHorizonLoader size="sm" label="Loading application milestones…" />
+                    </div>
                   ) : timeline.length === 0 ? (
-                    <p className="text-xs text-gray-400 italic">No status changes recorded yet.</p>
+                    <div className="rounded-xl border border-dashed border-[#B7CBC2] bg-[#F3F0E8]/40 p-5 text-center">
+                      <p className="text-xs text-[#546866] italic">
+                        No status changes recorded yet.
+                      </p>
+                    </div>
                   ) : (
-                    <div className="relative pl-6 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-gray-200">
-                      {timeline.map((item, idx) => (
-                        <div key={item.id} className="relative">
-                          <div className="absolute -left-6 top-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[hsl(166,72%,40%)] shadow-sm" />
-                          <div>
-                            <span className="text-xs font-bold text-gray-900 block">
-                              Status changed to:{" "}
-                              <span className="text-[hsl(166,72%,40%)]">{item.to_status}</span>
-                            </span>
-                            {item.notes && <p className="text-xs text-gray-600 mt-0.5">{item.notes}</p>}
-                            <span className="text-[10px] text-gray-400 mt-1 block">
-                              {new Date(item.changed_at).toLocaleString()}
-                            </span>
+                    <div className="relative pl-7 space-y-6 before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-[#B7CBC2]">
+                      {timeline.map((item, idx) => {
+                        const isLatest = idx === 0;
+                        return (
+                          <div key={item.id} className="relative">
+                            <div
+                              className={`absolute -left-7 top-1 h-4 w-4 rounded-full border-2 border-white shadow-xs ${
+                                isLatest ? "bg-[#D9A879]" : "bg-[#394B49]"
+                              }`}
+                            />
+                            <div className="rounded-xl border border-[#DCE5E8] bg-[#F3F0E8]/40 p-3.5">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <span className="text-xs font-semibold text-[#263331]">
+                                  Status changed to:{" "}
+                                  <span className="text-[#3F6258] font-bold">{item.to_status}</span>
+                                </span>
+                                <span className="text-[10px] font-medium text-[#546866]">
+                                  {new Date(item.changed_at).toLocaleString()}
+                                </span>
+                              </div>
+                              {item.notes && (
+                                <p className="text-xs text-[#546866] mt-1.5 leading-relaxed">
+                                  {item.notes}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>

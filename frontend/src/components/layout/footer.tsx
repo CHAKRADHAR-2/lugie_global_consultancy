@@ -11,49 +11,51 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative bg-[hsl(222,47%,8%)] text-white/70 overflow-hidden">
-      {/* Decorative gradient mesh */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute -top-32 -left-32 h-64 w-64 rounded-full bg-[hsl(166,72%,40%)] opacity-[0.03] blur-[80px]" />
-        <div className="absolute -bottom-20 -right-20 h-48 w-48 rounded-full bg-[hsl(45,93%,58%)] opacity-[0.03] blur-[60px]" />
-      </div>
+    <footer className="relative bg-[#394B49] text-[#F3F0E8]/85 border-t border-[#263331]">
+      {/* Subtle Horizon accent hairline */}
+      <div
+        className="h-1 w-full bg-gradient-to-r from-[#B7CBC2] via-[#D9A879] to-[#DCE5E8]"
+        aria-hidden="true"
+      />
 
-      <div className="relative mx-auto max-w-7xl px-6 pt-16 pb-8 lg:px-8">
+      <div className="relative mx-auto max-w-7xl px-6 pt-16 pb-10 lg:px-8">
         <StaggerContainer className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
+          {/* Brand Column */}
           <StaggerItem>
             <div>
-              <span className="text-2xl font-black tracking-tight text-white">
-                LUGIE
-                <span className="inline-block h-2 w-2 rounded-full bg-[hsl(166,72%,40%)] ml-1 align-middle" />
-              </span>
-              <p className="mt-2 text-sm font-light italic text-[hsl(45,93%,68%)]">{APP_TAGLINE}</p>
-              <p className="mt-4 text-sm leading-relaxed">
-                Expert overseas education consultancy guiding students to their dream universities worldwide.
+              <Link href="/" className="inline-flex items-baseline gap-1.5">
+                <span className="font-editorial text-2xl text-white">LUGIE</span>
+                <span className="inline-block h-2 w-2 rounded-full bg-[#D9A879]" aria-hidden="true" />
+              </Link>
+              <p className="mt-1.5 font-editorial italic text-base text-[#E5BE99]">
+                {APP_TAGLINE}.
               </p>
-              <div className="mt-5 space-y-2">
+              <p className="mt-4 text-sm leading-relaxed text-[#F3F0E8]/75">
+                Honest, founder-led overseas education consultancy guiding students toward global classrooms with clarity.
+              </p>
+              <div className="mt-5 space-y-2.5">
                 <a
                   href="mailto:luckysomisetty17427@gmail.com"
-                  className="flex items-center gap-2 text-xs text-white/50 transition-colors hover:text-[hsl(166,72%,50%)]"
+                  className="flex items-center gap-2 text-xs text-[#F3F0E8]/80 transition-colors hover:text-[#E5BE99]"
                 >
-                  <Mail className="h-3.5 w-3.5" />
+                  <Mail className="h-3.5 w-3.5 text-[#B7CBC2]" aria-hidden="true" />
                   luckysomisetty17427@gmail.com
                 </a>
                 <a
                   href="tel:+919392734699"
-                  className="flex items-center gap-2 text-xs text-white/50 transition-colors hover:text-[hsl(166,72%,50%)]"
+                  className="flex items-center gap-2 text-xs text-[#F3F0E8]/80 transition-colors hover:text-[#E5BE99]"
                 >
-                  <Phone className="h-3.5 w-3.5" />
+                  <Phone className="h-3.5 w-3.5 text-[#B7CBC2]" aria-hidden="true" />
                   +91 93927 34699 / +91 86105 06587
                 </a>
               </div>
             </div>
           </StaggerItem>
 
-          {/* Company */}
+          {/* Company Links */}
           <StaggerItem>
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-white/90">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-[#B7CBC2]">
                 Company
               </h3>
               <ul className="mt-4 space-y-3">
@@ -61,12 +63,13 @@ export function Footer() {
                   { label: "About Us", href: "/about" },
                   { label: "Our Services", href: "/services" },
                   { label: "Pricing & Packages", href: "/pricing" },
+                  { label: "Book Assessment", href: "/book-consultation" },
                   { label: "Contact", href: "/contact" },
                 ].map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm transition-colors hover:text-white"
+                      className="text-sm text-[#F3F0E8]/80 transition-colors hover:text-white hover:underline underline-offset-4 decoration-[#D9A879]"
                     >
                       {link.label}
                     </Link>
@@ -76,11 +79,11 @@ export function Footer() {
             </div>
           </StaggerItem>
 
-          {/* Resources */}
+          {/* Student Resources */}
           <StaggerItem>
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-white/90">
-                Resources
+              <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-[#B7CBC2]">
+                Student Resources
               </h3>
               <ul className="mt-4 space-y-3">
                 {[
@@ -89,11 +92,12 @@ export function Footer() {
                   { label: "Scholarships", href: "/scholarships" },
                   { label: "Education Loans", href: "/loans" },
                   { label: "Visa Assistance", href: "/visa-assistance" },
+                  { label: "Accommodation", href: "/accommodation" },
                 ].map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm transition-colors hover:text-white"
+                      className="text-sm text-[#F3F0E8]/80 transition-colors hover:text-white hover:underline underline-offset-4 decoration-[#D9A879]"
                     >
                       {link.label}
                     </Link>
@@ -103,11 +107,11 @@ export function Footer() {
             </div>
           </StaggerItem>
 
-          {/* Legal */}
+          {/* Legal & Ethics */}
           <StaggerItem>
             <div>
-              <h3 className="text-xs font-bold uppercase tracking-[0.15em] text-white/90">
-                Legal
+              <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-[#B7CBC2]">
+                Governance & Legal
               </h3>
               <ul className="mt-4 space-y-3">
                 {[
@@ -117,29 +121,33 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm transition-colors hover:text-white"
+                      className="text-sm text-[#F3F0E8]/80 transition-colors hover:text-white hover:underline underline-offset-4 decoration-[#D9A879]"
                     >
                       {link.label}
                     </Link>
                   </li>
                 ))}
               </ul>
+              <div className="mt-6 rounded-xl border border-white/10 bg-[#263331]/40 p-4 text-xs leading-relaxed text-[#F3F0E8]/75">
+                Transparent advisory only. Zero hidden university markups or guaranteed visa claims.
+              </div>
             </div>
           </StaggerItem>
         </StaggerContainer>
 
-        {/* Bottom bar */}
-        <FadeIn delay={0.3}>
-          <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
-            <p className="text-xs text-white/40">
+        {/* Bottom Legal Bar */}
+        <FadeIn delay={0.15}>
+          <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-white/15 pt-8 sm:flex-row">
+            <p className="text-xs text-[#F3F0E8]/70">
               © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
             </p>
-            <p className="text-[10px] text-white/30 max-w-md text-center sm:text-right">
-              Lugie is an education consultancy facilitator. We do not guarantee admission, visas, scholarships, or loans.
+            <p className="text-[11px] text-[#F3F0E8]/65 max-w-md text-center sm:text-right">
+              Lugie is an education consultancy facilitator. Admissions committees and embassies retain sole final decision authority.
             </p>
             <button
+              type="button"
               onClick={scrollToTop}
-              className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/40 transition-all hover:border-[hsl(166,72%,40%)] hover:text-[hsl(166,72%,40%)] hover:bg-[hsl(166,72%,40%)]/10"
+              className="group flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-[#263331]/40 text-[#F3F0E8]/80 transition-all hover:border-[#D9A879] hover:text-[#E5BE99] cursor-pointer"
               aria-label="Back to top"
             >
               <ArrowUp className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />

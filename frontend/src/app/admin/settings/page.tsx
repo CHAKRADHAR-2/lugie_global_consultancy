@@ -3,20 +3,14 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { SkeletonCard } from "@/components/ui/skeleton";
 import {
-  Settings,
   Building,
-  Mail,
-  Phone,
-  MessageCircle,
   MapPin,
   ShieldCheck,
   CreditCard,
   Save,
-  Loader2,
-  CheckCircle2,
-  AlertCircle,
-  Info,
 } from "lucide-react";
 
 interface AgencySettings {
@@ -105,36 +99,78 @@ export default function AdminSettingsPage() {
 
   if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
+      <div className="space-y-6 max-w-5xl">
+        <div className="space-y-2">
+          <h1 className="font-editorial text-2xl sm:text-3xl tracking-tight text-[#263331]">
+            Platform &amp; Agency Settings
+          </h1>
+          <p className="text-sm text-[#546866]">Loading agency configuration…</p>
+        </div>
+        <SkeletonCard />
+        <SkeletonCard />
       </div>
     );
   }
+
+  const inputClass =
+    "w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2.5 text-sm text-[#394B49] focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition";
+
+  const policyControls: {
+    key: "enable_student_self_registration" | "enable_simulated_payments" | "require_document_verification";
+    title: string;
+    description: string;
+  }[] = [
+    {
+      key: "enable_student_self_registration",
+      title: "Public Student Self-Registration",
+      description:
+        "Allows prospective students to self-register accounts from the website landing page.",
+    },
+    {
+      key: "enable_simulated_payments",
+      title: "Simulated Advisory Payments Sandbox",
+      description:
+        "Enables students to experience full package enrollment without requiring active gateway API keys.",
+    },
+    {
+      key: "require_document_verification",
+      title: "Strict Counsellor Document Verification",
+      description:
+        "Requires academic transcripts and language test proofs to be verified before visa filing.",
+    },
+  ];
 
   return (
     <div className="space-y-8 max-w-5xl">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)]">Platform & Agency Settings</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8E572C]">
+          Platform Configuration
+        </span>
+        <h1 className="font-editorial text-2xl sm:text-3xl tracking-tight text-[#263331] mt-0.5">
+          Platform &amp; Agency Settings
+        </h1>
+        <p className="mt-1 text-sm text-[#546866]">
           Manage agency branding, corporate headquarters contact channels, and operational access controls.
         </p>
       </div>
 
-      {/* Production Payment Gateway Ready Banner */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-5 shadow-sm">
-        <div className="flex items-start gap-3.5">
-          <div className="p-2 rounded-xl bg-blue-600 text-white shrink-0 mt-0.5">
+      {/* Production Payment Gateway Ready Banner (Forest Slate Highlight) */}
+      <div className="rounded-2xl bg-[#394B49] text-white p-5 sm:p-6 border border-[#263331] shadow-sm">
+        <div className="flex items-start gap-4">
+          <div className="p-2.5 rounded-xl bg-[#D9A879] text-[#263331] shrink-0 mt-0.5">
             <CreditCard className="h-5 w-5" />
           </div>
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold text-blue-950 flex items-center gap-2">
-              Payment Gateway Integration: Sandbox / Pre-Investment Mode
-              <span className="text-[11px] font-semibold bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">
+          <div className="space-y-1.5">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <h2 className="text-sm font-semibold text-white">
+                Payment Gateway Integration: Sandbox / Pre-Investment Mode
+              </h2>
+              <span className="text-[11px] font-semibold bg-[#D9A879] text-[#263331] px-2.5 py-0.5 rounded-full">
                 Zero Code Changes Needed Later
               </span>
-            </h3>
-            <p className="text-xs text-blue-800/80 leading-relaxed">
+            </div>
+            <p className="text-xs text-[#DCE5E8] leading-relaxed">
               The platform is actively operating with an end-to-end simulated transaction flow (order creation, reference assignment, and receipt generation). When you are ready to invest and go live, simply inject your live merchant credentials (Razorpay/Stripe) into the environment variables. The checkout interface will instantly transition to live gateway mode without needing any frontend modifications.
             </p>
           </div>
@@ -143,15 +179,15 @@ export default function AdminSettingsPage() {
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Section 1: Agency Identity & Contact */}
-        <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-          <div className="flex items-center gap-2 pb-4 border-b border-gray-100 text-[hsl(222,47%,11%)]">
-            <Building className="h-5 w-5 text-[hsl(166,72%,40%)]" />
-            <h2 className="text-base font-bold">Brand Identity & Official Channels</h2>
+        <div className="beyond-card p-6 md:p-8 space-y-6">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[#DCE5E8] text-[#263331]">
+            <Building className="h-5 w-5 text-[#3F6258]" />
+            <h2 className="text-base font-semibold">Brand Identity &amp; Official Channels</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5">
+              <label className="text-xs font-semibold text-[#394B49] block mb-1.5">
                 Official Agency Name
               </label>
               <input
@@ -160,12 +196,12 @@ export default function AdminSettingsPage() {
                 value={formData.agency_name}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)] font-medium"
+                className={`${inputClass} font-medium`}
               />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5">
+              <label className="text-xs font-semibold text-[#394B49] block mb-1.5">
                 Brand Tagline
               </label>
               <input
@@ -174,13 +210,13 @@ export default function AdminSettingsPage() {
                 value={formData.tagline}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)] font-medium"
+                className={`${inputClass} font-medium`}
               />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5">
-                Support & Inquiries Email
+              <label className="text-xs font-semibold text-[#394B49] block mb-1.5">
+                Support &amp; Inquiries Email
               </label>
               <input
                 type="email"
@@ -188,12 +224,12 @@ export default function AdminSettingsPage() {
                 value={formData.support_email}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={inputClass}
               />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5">
+              <label className="text-xs font-semibold text-[#394B49] block mb-1.5">
                 Advisory Phone Hotline
               </label>
               <input
@@ -202,13 +238,13 @@ export default function AdminSettingsPage() {
                 value={formData.contact_phone}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={inputClass}
               />
             </div>
 
             <div className="md:col-span-2">
-              <label className="font-semibold text-gray-700 block mb-1.5">
-                Emergency WhatsApp Line (For Visa & Airport Transit)
+              <label className="text-xs font-semibold text-[#394B49] block mb-1.5">
+                Emergency WhatsApp Line (For Visa &amp; Airport Transit)
               </label>
               <input
                 type="text"
@@ -216,23 +252,23 @@ export default function AdminSettingsPage() {
                 value={formData.emergency_whatsapp}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={inputClass}
               />
             </div>
           </div>
         </div>
 
         {/* Section 2: Corporate Address */}
-        <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-          <div className="flex items-center gap-2 pb-4 border-b border-gray-100 text-[hsl(222,47%,11%)]">
-            <MapPin className="h-5 w-5 text-[hsl(166,72%,40%)]" />
-            <h2 className="text-base font-bold">Headquarters Address</h2>
+        <div className="beyond-card p-6 md:p-8 space-y-6">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[#DCE5E8] text-[#263331]">
+            <MapPin className="h-5 w-5 text-[#8E572C]" />
+            <h2 className="text-base font-semibold">Headquarters Address</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="md:col-span-2">
-              <label className="font-semibold text-gray-700 block mb-1.5">
-                Street Address & Suite
+              <label className="text-xs font-semibold text-[#394B49] block mb-1.5">
+                Street Address &amp; Suite
               </label>
               <input
                 type="text"
@@ -240,150 +276,139 @@ export default function AdminSettingsPage() {
                 value={formData.address_street}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={inputClass}
               />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5">City</label>
+              <label className="text-xs font-semibold text-[#394B49] block mb-1.5">City</label>
               <input
                 type="text"
                 name="address_city"
                 value={formData.address_city}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={inputClass}
               />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5">State / Province</label>
+              <label className="text-xs font-semibold text-[#394B49] block mb-1.5">
+                State / Province
+              </label>
               <input
                 type="text"
                 name="address_state"
                 value={formData.address_state}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={inputClass}
               />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5">Postal / PIN Code</label>
+              <label className="text-xs font-semibold text-[#394B49] block mb-1.5">
+                Postal / PIN Code
+              </label>
               <input
                 type="text"
                 name="address_postal_code"
                 value={formData.address_postal_code}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={inputClass}
               />
             </div>
 
             <div>
-              <label className="font-semibold text-gray-700 block mb-1.5">Country</label>
+              <label className="text-xs font-semibold text-[#394B49] block mb-1.5">
+                Country
+              </label>
               <input
                 type="text"
                 name="address_country"
                 value={formData.address_country}
                 onChange={handleChange}
                 required
-                className="w-full p-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-[hsl(166,72%,40%)]"
+                className={inputClass}
               />
             </div>
           </div>
         </div>
 
         {/* Section 3: Operational Access & Security */}
-        <div className="bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm space-y-6">
-          <div className="flex items-center gap-2 pb-4 border-b border-gray-100 text-[hsl(222,47%,11%)]">
-            <ShieldCheck className="h-5 w-5 text-[hsl(166,72%,40%)]" />
-            <h2 className="text-base font-bold">Operational Controls & Policies</h2>
+        <div className="beyond-card p-6 md:p-8 space-y-6">
+          <div className="flex items-center gap-2.5 pb-4 border-b border-[#DCE5E8] text-[#263331]">
+            <ShieldCheck className="h-5 w-5 text-[#3F6258]" />
+            <h2 className="text-base font-semibold">Operational Controls &amp; Policies</h2>
           </div>
 
-          <div className="space-y-4 text-xs">
-            <div
-              onClick={() => handleToggle("enable_student_self_registration")}
-              className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50/50 cursor-pointer transition"
-            >
-              <div>
-                <span className="font-bold text-gray-900 block">
-                  Public Student Self-Registration
-                </span>
-                <span className="text-gray-500 text-[11px]">
-                  Allows prospective students to self-register accounts from the website landing page.
-                </span>
-              </div>
-              <input
-                type="checkbox"
-                name="enable_student_self_registration"
-                checked={formData.enable_student_self_registration}
-                onChange={() => {}}
-                className="h-4 w-4 text-[hsl(166,72%,40%)] rounded focus:ring-0 cursor-pointer"
-              />
-            </div>
+          <div className="space-y-3.5">
+            {policyControls.map((ctrl) => {
+              const enabled = formData[ctrl.key];
+              return (
+                <div
+                  key={ctrl.key}
+                  onClick={() => handleToggle(ctrl.key)}
+                  className="flex items-center justify-between gap-4 p-4 rounded-xl border border-[#DCE5E8] bg-[#F3F0E8]/45 hover:bg-[#EEF3F5]/60 cursor-pointer transition"
+                >
+                  <div>
+                    <span className="font-semibold text-sm text-[#263331] block">
+                      {ctrl.title}
+                    </span>
+                    <span className="text-[#546866] text-xs leading-relaxed">
+                      {ctrl.description}
+                    </span>
+                  </div>
 
-            <div
-              onClick={() => handleToggle("enable_simulated_payments")}
-              className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50/50 cursor-pointer transition"
-            >
-              <div>
-                <span className="font-bold text-gray-900 block">
-                  Simulated Advisory Payments Sandbox
-                </span>
-                <span className="text-gray-500 text-[11px]">
-                  Enables students to experience full package enrollment without requiring active gateway API keys.
-                </span>
-              </div>
-              <input
-                type="checkbox"
-                name="enable_simulated_payments"
-                checked={formData.enable_simulated_payments}
-                onChange={() => {}}
-                className="h-4 w-4 text-[hsl(166,72%,40%)] rounded focus:ring-0 cursor-pointer"
-              />
-            </div>
+                  <input
+                    type="checkbox"
+                    name={ctrl.key}
+                    checked={enabled}
+                    onChange={() => {}}
+                    tabIndex={-1}
+                    className="sr-only"
+                    aria-hidden="true"
+                  />
 
-            <div
-              onClick={() => handleToggle("require_document_verification")}
-              className="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50/50 cursor-pointer transition"
-            >
-              <div>
-                <span className="font-bold text-gray-900 block">
-                  Strict Counsellor Document Verification
-                </span>
-                <span className="text-gray-500 text-[11px]">
-                  Requires academic transcripts and language test proofs to be verified before visa filing.
-                </span>
-              </div>
-              <input
-                type="checkbox"
-                name="require_document_verification"
-                checked={formData.require_document_verification}
-                onChange={() => {}}
-                className="h-4 w-4 text-[hsl(166,72%,40%)] rounded focus:ring-0 cursor-pointer"
-              />
-            </div>
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={enabled}
+                    aria-label={ctrl.title}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleToggle(ctrl.key);
+                    }}
+                    className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border transition-colors cursor-pointer ${
+                      enabled
+                        ? "bg-[#394B49] border-[#394B49]"
+                        : "bg-[#DCE5E8] border-[#B7CBC2]"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-xs transition-transform ${
+                        enabled ? "translate-x-5" : "translate-x-1"
+                      }`}
+                    />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
 
         {/* Save Bar */}
         <div className="flex items-center justify-end gap-3 pt-2">
-          <button
+          <Button
             type="submit"
-            disabled={saving}
-            className="px-6 py-2.5 rounded-xl bg-[hsl(166,72%,40%)] text-white text-xs font-semibold hover:bg-[hsl(174,85%,28%)] transition flex items-center gap-2 shadow-sm disabled:opacity-50"
+            variant="primary"
+            size="lg"
+            loading={saving}
+            loadingText="Saving Changes…"
           >
-            {saving ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> Saving Changes...
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4" /> Save Configuration
-              </>
-            )}
-          </button>
+            <Save className="h-4 w-4" /> Save Configuration
+          </Button>
         </div>
       </form>
     </div>

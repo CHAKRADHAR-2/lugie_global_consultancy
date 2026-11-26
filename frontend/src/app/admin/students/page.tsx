@@ -1,28 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { ModalShell, StatusBadge } from "@/components/ui/feedback";
+import { SkeletonRow } from "@/components/ui/skeleton";
+import { DocumentRevealLoader } from "@/components/ui/loading-concepts";
 import {
   GraduationCap,
   Search,
   User,
-  Calendar,
-  CheckCircle2,
   Building2,
-  Loader2,
   Mail,
   Phone,
   Eye,
-  X,
   BookOpen,
   Award,
   Briefcase,
   MapPin,
-  CreditCard,
   MessageSquare,
 } from "lucide-react";
-import Link from "next/link";
 
 interface Student {
   id: string;
@@ -99,126 +98,157 @@ export default function AdminStudentsPage() {
     const phone = (s.phone || "").toLowerCase();
     const intake = (s.preferred_intake || "").toLowerCase();
     const city = (s.current_city || "").toLowerCase();
-    return !search || name.includes(q) || email.includes(q) || phone.includes(q) || intake.includes(q) || city.includes(q);
-  });
-
-  if (loading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
+      !search ||
+      name.includes(q) ||
+      email.includes(q) ||
+      phone.includes(q) ||
+      intake.includes(q) ||
+      city.includes(q)
     );
-  }
+  });
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-            <GraduationCap className="h-6 w-6 text-primary" />
-            Active Students Directory & Complete Dossiers
+          <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8E572C]">
+            Student Roster
+          </span>
+          <h1 className="font-editorial text-2xl sm:text-3xl tracking-tight text-[#263331] mt-0.5">
+            Active Students Directory &amp; Dossiers
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-[#546866]">
             Total {students.length} registered students enrolled in admissions advisory programs.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Link
             href="/admin/messages"
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-card border border-border text-foreground font-semibold text-sm hover:bg-muted shadow-sm transition"
+            className={buttonVariants({ variant: "secondary", size: "md" })}
           >
-            <MessageSquare className="h-4 w-4 text-primary" />
+            <MessageSquare className="h-4 w-4 text-[#3F6258]" />
             Supervisory Chat Desk
           </Link>
         </div>
       </div>
 
       {/* Search Bar */}
-      <div className="flex items-center gap-2 bg-card p-3 rounded-2xl border border-border shadow-sm">
-        <Search className="h-4 w-4 text-muted-foreground ml-2" />
-        <input
-          type="text"
-          placeholder="Search by student full name, email, phone, location, or intake..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="bg-transparent border-none text-sm focus:outline-none w-full text-foreground placeholder:text-muted-foreground"
-        />
+      <div className="bg-[#F3F0E8]/75 border border-[#DCE5E8] p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="relative w-full sm:max-w-md">
+          <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#546866]" />
+          <input
+            type="text"
+            placeholder="Search by student full name, email, phone, location, or intake..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-xl border border-[#DCE5E8] bg-white pl-10 pr-3.5 py-2.5 text-sm text-[#394B49] placeholder:text-[#546866]/70 focus:border-[#394B49] focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+          />
+        </div>
+        <span className="text-xs font-medium text-[#546866] shrink-0">
+          Showing <strong className="text-[#263331]">{filtered.length}</strong> of{" "}
+          <strong className="text-[#263331]">{students.length}</strong> students
+        </span>
       </div>
 
-      <div className="bg-card p-5 rounded-2xl border border-border shadow-sm overflow-hidden">
-        {students.length === 0 ? (
-          <div className="py-12 text-center">
-            <GraduationCap className="h-10 w-10 text-muted-foreground mx-auto mb-2 opacity-40" />
-            <p className="text-sm font-semibold text-foreground">No registered students yet</p>
-            <p className="text-xs text-muted-foreground mt-1">Convert enquiries from the CRM Leads page.</p>
+      {/* Table Card */}
+      <div className="beyond-card overflow-hidden">
+        {loading ? (
+          <div className="p-5 space-y-1">
+            <SkeletonRow cols={7} />
+            <SkeletonRow cols={7} />
+            <SkeletonRow cols={7} />
+            <SkeletonRow cols={7} />
+          </div>
+        ) : students.length === 0 ? (
+          <div className="py-14 text-center px-4">
+            <GraduationCap className="h-10 w-10 text-[#546866]/45 mx-auto mb-3" />
+            <p className="text-sm font-semibold text-[#263331]">No registered students yet</p>
+            <p className="text-xs text-[#546866] mt-1">
+              Convert enquiries from the CRM Leads page to create student accounts.
+            </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-muted/50 text-muted-foreground uppercase font-semibold text-[10px] tracking-wider border-b border-border">
+              <thead className="bg-[#F3F0E8]/75 border-b border-[#DCE5E8] text-[11px] font-semibold uppercase tracking-wider text-[#546866]">
                 <tr>
-                  <th className="p-3.5">Candidate Details</th>
-                  <th className="p-3.5">Contact (Email & Phone)</th>
-                  <th className="p-3.5">Enrolled Plan</th>
-                  <th className="p-3.5">City / Country</th>
-                  <th className="p-3.5">Target Intake</th>
-                  <th className="p-3.5">Readiness</th>
-                  <th className="p-3.5 text-right">Actions</th>
+                  <th className="py-3.5 px-4">Candidate Details</th>
+                  <th className="py-3.5 px-4">Contact (Email &amp; Phone)</th>
+                  <th className="py-3.5 px-4">Enrolled Plan</th>
+                  <th className="py-3.5 px-4">City / Country</th>
+                  <th className="py-3.5 px-4">Target Intake</th>
+                  <th className="py-3.5 px-4">Readiness</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border text-foreground">
+              <tbody className="divide-y divide-[#DCE5E8]/80 text-[#394B49]">
                 {filtered.map((s) => {
-                  const displayName = s.student_name || `${s.first_name || ""} ${s.last_name || ""}`.trim() || s.email || "Candidate";
+                  const displayName =
+                    s.student_name ||
+                    `${s.first_name || ""} ${s.last_name || ""}`.trim() ||
+                    s.email ||
+                    "Candidate";
+                  const planName = s.active_package || "Free Tier";
+                  const isPaidPlan = Boolean(s.active_package && s.active_package !== "Free Tier");
+
                   return (
-                    <tr key={s.id} className="hover:bg-muted/30 transition">
-                      <td className="p-3.5">
-                        <div className="font-bold text-sm text-foreground flex items-center gap-2">
-                          <User className="h-3.5 w-3.5 text-primary" />
+                    <tr key={s.id} className="hover:bg-[#EEF3F5]/45 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-sm text-[#263331] flex items-center gap-2">
+                          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#E6EFEA] text-[#3F6258] border border-[#B7CBC2]">
+                            <User className="h-3.5 w-3.5" />
+                          </span>
                           <span>{displayName}</span>
                         </div>
-                        <span className="font-mono text-[10px] text-muted-foreground">ID: {s.id.slice(0, 8)}...</span>
+                        <span className="font-mono text-[10px] text-[#546866] pl-9 block">
+                          ID: {s.id.slice(0, 8)}...
+                        </span>
                       </td>
-                      <td className="p-3.5">
-                        <div className="flex items-center gap-1.5 text-muted-foreground font-medium">
-                          <Mail className="h-3 w-3 text-muted-foreground" />
+                      <td className="py-3.5 px-4">
+                        <div className="flex items-center gap-1.5 text-[#394B49] font-medium">
+                          <Mail className="h-3 w-3 text-[#546866] shrink-0" />
                           <span>{s.email || "No email"}</span>
                         </div>
                         {s.phone && (
-                          <div className="flex items-center gap-1.5 text-muted-foreground text-[11px] mt-0.5">
-                            <Phone className="h-3 w-3 text-muted-foreground" />
+                          <div className="flex items-center gap-1.5 text-[#546866] text-[11px] mt-0.5">
+                            <Phone className="h-3 w-3 shrink-0" />
                             <span>{s.phone}</span>
                           </div>
                         )}
                       </td>
-                      <td className="p-3.5">
-                        <span className="bg-primary/10 text-primary font-bold px-2.5 py-0.5 rounded-full text-[11px] border border-primary/20">
-                          {s.active_package || "Free Tier"}
-                        </span>
+                      <td className="py-3.5 px-4">
+                        <StatusBadge tone={isPaidPlan ? "warm" : "misty"}>
+                          {planName}
+                        </StatusBadge>
                       </td>
-                      <td className="p-3.5">
+                      <td className="py-3.5 px-4 text-[#546866]">
                         {[s.current_city, s.current_country || "India"].filter(Boolean).join(", ")}
                       </td>
-                      <td className="p-3.5 font-semibold text-primary">
+                      <td className="py-3.5 px-4 font-semibold text-[#3F6258]">
                         {s.preferred_intake || "Not set"}
                       </td>
-                      <td className="p-3.5">
+                      <td className="py-3.5 px-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-16 bg-muted rounded-full h-1.5 overflow-hidden">
+                          <div className="w-16 bg-[#EEF3F5] rounded-full h-2 overflow-hidden border border-[#DCE5E8]">
                             <div
-                              className="h-full bg-primary rounded-full"
+                              className="h-full bg-[#394B49] rounded-full transition-all duration-500"
                               style={{ width: `${s.profile_completion}%` }}
                             />
                           </div>
-                          <span className="font-semibold text-[11px]">{s.profile_completion}%</span>
+                          <span className="font-semibold text-[11px] text-[#263331]">
+                            {s.profile_completion}%
+                          </span>
                         </div>
                       </td>
-                      <td className="p-3.5 text-right space-x-2">
-                        <button
+                      <td className="py-3.5 px-4 text-right">
+                        <Button
+                          variant="primary"
+                          size="sm"
                           onClick={() => openDossier(s.id)}
-                          className="inline-flex items-center gap-1 text-xs px-2.5 py-1.5 rounded-lg bg-primary text-primary-foreground font-semibold hover:opacity-90 shadow-sm"
                         >
                           <Eye className="h-3.5 w-3.5" /> Full Dossier
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   );
@@ -230,192 +260,221 @@ export default function AdminStudentsPage() {
       </div>
 
       {/* Full Dossier Modal */}
-      {selectedStudentId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm overflow-y-auto">
-          <div className="w-full max-w-4xl max-h-[90vh] rounded-3xl bg-card border border-border shadow-2xl flex flex-col overflow-hidden my-auto">
-            {/* Header */}
-            <div className="p-5 border-b border-border flex items-center justify-between bg-muted/20">
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">
-                  <GraduationCap className="h-6 w-6" />
-                </div>
+      <ModalShell
+        isOpen={Boolean(selectedStudentId)}
+        onClose={() => setSelectedStudentId(null)}
+        title="Admin Full Candidate Dossier & Academic Records"
+        subtitle="Complete records for candidate verification and audit."
+        maxWidth="max-w-4xl"
+      >
+        <div className="max-h-[70vh] overflow-y-auto pr-1 space-y-6">
+          {loadingDossier ? (
+            <div className="py-16">
+              <DocumentRevealLoader label="Loading full candidate dossier…" size="lg" />
+            </div>
+          ) : dossier ? (
+            <>
+              {/* Top Candidate Bar (Executive Forest Slate) */}
+              <div className="rounded-2xl bg-[#394B49] text-white p-5 flex flex-wrap items-center justify-between gap-4 border border-[#263331]">
                 <div>
-                  <h3 className="text-lg font-bold text-foreground">
-                    Admin Full Candidate Dossier & Academic Records
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    Complete records for candidate verification and audit.
+                  <div className="flex flex-wrap items-center gap-2.5">
+                    <h3 className="text-lg font-semibold text-white">
+                      {dossier.profile.student_name}
+                    </h3>
+                    <span className="rounded-full bg-[#D9A879] px-2.5 py-0.5 text-[11px] font-semibold text-[#263331]">
+                      {dossier.profile.active_package}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-4 text-xs text-[#DCE5E8] mt-1.5">
+                    <span className="flex items-center gap-1">
+                      <Mail className="h-3.5 w-3.5" /> {dossier.profile.email}
+                    </span>
+                    {dossier.profile.phone && (
+                      <span className="flex items-center gap-1">
+                        <Phone className="h-3.5 w-3.5" /> {dossier.profile.phone}
+                      </span>
+                    )}
+                    <span className="flex items-center gap-1">
+                      <MapPin className="h-3.5 w-3.5" />{" "}
+                      {[dossier.profile.current_city, dossier.profile.current_country]
+                        .filter(Boolean)
+                        .join(", ") || "India"}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-left sm:text-right">
+                  <p className="text-[11px] uppercase tracking-wider text-[#B7CBC2]">Target Intake</p>
+                  <p className="text-base font-semibold text-white">
+                    {dossier.profile.preferred_intake || "Not set"}
                   </p>
                 </div>
               </div>
-              <button
-                onClick={() => setSelectedStudentId(null)}
-                className="p-2 rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
 
-            {/* Body */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              {loadingDossier ? (
-                <div className="py-24 text-center">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Loading full candidate dossier...</p>
-                </div>
-              ) : dossier ? (
-                <>
-                  {/* Top Candidate Bar */}
-                  <div className="bg-primary/5 rounded-2xl p-5 border border-primary/20 flex flex-wrap items-center justify-between gap-4">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="text-xl font-bold text-foreground">
-                          {dossier.profile.student_name}
-                        </h4>
-                        <span className="bg-primary/10 text-primary font-bold px-2.5 py-0.5 rounded-full text-xs">
-                          {dossier.profile.active_package}
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground mt-1">
-                        <span className="flex items-center gap-1">
-                          <Mail className="h-3 w-3" /> {dossier.profile.email}
-                        </span>
-                        {dossier.profile.phone && (
-                          <span className="flex items-center gap-1">
-                            <Phone className="h-3 w-3" /> {dossier.profile.phone}
+              {/* 1. Academic History */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-[#263331] flex items-center gap-2">
+                  <BookOpen className="h-4 w-4 text-[#3F6258]" />
+                  Academic Records (Class X, Class XII, Undergrad)
+                </h4>
+                {dossier.academics.length === 0 ? (
+                  <p className="text-xs text-[#546866] italic">No academic records submitted yet.</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {dossier.academics.map((ac) => (
+                      <div
+                        key={ac.id}
+                        className="bg-[#F3F0E8]/75 rounded-xl p-3.5 border border-[#DCE5E8] text-xs space-y-1"
+                      >
+                        <div className="flex justify-between items-start font-semibold text-[#263331]">
+                          <span>{ac.qualification}</span>
+                          <span className="text-[#3F6258]">
+                            {ac.cgpa ? `${ac.cgpa} CGPA` : `${ac.percentage}%`}
                           </span>
+                        </div>
+                        <p className="text-[#394B49]">{ac.institution}</p>
+                        {ac.degree && (
+                          <p className="text-[#546866]">
+                            Degree: {ac.degree} ({ac.specialisation || "General"})
+                          </p>
                         )}
-                        <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />{" "}
-                          {[dossier.profile.current_city, dossier.profile.current_country].filter(Boolean).join(", ") || "India"}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">Target Intake</p>
-                      <p className="text-base font-bold text-primary">{dossier.profile.preferred_intake || "Not set"}</p>
-                    </div>
-                  </div>
-
-                  {/* 1. Academic History (Class X, XII, Undergrad) */}
-                  <div className="space-y-3">
-                    <h5 className="text-sm font-bold text-foreground flex items-center gap-2">
-                      <BookOpen className="h-4 w-4 text-primary" />
-                      Academic Records (Class X, Class XII, Undergrad)
-                    </h5>
-                    {dossier.academics.length === 0 ? (
-                      <p className="text-xs text-muted-foreground italic">No academic records submitted yet.</p>
-                    ) : (
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        {dossier.academics.map((ac) => (
-                          <div key={ac.id} className="bg-muted/30 rounded-xl p-3 border border-border text-xs space-y-1">
-                            <div className="flex justify-between items-start font-bold text-foreground">
-                              <span>{ac.qualification}</span>
-                              <span className="text-primary">{ac.cgpa ? `${ac.cgpa} CGPA` : `${ac.percentage}%`}</span>
-                            </div>
-                            <p className="text-muted-foreground">{ac.institution}</p>
-                            {ac.degree && <p className="text-muted-foreground">Degree: {ac.degree} ({ac.specialisation || "General"})</p>}
-                            <div className="flex justify-between text-[11px] text-muted-foreground/80 pt-1">
-                              <span>Duration: {ac.start_date || "N/A"} - {ac.is_current ? "Present" : ac.end_date || "N/A"}</span>
-                              {ac.backlogs > 0 && <span className="text-rose-600 font-semibold">{ac.backlogs} Backlogs</span>}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 2. English & Standardized Tests (IELTS, GRE, etc.) */}
-                  <div className="space-y-3">
-                    <h5 className="text-sm font-bold text-foreground flex items-center gap-2">
-                      <Award className="h-4 w-4 text-primary" />
-                      Standardized & English Proficiency Tests
-                    </h5>
-                    {dossier.language_tests.length === 0 ? (
-                      <p className="text-xs text-muted-foreground italic">No standardized test scores reported yet.</p>
-                    ) : (
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        {dossier.language_tests.map((t) => (
-                          <div key={t.id} className="bg-muted/30 rounded-xl p-3 border border-border text-xs text-center space-y-1">
-                            <span className="font-bold text-foreground text-sm uppercase block">{t.test_type}</span>
-                            <span className="text-lg font-bold text-primary block">{t.overall_score}</span>
-                            <div className="text-[10px] text-muted-foreground">
-                              L:{t.listening || "-"} | R:{t.reading || "-"} | W:{t.writing || "-"} | S:{t.speaking || "-"}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* 3. Work Experience & Projects */}
-                  <div className="space-y-3">
-                    <h5 className="text-sm font-bold text-foreground flex items-center gap-2">
-                      <Briefcase className="h-4 w-4 text-primary" />
-                      Work Experience & Technical Projects
-                    </h5>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {dossier.work_experiences.map((exp) => (
-                        <div key={exp.id} className="bg-muted/30 rounded-xl p-3 border border-border text-xs space-y-1">
-                          <div className="font-bold text-foreground">{exp.job_title} @ {exp.company_name}</div>
-                          <p className="text-muted-foreground text-[11px]">{exp.location || "On-site"} • {exp.employment_type || "Full-time"}</p>
-                          <p className="text-muted-foreground text-[11px] line-clamp-2">{exp.description}</p>
-                        </div>
-                      ))}
-                      {dossier.projects.map((proj) => (
-                        <div key={proj.id} className="bg-muted/30 rounded-xl p-3 border border-border text-xs space-y-1">
-                          <div className="font-bold text-foreground">{proj.title}</div>
-                          <p className="text-muted-foreground text-[11px] line-clamp-2">{proj.description}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* 4. Student Opted Universities & Counsellor Recommendations */}
-                  <div className="space-y-3">
-                    <h5 className="text-sm font-bold text-foreground flex items-center gap-2">
-                      <Building2 className="h-4 w-4 text-primary" />
-                      University Shortlists & Opted Choices
-                    </h5>
-                    {dossier.opted_universities.length === 0 ? (
-                      <p className="text-xs text-muted-foreground italic">No student nominated universities yet.</p>
-                    ) : (
-                      <div className="space-y-2">
-                        {dossier.opted_universities.map((opt) => (
-                          <div key={opt.id} className="bg-muted/30 rounded-xl p-3 border border-border text-xs flex justify-between items-center">
-                            <div>
-                              <div className="font-bold text-foreground">{opt.university_name} ({opt.country})</div>
-                              <p className="text-muted-foreground">{opt.course_name} • {opt.intake}</p>
-                              {opt.counsellor_opinion && (
-                                <p className="text-primary font-medium mt-1">
-                                  Verdict: {opt.counsellor_verdict || "Reviewed"} — {opt.counsellor_opinion}
-                                </p>
-                              )}
-                            </div>
-                            <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-primary/10 text-primary">
-                              {opt.tier}
+                        <div className="flex justify-between text-[11px] text-[#546866] pt-1">
+                          <span>
+                            Duration: {ac.start_date || "N/A"} -{" "}
+                            {ac.is_current ? "Present" : ac.end_date || "N/A"}
+                          </span>
+                          {ac.backlogs > 0 && (
+                            <span className="text-[#A63A3A] font-semibold">
+                              {ac.backlogs} Backlogs
                             </span>
-                          </div>
-                        ))}
+                          )}
+                        </div>
                       </div>
-                    )}
+                    ))}
                   </div>
-                </>
-              ) : null}
-            </div>
+                )}
+              </div>
 
-            {/* Footer */}
-            <div className="p-4 border-t border-border flex justify-end gap-2 bg-muted/10">
-              <button
-                onClick={() => setSelectedStudentId(null)}
-                className="rounded-xl border border-border px-5 py-2 text-sm font-semibold text-foreground hover:bg-muted"
-              >
-                Close Dossier
-              </button>
-            </div>
-          </div>
+              {/* 2. English & Standardized Tests */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-[#263331] flex items-center gap-2">
+                  <Award className="h-4 w-4 text-[#8E572C]" />
+                  Standardized &amp; English Proficiency Tests
+                </h4>
+                {dossier.language_tests.length === 0 ? (
+                  <p className="text-xs text-[#546866] italic">
+                    No standardized test scores reported yet.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {dossier.language_tests.map((t) => (
+                      <div
+                        key={t.id}
+                        className="bg-[#F3F0E8]/75 rounded-xl p-3.5 border border-[#DCE5E8] text-xs text-center space-y-1"
+                      >
+                        <span className="font-semibold text-[#263331] text-sm uppercase block">
+                          {t.test_type}
+                        </span>
+                        <span className="text-lg font-bold text-[#394B49] block">
+                          {t.overall_score}
+                        </span>
+                        <div className="text-[10px] text-[#546866]">
+                          L:{t.listening || "-"} | R:{t.reading || "-"} | W:{t.writing || "-"} | S:
+                          {t.speaking || "-"}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* 3. Work Experience & Projects */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-[#263331] flex items-center gap-2">
+                  <Briefcase className="h-4 w-4 text-[#394B49]" />
+                  Work Experience &amp; Technical Projects
+                </h4>
+                {dossier.work_experiences.length === 0 && dossier.projects.length === 0 ? (
+                  <p className="text-xs text-[#546866] italic">
+                    No work experience or technical projects added yet.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {dossier.work_experiences.map((exp) => (
+                      <div
+                        key={exp.id}
+                        className="bg-[#F3F0E8]/75 rounded-xl p-3.5 border border-[#DCE5E8] text-xs space-y-1"
+                      >
+                        <div className="font-semibold text-[#263331]">
+                          {exp.job_title} @ {exp.company_name}
+                        </div>
+                        <p className="text-[#546866] text-[11px]">
+                          {exp.location || "On-site"} • {exp.employment_type || "Full-time"}
+                        </p>
+                        <p className="text-[#546866] text-[11px] line-clamp-2">{exp.description}</p>
+                      </div>
+                    ))}
+                    {dossier.projects.map((proj) => (
+                      <div
+                        key={proj.id}
+                        className="bg-[#F3F0E8]/75 rounded-xl p-3.5 border border-[#DCE5E8] text-xs space-y-1"
+                      >
+                        <div className="font-semibold text-[#263331]">{proj.title}</div>
+                        <p className="text-[#546866] text-[11px] line-clamp-2">{proj.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* 4. Student Opted Universities */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-[#263331] flex items-center gap-2">
+                  <Building2 className="h-4 w-4 text-[#3F6258]" />
+                  University Shortlists &amp; Opted Choices
+                </h4>
+                {dossier.opted_universities.length === 0 ? (
+                  <p className="text-xs text-[#546866] italic">
+                    No student nominated universities yet.
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {dossier.opted_universities.map((opt) => (
+                      <div
+                        key={opt.id}
+                        className="bg-[#F3F0E8]/75 rounded-xl p-3.5 border border-[#DCE5E8] text-xs flex justify-between items-center gap-3"
+                      >
+                        <div>
+                          <div className="font-semibold text-[#263331]">
+                            {opt.university_name} ({opt.country})
+                          </div>
+                          <p className="text-[#546866]">
+                            {opt.course_name} • {opt.intake}
+                          </p>
+                          {opt.counsellor_opinion && (
+                            <p className="text-[#3F6258] font-medium mt-1">
+                              Verdict: {opt.counsellor_verdict || "Reviewed"} —{" "}
+                              {opt.counsellor_opinion}
+                            </p>
+                          )}
+                        </div>
+                        <StatusBadge tone="sage" className="uppercase text-[10px]">
+                          {opt.tier}
+                        </StatusBadge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          ) : null}
         </div>
-      )}
+
+        <div className="mt-6 pt-4 border-t border-[#DCE5E8] flex justify-end">
+          <Button variant="secondary" size="md" onClick={() => setSelectedStudentId(null)}>
+            Close Dossier
+          </Button>
+        </div>
+      </ModalShell>
     </div>
   );
 }

@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
+import { BEYOND_EASE } from "@/lib/design-tokens";
 
 interface FadeInProps {
   children: ReactNode;
@@ -13,34 +14,41 @@ interface FadeInProps {
 }
 
 const directionOffset = {
-  up: { y: 24 },
-  down: { y: -24 },
-  left: { x: 24 },
-  right: { x: -24 },
+  up: { y: 18 },
+  down: { y: -18 },
+  left: { x: 18 },
+  right: { x: -18 },
   none: {},
 };
 
 /**
- * Wraps content with a smooth fade + slide animation on scroll into view.
+ * Quiet editorial reveal when entering the viewport.
+ * Honors user prefers-reduced-motion automatically.
  */
 export function FadeIn({
   children,
   delay = 0,
-  duration = 0.6,
+  duration = 0.55,
   direction = "up",
   className = "",
   once = true,
 }: FadeInProps) {
+  const prefersReduced = useReducedMotion();
+
+  if (prefersReduced) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={className}
       initial={{ opacity: 0, ...directionOffset[direction] }}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once, margin: "-60px" }}
+      viewport={{ once, amount: "some" }}
       transition={{
         delay,
         duration,
-        ease: [0.22, 1, 0.36, 1],
+        ease: BEYOND_EASE.editorial,
       }}
     >
       {children}
@@ -49,23 +57,29 @@ export function FadeIn({
 }
 
 /**
- * Staggered container — each child animates in sequence.
+ * Sequential staggered container for editorial cards, steps, and destination rows.
  */
 export function StaggerContainer({
   children,
-  staggerDelay = 0.08,
+  staggerDelay = 0.06,
   className = "",
 }: {
   children: ReactNode;
   staggerDelay?: number;
   className?: string;
 }) {
+  const prefersReduced = useReducedMotion();
+
+  if (prefersReduced) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={className}
       initial="hidden"
       whileInView="visible"
-      viewport={{ once: true, margin: "-40px" }}
+      viewport={{ once: true, amount: "some" }}
       variants={{
         hidden: {},
         visible: { transition: { staggerChildren: staggerDelay } },
@@ -83,17 +97,51 @@ export function StaggerItem({
   children: ReactNode;
   className?: string;
 }) {
+  const prefersReduced = useReducedMotion();
+
+  if (prefersReduced) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={className}
       variants={{
-        hidden: { opacity: 0, y: 20 },
+        hidden: { opacity: 0, y: 14 },
         visible: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+          transition: { duration: 0.45, ease: BEYOND_EASE.editorial },
         },
       }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/**
+ * Restrained top-level route/page entrance.
+ */
+export function PageTransition({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  const prefersReduced = useReducedMotion();
+
+  if (prefersReduced) {
+    return <div className={className}>{children}</div>;
+  }
+
+  return (
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: BEYOND_EASE.editorial }}
     >
       {children}
     </motion.div>

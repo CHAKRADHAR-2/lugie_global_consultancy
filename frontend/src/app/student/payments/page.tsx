@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import {
@@ -10,18 +9,15 @@ import {
   CheckCircle2,
   ShieldCheck,
   Download,
-  Plus,
-  Loader2,
   Clock,
-  Sparkles,
   ArrowRight,
   Receipt,
   Check,
-  X,
-  AlertCircle,
-  Tag,
   ArrowUpCircle,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { SkeletonJourney } from "@/components/ui/skeleton";
+import { ModalShell, StatusBadge } from "@/components/ui/feedback";
 
 interface Payment {
   id: string;
@@ -137,7 +133,7 @@ function PaymentsContent() {
 
   // Active paid order
   const activePaidOrder = orders.find((o) => o.status === "paid");
-  
+
   // Resolve current active package
   const activePackage = activePaidOrder
     ? PACKAGES_OPTIONS.find((p) => p.name.toLowerCase() === (activePaidOrder.package_name || "").toLowerCase()) ||
@@ -158,9 +154,7 @@ function PaymentsContent() {
   const currentSelectedPkg =
     PACKAGES_OPTIONS.find((p) => p.slug === selectedPkgSlug) || PACKAGES_OPTIONS[1];
 
-  // Calculate Prorated Differential Upgrade Price:
-  // e.g. If current package is Basic (₹7,999) and upgrading to Standard (₹13,999):
-  // differential = 13999 - 7999 = 6000!
+  // Calculate Prorated Differential Upgrade Price
   const calculatePayableAmount = (targetPkg: PackageOption): {
     basePrice: number;
     creditedAmount: number;
@@ -260,7 +254,7 @@ function PaymentsContent() {
         description: `${rzpOrder.package_name} - Overseas Admissions`,
         order_id: rzpOrder.razorpay_order_id,
         theme: {
-          color: "#0d9488",
+          color: "#394B49",
         },
         handler: async function (response: any) {
           try {
@@ -330,11 +324,7 @@ function PaymentsContent() {
   };
 
   if (loading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
-      </div>
-    );
+    return <SkeletonJourney />;
   }
 
   return (
@@ -342,58 +332,61 @@ function PaymentsContent() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)] flex items-center gap-2">
-            <CreditCard className="h-6 w-6 text-[hsl(166,72%,40%)]" />
-            Billing & Package Services
+          <h1 className="font-editorial text-2xl sm:text-3xl text-[#263331] flex items-center gap-2.5">
+            <CreditCard className="h-6 w-6 text-[#3F6258] shrink-0" />
+            <span>Billing &amp; Package Services</span>
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-[#546866]">
             View active consultancy plan, prorated tier upgrades, transaction history, and tax invoices.
           </p>
         </div>
 
-        <button
+        <Button
+          type="button"
+          variant={activePackage ? "warm" : "primary"}
+          size="md"
           onClick={() => {
             setSelectedPkgSlug(activePackage?.slug === "basic" ? "standard" : "premium");
             setIsCheckoutOpen(true);
           }}
-          className="inline-flex items-center gap-2 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
+          className="shrink-0"
         >
           <ArrowUpCircle className="h-4 w-4" />
           {activePackage ? "Upgrade Plan Tier" : "Enroll in Package"}
-        </button>
+        </Button>
       </div>
 
       {/* Active Package Banner */}
       {activePackage ? (
-        <div className="rounded-2xl border-2 border-[hsl(166,72%,40%)] bg-white p-8 shadow-md relative overflow-hidden">
-          <div className="absolute top-0 right-0 bg-[hsl(166,72%,40%)] text-white text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-bl-xl flex items-center gap-1.5">
-            <CheckCircle2 className="h-3 w-3" />
+        <div className="beyond-card border-2 border-[#394B49] p-7 sm:p-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 bg-[#E6EFEA] text-[#263331] border-b border-l border-[#B7CBC2] text-[10px] font-bold uppercase tracking-widest px-4 py-1.5 rounded-bl-xl flex items-center gap-1.5">
+            <CheckCircle2 className="h-3.5 w-3.5 text-[#2F6B55]" />
             Active Enrolled Plan
           </div>
 
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pt-3 sm:pt-0">
             <div>
-              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[hsl(166,72%,40%)]">
-                <ShieldCheck className="h-4 w-4" />
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-[#3F6258]">
+                <ShieldCheck className="h-4 w-4 text-[#2F6B55]" />
                 <span>Lugie Global Consultancy Enrolled</span>
               </div>
-              <h2 className="text-2xl font-bold text-[hsl(222,47%,11%)] mt-1">
+              <h2 className="font-editorial text-2xl text-[#263331] mt-1">
                 {activePackage.name}
               </h2>
-              <p className="text-xs text-gray-500 mt-1 max-w-xl">
+              <p className="text-xs text-[#546866] mt-1 max-w-xl">
                 {activePackage.description}
               </p>
-              <div className="mt-3 flex items-center gap-4 text-xs text-gray-500">
+              <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-[#546866]">
                 <span>
                   Enrolled Value:{" "}
-                  <strong className="text-gray-900 font-bold">
+                  <strong className="text-[#263331] font-bold tabular-nums">
                     ₹{activePackage.price.toLocaleString("en-IN")}
                   </strong>
                 </span>
-                <span>•</span>
+                <span className="text-[#B7CBC2]">•</span>
                 <span>
                   Date:{" "}
-                  <strong>
+                  <strong className="text-[#263331]">
                     {new Date(activePaidOrder?.created_at || Date.now()).toLocaleDateString("en-IN", {
                       day: "numeric",
                       month: "short",
@@ -401,51 +394,54 @@ function PaymentsContent() {
                     })}
                   </strong>
                 </span>
-                <span>•</span>
-                <span className="text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                  Fully Settled
-                </span>
+                <span className="text-[#B7CBC2]">•</span>
+                <StatusBadge tone="success">Fully Settled</StatusBadge>
               </div>
             </div>
 
             {activePackage.tierRank < 3 && (
               <div className="shrink-0 flex flex-col items-start md:items-end gap-2">
-                <span className="text-[11px] text-gray-500">
+                <span className="text-[11px] text-[#546866]">
                   Want more university shortlists or visa mocks?
                 </span>
-                <button
+                <Button
+                  type="button"
+                  variant="warm"
+                  size="md"
                   onClick={() => {
                     const nextSlug = activePackage.tierRank === 1 ? "standard" : "premium";
                     handleOpenUpgradeModal(nextSlug);
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-[hsl(166,72%,40%)] px-5 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
                 >
                   <ArrowUpCircle className="h-4 w-4" />
                   Upgrade Plan (Differential Rate)
-                </button>
+                </Button>
               </div>
             )}
           </div>
         </div>
       ) : (
-        <div className="rounded-2xl border border-gray-100 bg-white p-8 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div className="beyond-card p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
+            <StatusBadge tone="warning" className="uppercase tracking-wider">
               No Active Package Enrolled
-            </span>
-            <h2 className="text-xl font-bold text-[hsl(222,47%,11%)] mt-2">
-              Unlock Full Admissions & Visa Support
+            </StatusBadge>
+            <h2 className="font-editorial text-xl text-[#263331] mt-2.5">
+              Unlock Full Admissions &amp; Visa Support
             </h2>
-            <p className="text-xs text-gray-500 mt-1 max-w-lg">
+            <p className="text-xs text-[#546866] mt-1 max-w-lg leading-relaxed">
               Choose from our fixed non-negotiable consultancy packages below to receive dedicated counsellor shortlists and 1-on-1 visa mock interviews.
             </p>
           </div>
-          <button
+          <Button
+            type="button"
+            variant="warm"
+            size="md"
             onClick={() => setIsCheckoutOpen(true)}
-            className="rounded-xl bg-[hsl(166,72%,40%)] px-6 py-3 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition self-start"
+            className="self-start shrink-0"
           >
             Enroll in a Plan Now
-          </button>
+          </Button>
         </div>
       )}
 
@@ -453,19 +449,19 @@ function PaymentsContent() {
       {/* Packages Grid with Prorated Upgrade Pricing                         */}
       {/* =================================================================== */}
       <div>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <div>
-            <h2 className="text-lg font-bold text-[hsl(222,47%,11%)]">
-              Consultancy Packages & Prorated Upgrades
+            <h2 className="text-lg font-bold text-[#263331]">
+              Consultancy Packages &amp; Prorated Upgrades
             </h2>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-xs text-[#546866] mt-0.5">
               Upgrade at any time by paying only the difference between your current package and the new tier.
             </p>
           </div>
           {activePackage && (
-            <span className="text-[11px] font-semibold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+            <StatusBadge tone="sage" className="self-start sm:self-auto py-1 px-3">
               ₹{activePackage.price.toLocaleString("en-IN")} Credit Active
-            </span>
+            </StatusBadge>
           )}
         </div>
 
@@ -478,62 +474,62 @@ function PaymentsContent() {
             return (
               <div
                 key={pkg.slug}
-                className={`rounded-2xl p-6 border shadow-sm flex flex-col justify-between transition relative ${
+                className={`rounded-2xl p-6 border shadow-[0_1px_3px_rgba(57,75,73,0.04)] flex flex-col justify-between transition relative ${
                   isCurrent
-                    ? "border-emerald-400 bg-emerald-50/20 ring-2 ring-emerald-400/30"
+                    ? "border-[#B7CBC2] bg-[#E6EFEA]/45 ring-1 ring-[#B7CBC2]"
                     : pkg.recommended
-                    ? "border-[hsl(166,72%,40%)] bg-white ring-1 ring-[hsl(166,72%,40%)]/20"
-                    : "border-gray-200 bg-white hover:border-gray-300"
+                    ? "border-[#D9A879] bg-white ring-1 ring-[#D9A879]/40"
+                    : "border-[#DCE5E8] bg-white hover:border-[#B7CBC2]"
                 }`}
               >
                 {pkg.recommended && !isCurrent && (
-                  <span className="absolute -top-3 right-6 bg-[hsl(166,72%,40%)] text-white text-[9px] font-extrabold uppercase tracking-wider px-3 py-0.5 rounded-full shadow-xs">
+                  <span className="absolute -top-3 right-6 bg-[#D9A879] text-[#263331] border border-[#CFA070] text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full shadow-xs">
                     Most Popular
                   </span>
                 )}
                 {isCurrent && (
-                  <span className="absolute -top-3 right-6 bg-emerald-600 text-white text-[9px] font-extrabold uppercase tracking-wider px-3 py-0.5 rounded-full shadow-xs">
+                  <span className="absolute -top-3 right-6 bg-[#394B49] text-white text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full shadow-xs">
                     Your Current Plan
                   </span>
                 )}
 
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-bold text-[hsl(222,47%,11%)]">{pkg.name}</h3>
-                    <p className="text-xs text-gray-500 mt-1">{pkg.description}</p>
+                    <h3 className="text-lg font-bold text-[#263331]">{pkg.name}</h3>
+                    <p className="text-xs text-[#546866] mt-1 leading-relaxed">{pkg.description}</p>
                   </div>
 
                   {/* Pricing Box */}
-                  <div className="pt-2">
+                  <div className="pt-1">
                     {isUpgrade ? (
-                      <div className="space-y-1">
+                      <div className="space-y-1.5">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-2xl font-extrabold text-[hsl(166,72%,40%)]">
+                          <span className="text-2xl font-extrabold text-[#263331] tabular-nums">
                             ₹{calc.payable.toLocaleString("en-IN")}
                           </span>
-                          <span className="text-xs line-through text-gray-400">
+                          <span className="text-xs line-through text-[#546866] tabular-nums">
                             ₹{pkg.price.toLocaleString("en-IN")}
                           </span>
                         </div>
-                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded block">
+                        <StatusBadge tone="success">
                           ₹{calc.creditedAmount.toLocaleString("en-IN")} credited from {activePackage?.name}!
-                        </span>
+                        </StatusBadge>
                       </div>
                     ) : (
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-2xl font-extrabold text-[hsl(222,47%,11%)]">
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-2xl font-extrabold text-[#263331] tabular-nums">
                           ₹{pkg.price.toLocaleString("en-IN")}
                         </span>
-                        <span className="text-xs text-gray-400 font-semibold">one-time</span>
+                        <span className="text-xs text-[#546866] font-semibold">one-time</span>
                       </div>
                     )}
                   </div>
 
                   {/* Inclusions */}
-                  <ul className="space-y-2 text-xs text-gray-600 pt-2 border-t border-gray-100">
+                  <ul className="space-y-2 text-xs text-[#394B49] pt-3 border-t border-[#DCE5E8]">
                     {pkg.inclusions.map((inc, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-[hsl(166,72%,40%)] shrink-0 mt-0.5" />
+                        <Check className="h-4 w-4 text-[#2F6B55] shrink-0 mt-0.5" />
                         <span>{inc}</span>
                       </li>
                     ))}
@@ -541,31 +537,37 @@ function PaymentsContent() {
                 </div>
 
                 {/* Card Action */}
-                <div className="pt-6 mt-6 border-t border-gray-100">
+                <div className="pt-6 mt-6 border-t border-[#DCE5E8]">
                   {isCurrent ? (
-                    <div className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-bold">
+                    <div className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[#EDF5F1] border border-[#B7CBC2] text-[#2F6B55] text-xs font-bold">
                       <CheckCircle2 className="h-4 w-4" />
                       Currently Active Plan
                     </div>
                   ) : isUpgrade ? (
-                    <button
+                    <Button
+                      type="button"
+                      variant={pkg.recommended ? "warm" : "primary"}
+                      size="md"
                       onClick={() => handleOpenUpgradeModal(pkg.slug)}
-                      className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(166,72%,40%)] py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
+                      className="w-full"
                     >
                       <ArrowUpCircle className="h-4 w-4" />
                       Upgrade for ₹{calc.payable.toLocaleString("en-IN")}
-                    </button>
+                    </Button>
                   ) : calc.isDowngrade ? (
-                    <div className="py-2.5 text-center text-xs font-semibold text-gray-400 bg-gray-50 rounded-xl">
+                    <div className="py-2.5 text-center text-xs font-semibold text-[#546866] bg-[#F3F0E8] border border-[#DCE5E8] rounded-xl">
                       Included in Your Plan
                     </div>
                   ) : (
-                    <button
+                    <Button
+                      type="button"
+                      variant={pkg.recommended ? "warm" : "primary"}
+                      size="md"
                       onClick={() => handleOpenUpgradeModal(pkg.slug)}
-                      className="w-full flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(222,47%,11%)] py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[hsl(222,47%,18%)] transition"
+                      className="w-full"
                     >
                       Enroll for ₹{pkg.price.toLocaleString("en-IN")}
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -577,58 +579,55 @@ function PaymentsContent() {
       {/* =================================================================== */}
       {/* Transaction & Digital Tax Receipts Table                           */}
       {/* =================================================================== */}
-      <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-        <h2 className="text-base font-bold text-gray-900 mb-4">Payment & Receipt Ledger</h2>
+      <div className="beyond-card p-6">
+        <h2 className="text-base font-bold text-[#263331] mb-4">Payment &amp; Receipt Ledger</h2>
 
         {orders.length === 0 ? (
-          <div className="p-8 text-center text-xs text-gray-400">
+          <div className="rounded-xl border border-dashed border-[#B7CBC2] bg-[#F3F0E8]/50 p-8 text-center text-xs text-[#546866]">
             No transaction records found.
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gray-50 text-gray-600 uppercase font-semibold text-[10px] tracking-wider border-b border-gray-100">
+          <div className="overflow-x-auto rounded-xl border border-[#DCE5E8]">
+            <table className="w-full text-left text-xs font-sans">
+              <thead className="bg-[#F3F0E8]/80 text-[#546866] uppercase font-semibold text-[10px] tracking-wider border-b border-[#DCE5E8]">
                 <tr>
-                  <th className="py-3 px-6">Order ID</th>
-                  <th className="py-3 px-6">Package Enrolled</th>
-                  <th className="py-3 px-6">Amount Paid</th>
-                  <th className="py-3 px-6">Credit / Discount</th>
-                  <th className="py-3 px-6">Date</th>
-                  <th className="py-3 px-6">Status</th>
-                  <th className="py-3 px-6 text-right">Receipt</th>
+                  <th className="py-3.5 px-5">Order ID</th>
+                  <th className="py-3.5 px-5">Package Enrolled</th>
+                  <th className="py-3.5 px-5">Amount Paid</th>
+                  <th className="py-3.5 px-5">Credit / Discount</th>
+                  <th className="py-3.5 px-5">Date</th>
+                  <th className="py-3.5 px-5">Status</th>
+                  <th className="py-3.5 px-5 text-right">Receipt</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 text-gray-700">
+              <tbody className="divide-y divide-[#DCE5E8]/80 text-[#394B49] bg-white">
                 {orders.map((ord) => (
-                  <tr key={ord.id} className="hover:bg-gray-50/50 transition">
-                    <td className="py-4 px-6 font-mono text-[11px] text-gray-600">
+                  <tr key={ord.id} className="hover:bg-[#F3F0E8]/40 transition">
+                    <td className="py-4 px-5 font-mono text-[11px] text-[#546866]">
                       {ord.id.substring(0, 8)}...
                     </td>
-                    <td className="py-4 px-6 font-semibold text-gray-900">
+                    <td className="py-4 px-5 font-semibold text-[#263331]">
                       {ord.package_name || "Admissions Package"}
                     </td>
-                    <td className="py-4 px-6 font-bold text-[hsl(222,47%,11%)]">
+                    <td className="py-4 px-5 font-bold text-[#263331] tabular-nums">
                       ₹{ord.total_amount?.toLocaleString("en-IN")}
                     </td>
-                    <td className="py-4 px-6 text-emerald-700 font-semibold">
+                    <td className="py-4 px-5 text-[#2F6B55] font-semibold tabular-nums">
                       {ord.discount_amount && ord.discount_amount > 0
                         ? `-₹${ord.discount_amount.toLocaleString("en-IN")}`
                         : "₹0"}
                     </td>
-                    <td className="py-4 px-6 text-gray-500">
+                    <td className="py-4 px-5 text-[#546866]">
                       {new Date(ord.created_at).toLocaleDateString("en-IN", {
                         day: "numeric",
                         month: "short",
                         year: "numeric",
                       })}
                     </td>
-                    <td className="py-4 px-6">
-                      <span
-                        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
-                          ord.status === "paid"
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : "bg-amber-50 text-amber-700 border border-amber-200"
-                        }`}
+                    <td className="py-4 px-5">
+                      <StatusBadge
+                        tone={ord.status === "paid" ? "success" : "warning"}
+                        className="uppercase"
                       >
                         {ord.status === "paid" ? (
                           <CheckCircle2 className="h-3 w-3" />
@@ -636,12 +635,13 @@ function PaymentsContent() {
                           <Clock className="h-3 w-3" />
                         )}
                         {ord.status}
-                      </span>
+                      </StatusBadge>
                     </td>
-                    <td className="py-4 px-6 text-right">
+                    <td className="py-4 px-5 text-right">
                       <button
+                        type="button"
                         onClick={() => setViewReceipt(ord)}
-                        className="font-semibold text-[hsl(166,72%,40%)] hover:underline inline-flex items-center gap-1"
+                        className="font-semibold text-[#394B49] hover:text-[#8E572C] hover:underline inline-flex items-center gap-1 cursor-pointer"
                       >
                         <Receipt className="h-3.5 w-3.5" /> View
                       </button>
@@ -657,303 +657,294 @@ function PaymentsContent() {
       {/* =================================================================== */}
       {/* Checkout / Upgrade Modal                                            */}
       {/* =================================================================== */}
-      {isCheckoutOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-lg rounded-3xl bg-white p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button
-              onClick={() => setIsCheckoutOpen(false)}
-              className="absolute right-5 top-5 text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-5 w-5" />
-            </button>
+      <ModalShell
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        title={currentPayableCalc.isUpgrade ? "Confirm Package Upgrade" : "Select Your Consultancy Tier"}
+        subtitle={
+          currentPayableCalc.isUpgrade
+            ? `You are upgrading to ${currentSelectedPkg.name}. Your previous payment is credited automatically!`
+            : "Fixed non-negotiable prices with comprehensive admissions coverage."
+        }
+        maxWidth="max-w-lg"
+      >
+        <div className="max-h-[72vh] overflow-y-auto pr-1 space-y-5">
+          <div>
+            <StatusBadge tone="sage" className="uppercase tracking-wider">
+              {currentPayableCalc.isUpgrade ? "Prorated Plan Upgrade" : "Secure Package Checkout"}
+            </StatusBadge>
+          </div>
 
-            <div className="mb-6">
-              <span className="text-xs font-bold uppercase tracking-wider text-[hsl(166,72%,40%)]">
-                {currentPayableCalc.isUpgrade ? "Prorated Plan Upgrade" : "Secure Package Checkout"}
-              </span>
-              <h3 className="text-xl font-bold text-[hsl(222,47%,11%)] mt-1">
-                {currentPayableCalc.isUpgrade ? "Confirm Package Upgrade" : "Select Your Consultancy Tier"}
-              </h3>
-              <p className="text-xs text-gray-500 mt-1">
-                {currentPayableCalc.isUpgrade
-                  ? `You are upgrading to ${currentSelectedPkg.name}. Your previous payment is credited automatically!`
-                  : "Fixed non-negotiable prices with comprehensive admissions coverage."}
-              </p>
+          {/* Package Choices */}
+          <div className="space-y-3">
+            {PACKAGES_OPTIONS.map((pkg) => {
+              const isSelected = selectedPkgSlug === pkg.slug;
+              const calc = calculatePayableAmount(pkg);
+
+              return (
+                <div
+                  key={pkg.slug}
+                  onClick={() => setSelectedPkgSlug(pkg.slug)}
+                  className={`cursor-pointer rounded-2xl p-4 border transition flex items-center justify-between gap-3 ${
+                    isSelected
+                      ? "border-[#394B49] bg-[#E6EFEA]/60 ring-2 ring-[#B7CBC2]"
+                      : "border-[#DCE5E8] hover:border-[#B7CBC2]"
+                  }`}
+                >
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h4 className="font-bold text-sm text-[#263331]">{pkg.name}</h4>
+                      {pkg.recommended && (
+                        <StatusBadge tone="warm" className="text-[9px] uppercase">
+                          Recommended
+                        </StatusBadge>
+                      )}
+                      {calc.isCurrent && (
+                        <StatusBadge tone="slate" className="text-[9px] uppercase">
+                          Active
+                        </StatusBadge>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-[#546866] mt-1 max-w-xs">{pkg.description}</p>
+                  </div>
+
+                  <div className="text-right shrink-0">
+                    {calc.isUpgrade ? (
+                      <div>
+                        <span className="text-base font-extrabold text-[#2F6B55] block tabular-nums">
+                          ₹{calc.payable.toLocaleString("en-IN")}
+                        </span>
+                        <span className="text-[10px] text-[#2F6B55] font-semibold">
+                          (Upgrade Diff)
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-base font-extrabold text-[#263331] tabular-nums">
+                        ₹{pkg.price.toLocaleString("en-IN")}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Upgrade Credit Breakdown Box */}
+          {currentPayableCalc.isUpgrade && (
+            <div className="rounded-2xl bg-[#E6EFEA]/70 border border-[#B7CBC2] p-4 text-xs space-y-2">
+              <div className="flex justify-between text-[#394B49]">
+                <span>{currentSelectedPkg.name} Standard Price:</span>
+                <span className="font-semibold tabular-nums">
+                  ₹{currentSelectedPkg.price.toLocaleString("en-IN")}
+                </span>
+              </div>
+              <div className="flex justify-between text-[#2F6B55] font-semibold">
+                <span>{activePackage?.name} Credit Applied:</span>
+                <span className="tabular-nums">
+                  -₹{currentPayableCalc.creditedAmount.toLocaleString("en-IN")}
+                </span>
+              </div>
+              <div className="pt-2 border-t border-[#B7CBC2] flex justify-between font-bold text-sm text-[#263331]">
+                <span>Differential Amount Payable:</span>
+                <span className="tabular-nums">
+                  ₹{currentPayableCalc.payable.toLocaleString("en-IN")}
+                </span>
+              </div>
             </div>
+          )}
 
-            {/* Package Choices */}
-            <div className="space-y-3 mb-6">
-              {PACKAGES_OPTIONS.map((pkg) => {
-                const isSelected = selectedPkgSlug === pkg.slug;
-                const calc = calculatePayableAmount(pkg);
+          {/* Payment Gateway Selection */}
+          <div>
+            <label className="text-xs font-bold text-[#394B49] block mb-2">
+              1. Select Payment Gateway:
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedGateway("razorpay");
+                  setSelectedMethod("upi");
+                }}
+                className={`p-3 rounded-xl border text-left transition flex items-center justify-between cursor-pointer ${
+                  selectedGateway === "razorpay"
+                    ? "border-[#394B49] bg-[#E6EFEA]/70 ring-1 ring-[#394B49]"
+                    : "border-[#DCE5E8] hover:border-[#B7CBC2] bg-white"
+                }`}
+              >
+                <div>
+                  <div className="text-xs font-bold text-[#263331] flex items-center gap-1.5">
+                    <span>Razorpay</span>
+                    <StatusBadge tone="misty" className="text-[9px]">India</StatusBadge>
+                  </div>
+                  <div className="text-[10px] text-[#546866] mt-0.5">UPI, NetBanking, RuPay &amp; Cards</div>
+                </div>
+                {selectedGateway === "razorpay" && (
+                  <CheckCircle2 className="h-4 w-4 text-[#2F6B55] shrink-0 ml-2" />
+                )}
+              </button>
 
-                return (
-                  <div
-                    key={pkg.slug}
-                    onClick={() => setSelectedPkgSlug(pkg.slug)}
-                    className={`cursor-pointer rounded-2xl p-4 border transition flex items-center justify-between ${
-                      isSelected
-                        ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/5 ring-2 ring-[hsl(166,72%,40%)]/20"
-                        : "border-gray-200 hover:border-gray-300"
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedGateway("stripe");
+                  setSelectedMethod("card");
+                }}
+                className={`p-3 rounded-xl border text-left transition flex items-center justify-between cursor-pointer ${
+                  selectedGateway === "stripe"
+                    ? "border-[#394B49] bg-[#E6EFEA]/70 ring-1 ring-[#394B49]"
+                    : "border-[#DCE5E8] hover:border-[#B7CBC2] bg-white"
+                }`}
+              >
+                <div>
+                  <div className="text-xs font-bold text-[#263331] flex items-center gap-1.5">
+                    <span>Stripe</span>
+                    <StatusBadge tone="warm" className="text-[9px]">Global</StatusBadge>
+                  </div>
+                  <div className="text-[10px] text-[#546866] mt-0.5">International Cards &amp; Apple Pay</div>
+                </div>
+                {selectedGateway === "stripe" && (
+                  <CheckCircle2 className="h-4 w-4 text-[#2F6B55] shrink-0 ml-2" />
+                )}
+              </button>
+            </div>
+          </div>
+
+          {/* Payment Method Selection */}
+          <div>
+            <label className="text-xs font-bold text-[#394B49] block mb-2">
+              2. Select Channel ({selectedGateway === "razorpay" ? "Razorpay" : "Stripe"}):
+            </label>
+            {selectedGateway === "razorpay" ? (
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { id: "upi", label: "UPI (Instant)", desc: "GPay / PhonePe / Paytm" },
+                  { id: "card", label: "Indian Cards", desc: "RuPay / Visa / Master" },
+                  { id: "netbanking", label: "NetBanking", desc: "All 50+ Banks" },
+                ].map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => setSelectedMethod(m.id)}
+                    className={`rounded-xl p-3 border text-left transition cursor-pointer ${
+                      selectedMethod === m.id
+                        ? "border-[#394B49] bg-[#E6EFEA] text-[#263331]"
+                        : "border-[#DCE5E8] text-[#394B49] hover:bg-[#F3F0E8]"
                     }`}
                   >
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-bold text-sm text-[hsl(222,47%,11%)]">{pkg.name}</h4>
-                        {pkg.recommended && (
-                          <span className="bg-[hsl(166,72%,40%)] text-white text-[9px] font-bold uppercase px-2 py-0.5 rounded-full">
-                            Recommended
-                          </span>
-                        )}
-                        {calc.isCurrent && (
-                          <span className="bg-emerald-600 text-white text-[9px] font-bold uppercase px-2 py-0.5 rounded-full">
-                            Active
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-[11px] text-gray-500 mt-1 max-w-xs">{pkg.description}</p>
-                    </div>
-
-                    <div className="text-right shrink-0">
-                      {calc.isUpgrade ? (
-                        <div>
-                          <span className="text-base font-extrabold text-[hsl(166,72%,40%)] block">
-                            ₹{calc.payable.toLocaleString("en-IN")}
-                          </span>
-                          <span className="text-[10px] text-emerald-700 font-semibold">
-                            (Upgrade Diff)
-                          </span>
-                        </div>
-                      ) : (
-                        <span className="text-base font-extrabold text-[hsl(222,47%,11%)]">
-                          ₹{pkg.price.toLocaleString("en-IN")}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Upgrade Credit Breakdown Box */}
-            {currentPayableCalc.isUpgrade && (
-              <div className="mb-5 rounded-2xl bg-teal-50/70 border border-teal-200 p-4 text-xs space-y-2">
-                <div className="flex justify-between text-gray-700">
-                  <span>{currentSelectedPkg.name} Standard Price:</span>
-                  <span className="font-semibold">₹{currentSelectedPkg.price.toLocaleString("en-IN")}</span>
-                </div>
-                <div className="flex justify-between text-emerald-700 font-semibold">
-                  <span>{activePackage?.name} Credit Applied:</span>
-                  <span>-₹{currentPayableCalc.creditedAmount.toLocaleString("en-IN")}</span>
-                </div>
-                <div className="pt-2 border-t border-teal-200 flex justify-between font-bold text-sm text-teal-950">
-                  <span>Differential Amount Payable:</span>
-                  <span>₹{currentPayableCalc.payable.toLocaleString("en-IN")}</span>
-                </div>
+                    <div className="text-xs font-bold">{m.label}</div>
+                    <div className="text-[10px] text-[#546866] mt-0.5">{m.desc}</div>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { id: "card", label: "International Cards", desc: "Visa / Mastercard / Amex" },
+                  { id: "apple_pay", label: "Digital Wallets", desc: "Apple Pay / Google Pay" },
+                ].map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => setSelectedMethod(m.id)}
+                    className={`rounded-xl p-3 border text-left transition cursor-pointer ${
+                      selectedMethod === m.id
+                        ? "border-[#394B49] bg-[#E6EFEA] text-[#263331]"
+                        : "border-[#DCE5E8] text-[#394B49] hover:bg-[#F3F0E8]"
+                    }`}
+                  >
+                    <div className="text-xs font-bold">{m.label}</div>
+                    <div className="text-[10px] text-[#546866] mt-0.5">{m.desc}</div>
+                  </button>
+                ))}
               </div>
             )}
+          </div>
 
-            {/* Payment Gateway Selection */}
-            <div className="mb-5">
-              <label className="text-xs font-bold text-gray-700 block mb-2">
-                1. Select Payment Gateway:
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedGateway("razorpay");
-                    setSelectedMethod("upi");
-                  }}
-                  className={`p-3 rounded-xl border text-left transition flex items-center justify-between ${
-                    selectedGateway === "razorpay"
-                      ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 ring-1 ring-[hsl(166,72%,40%)]"
-                      : "border-gray-200 hover:border-gray-300 bg-white"
-                  }`}
-                >
-                  <div>
-                    <div className="text-xs font-bold text-[hsl(222,47%,11%)] flex items-center gap-1.5">
-                      <span>🇮🇳 Razorpay</span>
-                      <span className="text-[10px] bg-blue-100 text-blue-800 px-1.5 py-0.2 rounded font-semibold">India</span>
-                    </div>
-                    <div className="text-[10px] text-gray-500 mt-0.5">UPI, NetBanking, RuPay & Cards</div>
-                  </div>
-                  {selectedGateway === "razorpay" && (
-                    <CheckCircle2 className="h-4 w-4 text-[hsl(166,72%,40%)] shrink-0 ml-2" />
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedGateway("stripe");
-                    setSelectedMethod("card");
-                  }}
-                  className={`p-3 rounded-xl border text-left transition flex items-center justify-between ${
-                    selectedGateway === "stripe"
-                      ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 ring-1 ring-[hsl(166,72%,40%)]"
-                      : "border-gray-200 hover:border-gray-300 bg-white"
-                  }`}
-                >
-                  <div>
-                    <div className="text-xs font-bold text-[hsl(222,47%,11%)] flex items-center gap-1.5">
-                      <span>🌐 Stripe</span>
-                      <span className="text-[10px] bg-purple-100 text-purple-800 px-1.5 py-0.2 rounded font-semibold">Global</span>
-                    </div>
-                    <div className="text-[10px] text-gray-500 mt-0.5">International Cards & Apple Pay</div>
-                  </div>
-                  {selectedGateway === "stripe" && (
-                    <CheckCircle2 className="h-4 w-4 text-[hsl(166,72%,40%)] shrink-0 ml-2" />
-                  )}
-                </button>
+          {/* Total and Action */}
+          <div className="pt-4 border-t border-[#DCE5E8] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <span className="text-xs text-[#546866]">
+                {currentPayableCalc.isUpgrade ? "Differential Total Payable:" : "Total Payable:"}
+              </span>
+              <div className="text-2xl font-extrabold text-[#263331] tabular-nums">
+                ₹{currentPayableCalc.payable.toLocaleString("en-IN")}
               </div>
             </div>
 
-            {/* Payment Method Selection */}
-            <div className="mb-6">
-              <label className="text-xs font-bold text-gray-700 block mb-2">
-                2. Select Channel ({selectedGateway === "razorpay" ? "Razorpay" : "Stripe"}):
-              </label>
+            <div className="flex flex-wrap items-center gap-2">
               {selectedGateway === "razorpay" ? (
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { id: "upi", label: "UPI (Instant)", desc: "GPay / PhonePe / Paytm" },
-                    { id: "card", label: "Indian Cards", desc: "RuPay / Visa / Master" },
-                    { id: "netbanking", label: "NetBanking", desc: "All 50+ Banks" },
-                  ].map((m) => (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => setSelectedMethod(m.id)}
-                      className={`rounded-xl p-3 border text-left transition ${
-                        selectedMethod === m.id
-                          ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)]"
-                          : "border-gray-200 text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      <div className="text-xs font-bold">{m.label}</div>
-                      <div className="text-[10px] text-gray-500 mt-0.5">{m.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { id: "card", label: "International Cards", desc: "Visa / Mastercard / Amex" },
-                    { id: "apple_pay", label: "Digital Wallets", desc: "Apple Pay / Google Pay" },
-                  ].map((m) => (
-                    <button
-                      key={m.id}
-                      type="button"
-                      onClick={() => setSelectedMethod(m.id)}
-                      className={`rounded-xl p-3 border text-left transition ${
-                        selectedMethod === m.id
-                          ? "border-[hsl(166,72%,40%)] bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)]"
-                          : "border-gray-200 text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      <div className="text-xs font-bold">{m.label}</div>
-                      <div className="text-[10px] text-gray-500 mt-0.5">{m.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Total and Action */}
-            <div className="pt-4 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div>
-                <span className="text-xs text-gray-500">
-                  {currentPayableCalc.isUpgrade ? "Differential Total Payable:" : "Total Payable:"}
-                </span>
-                <div className="text-2xl font-extrabold text-[hsl(222,47%,11%)]">
-                  ₹{currentPayableCalc.payable.toLocaleString("en-IN")}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {selectedGateway === "razorpay" ? (
-                  <>
-                    <button
-                      disabled={submitting || currentPayableCalc.isCurrent}
-                      type="button"
-                      onClick={handleDirectPayment}
-                      className="inline-flex items-center gap-1.5 rounded-xl border border-gray-300 bg-white px-4 py-3 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition disabled:opacity-50"
-                    >
-                      Instant 1-Click
-                    </button>
-                    <button
-                      disabled={submitting || currentPayableCalc.isCurrent}
-                      type="button"
-                      onClick={handleRazorpayModalPayment}
-                      className="inline-flex items-center gap-2 rounded-xl bg-[hsl(166,72%,40%)] px-5 py-3 text-xs font-bold text-white shadow-md hover:bg-[hsl(166,72%,46%)] transition disabled:opacity-50"
-                    >
-                      {submitting ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" /> Launching...
-                        </>
-                      ) : (
-                        <>
-                          Pay via Razorpay <ArrowRight className="h-4 w-4" />
-                        </>
-                      )}
-                    </button>
-                  </>
-                ) : (
-                  <button
+                <>
+                  <Button
                     disabled={submitting || currentPayableCalc.isCurrent}
                     type="button"
+                    variant="secondary"
+                    size="md"
                     onClick={handleDirectPayment}
-                    className="inline-flex items-center gap-2 rounded-xl bg-purple-700 px-6 py-3 text-xs font-bold text-white shadow-md hover:bg-purple-800 transition disabled:opacity-50"
                   >
-                    {submitting ? (
-                      <>
-                        <Loader2 className="h-4 w-4 animate-spin" /> Processing...
-                      </>
-                    ) : (
-                      <>
-                        Pay with Stripe (Sandbox) <ArrowRight className="h-4 w-4" />
-                      </>
-                    )}
-                  </button>
-                )}
-              </div>
+                    Instant 1-Click
+                  </Button>
+                  <Button
+                    disabled={submitting || currentPayableCalc.isCurrent}
+                    loading={submitting}
+                    loadingText="Launching..."
+                    type="button"
+                    variant="primary"
+                    size="md"
+                    onClick={handleRazorpayModalPayment}
+                  >
+                    Pay via Razorpay <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </>
+              ) : (
+                <Button
+                  disabled={submitting || currentPayableCalc.isCurrent}
+                  loading={submitting}
+                  loadingText="Processing..."
+                  type="button"
+                  variant="warm"
+                  size="md"
+                  onClick={handleDirectPayment}
+                >
+                  Pay with Stripe (Sandbox) <ArrowRight className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           </div>
         </div>
-      )}
+      </ModalShell>
 
       {/* View Digital Receipt Modal */}
-      {viewReceipt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
-          <div className="w-full max-w-md rounded-3xl bg-white p-8 shadow-2xl relative">
-            <button
-              onClick={() => setViewReceipt(null)}
-              className="absolute right-5 top-5 text-gray-400 hover:text-gray-600"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
+      <ModalShell
+        isOpen={Boolean(viewReceipt)}
+        onClose={() => setViewReceipt(null)}
+        maxWidth="max-w-md"
+      >
+        {viewReceipt && (
+          <div>
             <div className="text-center mb-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 mx-auto mb-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EDF5F1] border border-[#B7CBC2] text-[#2F6B55] mx-auto mb-3">
                 <CheckCircle2 className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-bold text-[hsl(222,47%,11%)]">Official Tax Invoice</h3>
-              <p className="text-xs text-gray-500 mt-0.5">Lugie Global Consultancy – Dream Beyond Borders</p>
+              <h3 className="font-editorial text-xl text-[#263331]">Official Tax Invoice</h3>
+              <p className="text-xs text-[#546866] mt-0.5">
+                Lugie Global Consultancy – Dream Beyond Borders
+              </p>
             </div>
 
-            <div className="rounded-2xl bg-gray-50 p-4 border border-gray-100 space-y-2.5 text-xs">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Order ID:</span>
-                <span className="font-mono font-semibold text-gray-800">{viewReceipt.id}</span>
+            <div className="rounded-2xl bg-[#F3F0E8]/60 p-4 border border-[#DCE5E8] space-y-2.5 text-xs">
+              <div className="flex justify-between gap-3">
+                <span className="text-[#546866]">Order ID:</span>
+                <span className="font-mono font-semibold text-[#263331] truncate">{viewReceipt.id}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Package Enrolled:</span>
-                <span className="font-semibold text-gray-900">{viewReceipt.package_name || "Admissions Plan"}</span>
+              <div className="flex justify-between gap-3">
+                <span className="text-[#546866]">Package Enrolled:</span>
+                <span className="font-semibold text-[#263331]">
+                  {viewReceipt.package_name || "Admissions Plan"}
+                </span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Date Paid:</span>
-                <span className="font-semibold text-gray-900">
+              <div className="flex justify-between gap-3">
+                <span className="text-[#546866]">Date Paid:</span>
+                <span className="font-semibold text-[#263331]">
                   {new Date(viewReceipt.created_at).toLocaleDateString("en-IN", {
                     day: "numeric",
                     month: "long",
@@ -962,47 +953,46 @@ function PaymentsContent() {
                 </span>
               </div>
               {viewReceipt.discount_amount && viewReceipt.discount_amount > 0 && (
-                <div className="flex justify-between text-emerald-700">
+                <div className="flex justify-between text-[#2F6B55]">
                   <span>Upgrade Credit Applied:</span>
-                  <span className="font-bold">-₹{viewReceipt.discount_amount.toLocaleString("en-IN")}</span>
+                  <span className="font-bold tabular-nums">
+                    -₹{viewReceipt.discount_amount.toLocaleString("en-IN")}
+                  </span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-gray-500">Payment Status:</span>
-                <span className="font-bold text-emerald-600 uppercase">CONFIRMED (PAID)</span>
+                <span className="text-[#546866]">Payment Status:</span>
+                <span className="font-bold text-[#2F6B55] uppercase">CONFIRMED (PAID)</span>
               </div>
-              <div className="pt-2 border-t border-gray-200 flex justify-between text-sm font-bold">
-                <span>Total Amount Paid:</span>
-                <span className="text-[hsl(166,72%,40%)] font-extrabold">
+              <div className="pt-2.5 border-t border-[#DCE5E8] flex justify-between text-sm font-bold">
+                <span className="text-[#263331]">Total Amount Paid:</span>
+                <span className="text-[#394B49] font-extrabold tabular-nums">
                   ₹{viewReceipt.total_amount?.toLocaleString("en-IN")}
                 </span>
               </div>
             </div>
 
-            <button
+            <Button
+              type="button"
+              variant="secondary"
+              size="md"
               onClick={() => {
                 window.print();
               }}
-              className="mt-6 w-full py-2.5 rounded-xl border border-gray-300 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition flex items-center justify-center gap-1.5"
+              className="mt-6 w-full"
             >
               <Download className="h-4 w-4" /> Print / Save Tax Receipt
-            </button>
+            </Button>
           </div>
-        </div>
-      )}
+        )}
+      </ModalShell>
     </div>
   );
 }
 
 export default function StudentPaymentsPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex h-64 items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
-        </div>
-      }
-    >
+    <Suspense fallback={<SkeletonJourney />}>
       <PaymentsContent />
     </Suspense>
   );

@@ -1,5 +1,5 @@
 /**
- * Branded spinner — teal ring with navy center dot.
+ * Restrained spinner aligned with Beyond palette (Forest Slate track + Soft Terracotta accent).
  */
 export function Spinner({
   size = "md",
@@ -13,7 +13,7 @@ export function Spinner({
 
   return (
     <div
-      className={`${dims[size]} ${border[size]} animate-spin rounded-full border-[hsl(166,72%,40%)] border-t-transparent ${className}`}
+      className={`${dims[size]} ${border[size]} animate-spin rounded-full border-[#B7CBC2] border-t-[#394B49] ${className}`}
       role="status"
       aria-label="Loading"
     >

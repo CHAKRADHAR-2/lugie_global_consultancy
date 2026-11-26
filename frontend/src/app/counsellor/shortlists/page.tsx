@@ -5,22 +5,17 @@ import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import {
   Building2,
-  GraduationCap,
   Sparkles,
   Search,
-  Plus,
   CheckCircle2,
-  Clock,
-  AlertCircle,
-  Loader2,
   User,
   Mail,
   Send,
-  X,
-  Compass,
-  DollarSign,
-  TrendingUp,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ModalShell, StatusBadge } from "@/components/ui/feedback";
+import { GlobalOrbitLoader } from "@/components/ui/loading-concepts";
+import { SkeletonCard } from "@/components/ui/skeleton";
 
 interface StudentOpted {
   id: string;
@@ -45,6 +40,17 @@ interface StudentOption {
   first_name?: string;
   last_name?: string;
   email?: string;
+}
+
+const INPUT_CLASS =
+  "w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2.5 text-sm text-[#394B49] placeholder:text-[#546866]/70 focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition";
+
+function getTierTone(tier: string): "success" | "sage" | "warm" | "misty" {
+  const t = (tier || "").toLowerCase();
+  if (t === "dream") return "warm";
+  if (t === "safe") return "success";
+  if (t === "target") return "sage";
+  return "misty";
 }
 
 export default function CounsellorShortlistsPage() {
@@ -81,10 +87,13 @@ export default function CounsellorShortlistsPage() {
       ]);
 
       if (optedRes.status === "fulfilled") {
-        setOptedList(optedRes.value || []);
+        const val = optedRes.value as any;
+        const list = Array.isArray(val) ? val : val?.items || [];
+        setOptedList(list);
       }
       if (studentsRes.status === "fulfilled") {
-        const list = studentsRes.value || [];
+        const val = studentsRes.value as any;
+        const list: StudentOption[] = Array.isArray(val) ? val : val?.items || [];
         setStudents(list);
         if (list.length > 0 && !recStudentId) {
           setRecStudentId(list[0].id);
@@ -186,129 +195,146 @@ export default function CounsellorShortlistsPage() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-            <Building2 className="h-6 w-6 text-primary" />
-            University Shortlisting & Recommendations Desk
+          <h1 className="font-editorial text-2xl sm:text-3xl tracking-tight text-[#263331] flex items-center gap-2.5">
+            <Building2 className="h-6 w-6 text-[#3F6258] shrink-0" />
+            <span>University Shortlisting &amp; Recommendations Desk</span>
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[#546866] mt-1">
             Review university nominations chosen by students and prescribe curated institutional strategies.
           </p>
         </div>
-        <button
+        <Button
+          type="button"
+          variant="warm"
+          size="md"
           onClick={() => setShowRecModal(true)}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90"
+          className="shrink-0"
         >
           <Sparkles className="h-4 w-4" />
           Recommend University to Student
-        </button>
+        </Button>
       </div>
 
       {/* Search Bar */}
-      <div className="flex items-center gap-2 bg-card p-3 rounded-2xl border border-border shadow-sm">
-        <Search className="h-4 w-4 text-muted-foreground ml-2" />
-        <input
-          type="text"
-          placeholder="Search by student name, email, university, or country..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="bg-transparent border-none text-sm focus:outline-none w-full text-foreground placeholder:text-muted-foreground"
-        />
+      <div className="bg-[#F3F0E8]/60 border border-[#DCE5E8] rounded-xl p-3">
+        <div className="relative">
+          <Search className="h-4 w-4 text-[#546866] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search by student name, email, university, or country..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className={`${INPUT_CLASS} pl-10 bg-white`}
+          />
+        </div>
       </div>
 
       {/* Main Opted Review Grid */}
       {loading ? (
-        <div className="py-20 text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
-          <p className="text-sm text-muted-foreground">Loading university nominations...</p>
+        <div className="space-y-6">
+          <div className="beyond-card p-6">
+            <GlobalOrbitLoader label="Loading university nominations…" size="md" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
         </div>
       ) : filteredOpted.length === 0 ? (
-        <div className="p-12 text-center bg-card rounded-2xl border border-border shadow-sm">
-          <Building2 className="h-10 w-10 text-muted-foreground mx-auto mb-2 opacity-40" />
-          <h3 className="font-semibold text-foreground">No student opted universities found</h3>
-          <p className="text-sm text-muted-foreground mt-1">
+        <div className="beyond-card p-12 text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#E6EFEA] border border-[#B7CBC2] text-[#3F6258]">
+            <Building2 className="h-6 w-6" />
+          </div>
+          <h3 className="font-semibold text-[#263331]">No student opted universities found</h3>
+          <p className="text-sm text-[#546866] mt-1">
             When candidates opt universities in their portal, they appear here for your advisory verdict.
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {filteredOpted.map((item) => {
-            const isReviewed = item.status === "reviewed" || item.counsellor_opinion;
+            const isReviewed = Boolean(item.status === "reviewed" || item.counsellor_opinion);
             return (
               <div
                 key={item.id}
-                className="bg-card rounded-2xl border border-border p-5 flex flex-col justify-between hover:border-primary/40 transition shadow-sm"
+                className="beyond-card beyond-card-interactive p-5 flex flex-col justify-between"
               >
-                <div className="space-y-3">
+                <div className="space-y-3.5">
                   {/* Top Candidate & Status Bar */}
-                  <div className="flex items-start justify-between gap-2 border-b border-border pb-3">
-                    <div>
-                      <div className="flex items-center gap-1.5 font-bold text-sm text-foreground">
-                        <User className="h-3.5 w-3.5 text-primary" />
-                        <span>{item.student_name || "Enrolled Student"}</span>
+                  <div className="flex items-start justify-between gap-2 border-b border-[#DCE5E8] pb-3">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-1.5 font-bold text-sm text-[#263331]">
+                        <User className="h-3.5 w-3.5 text-[#3F6258] shrink-0" />
+                        <span className="truncate">{item.student_name || "Enrolled Student"}</span>
                       </div>
-                      <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                        <Mail className="h-3 w-3 text-muted-foreground" />
-                        <span>{item.student_email || "Email on file"}</span>
+                      <div className="text-xs text-[#546866] flex items-center gap-1 mt-0.5">
+                        <Mail className="h-3 w-3 shrink-0" />
+                        <span className="truncate">{item.student_email || "Email on file"}</span>
                       </div>
                     </div>
-                    <span
-                      className={`text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border ${
-                        item.tier === "dream"
-                          ? "bg-purple-50 text-purple-700 border-purple-200"
-                          : item.tier === "target"
-                          ? "bg-blue-50 text-blue-700 border-blue-200"
-                          : "bg-emerald-50 text-emerald-700 border-emerald-200"
-                      }`}
-                    >
-                      {item.tier} Choice
-                    </span>
+                    <div className="flex flex-wrap items-center justify-end gap-1.5 shrink-0">
+                      <StatusBadge tone={getTierTone(item.tier)} className="uppercase">
+                        {item.tier} Choice
+                      </StatusBadge>
+                      <StatusBadge tone={isReviewed ? "success" : "warning"}>
+                        {isReviewed ? "Reviewed" : "Pending Review"}
+                      </StatusBadge>
+                    </div>
                   </div>
 
                   {/* University & Course */}
                   <div>
-                    <h4 className="font-bold text-foreground text-base">
+                    <h2 className="font-bold text-[#263331] text-base">
                       {item.university_name}
-                    </h4>
-                    <p className="text-xs text-muted-foreground font-medium">
-                      {item.course_name} • <span className="text-primary font-semibold">{item.country}</span>
+                    </h2>
+                    <p className="text-xs text-[#546866] font-medium mt-0.5">
+                      {item.course_name} &bull;{" "}
+                      <span className="text-[#3F6258] font-semibold">{item.country}</span>
                     </p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      Target Intake: <span className="font-semibold text-foreground">{item.intake}</span>
+                    <p className="text-xs text-[#546866] mt-1">
+                      Target Intake:{" "}
+                      <span className="font-semibold text-[#263331]">{item.intake}</span>
                     </p>
                   </div>
 
                   {/* Student's Query / Notes */}
                   {item.student_notes && (
-                    <div className="bg-muted/40 rounded-xl p-3 text-xs border border-border">
-                      <span className="font-semibold text-foreground block mb-1">Student's Query:</span>
-                      <p className="text-muted-foreground italic">&ldquo;{item.student_notes}&rdquo;</p>
+                    <div className="bg-[#F3F0E8]/60 rounded-xl p-3.5 text-xs border border-[#DCE5E8]">
+                      <span className="font-semibold text-[#263331] block mb-1">
+                        Student&apos;s Query:
+                      </span>
+                      <p className="text-[#546866] italic leading-relaxed">
+                        &ldquo;{item.student_notes}&rdquo;
+                      </p>
                     </div>
                   )}
 
                   {/* Counsellor Opinion Verdict */}
                   {isReviewed && (
-                    <div className="bg-emerald-50/50 rounded-xl p-3 text-xs border border-emerald-200 space-y-1">
-                      <div className="flex items-center gap-1.5 font-bold text-emerald-900">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                    <div className="bg-[#EDF5F1] rounded-xl p-3.5 text-xs border border-[#B7CBC2] space-y-1">
+                      <div className="flex items-center gap-1.5 font-bold text-[#2F6B55]">
+                        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
                         <span>Advisory Verdict: {item.counsellor_verdict}</span>
                       </div>
-                      <p className="text-emerald-800 leading-relaxed">{item.counsellor_opinion}</p>
+                      <p className="text-[#263331] leading-relaxed">{item.counsellor_opinion}</p>
                     </div>
                   )}
                 </div>
 
                 {/* Footer Action */}
-                <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-                  <span className="text-[11px] text-muted-foreground">
+                <div className="mt-4 pt-3 border-t border-[#DCE5E8] flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-[11px] text-[#546866]">
                     {isReviewed ? "Delivered to candidate" : "Awaiting your evaluation"}
                   </span>
-                  <button
+                  <Button
+                    type="button"
+                    variant={isReviewed ? "secondary" : "primary"}
+                    size="sm"
                     onClick={() => handleOpenReview(item)}
-                    className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-90"
                   >
                     <Send className="h-3.5 w-3.5" />
                     {isReviewed ? "Update Opinion" : "Submit Expert Opinion"}
-                  </button>
+                  </Button>
                 </div>
               </div>
             );
@@ -317,246 +343,251 @@ export default function CounsellorShortlistsPage() {
       )}
 
       {/* Review Opinion Modal */}
-      {reviewModalItem && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl bg-card border border-border p-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
-              <div>
-                <h3 className="text-base font-bold text-foreground">
-                  Advisory Verdict & Opinion on Nominated Choice
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  For {reviewModalItem.student_name}: {reviewModalItem.university_name}
-                </p>
-              </div>
-              <button
-                onClick={() => setReviewModalItem(null)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmitReview} className="space-y-4">
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1">
-                  Admissions Calibrated Verdict *
-                </label>
-                <select
-                  value={verdict}
-                  onChange={(e) => setVerdict(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                >
-                  <option value="Strong Competitive Match">Strong Competitive Match (High Probability)</option>
-                  <option value="Target / High Fit">Target / Direct Fit (Balanced Strategy)</option>
-                  <option value="Ambitious Reach">Ambitious Reach (Requires Strong SOP/GRE)</option>
-                  <option value="High Risk / Safety Net Required">High Risk / Safety Net Required</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1">
-                  Expert Counsellor Opinion & Strategic Guidance *
-                </label>
-                <textarea
-                  rows={4}
-                  required
-                  placeholder="Provide concrete advice on entrance exams, minimum CGPA cutoff, Vorprufung curricular matching, or alternative suggestions..."
-                  value={opinion}
-                  onChange={(e) => setOpinion(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setReviewModalItem(null)}
-                  className="rounded-xl border border-border px-4 py-2 text-xs font-medium text-foreground hover:bg-muted"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submittingReview}
-                  className="rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-1.5"
-                >
-                  {submittingReview && <Loader2 className="h-4 w-4 animate-spin" />}
-                  {submittingReview ? "Sending..." : "Deliver Opinion"}
-                </button>
-              </div>
-            </form>
+      <ModalShell
+        isOpen={Boolean(reviewModalItem)}
+        onClose={() => setReviewModalItem(null)}
+        title="Advisory Verdict & Opinion on Nominated Choice"
+        subtitle={
+          reviewModalItem
+            ? `For ${reviewModalItem.student_name || "Student"}: ${reviewModalItem.university_name}`
+            : undefined
+        }
+        maxWidth="max-w-lg"
+      >
+        <form onSubmit={handleSubmitReview} className="space-y-4">
+          <div>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              Admissions Calibrated Verdict *
+            </label>
+            <select
+              value={verdict}
+              onChange={(e) => setVerdict(e.target.value)}
+              className={INPUT_CLASS}
+            >
+              <option value="Strong Competitive Match">
+                Strong Competitive Match (High Probability)
+              </option>
+              <option value="Target / High Fit">
+                Target / Direct Fit (Balanced Strategy)
+              </option>
+              <option value="Ambitious Reach">
+                Ambitious Reach (Requires Strong SOP/GRE)
+              </option>
+              <option value="High Risk / Safety Net Required">
+                High Risk / Safety Net Required
+              </option>
+            </select>
           </div>
-        </div>
-      )}
+
+          <div>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              Expert Counsellor Opinion &amp; Strategic Guidance *
+            </label>
+            <textarea
+              rows={4}
+              required
+              placeholder="Provide concrete advice on entrance exams, minimum CGPA cutoff, Vorprufung curricular matching, or alternative suggestions..."
+              value={opinion}
+              onChange={(e) => setOpinion(e.target.value)}
+              className={INPUT_CLASS}
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setReviewModalItem(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              size="sm"
+              loading={submittingReview}
+              loadingText="Sending..."
+              disabled={submittingReview}
+            >
+              Deliver Opinion
+            </Button>
+          </div>
+        </form>
+      </ModalShell>
 
       {/* Add Recommendation Modal */}
-      {showRecModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-3xl bg-card border border-border p-6 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-border pb-3 mb-4">
-              <div>
-                <h3 className="text-base font-bold text-foreground">
-                  Recommend University to Candidate
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  Suggest strategic universities tailored to the student&apos;s academic background.
-                </p>
-              </div>
-              <button
-                onClick={() => setShowRecModal(false)}
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateRecommendation} className="space-y-3">
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1">
-                  Select Student *
-                </label>
-                <select
-                  value={recStudentId}
-                  onChange={(e) => setRecStudentId(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                  required
-                >
-                  {students.map((s) => {
-                    const name = s.student_name || `${s.first_name || ""} ${s.last_name || ""}`.trim() || s.email || "Candidate";
-                    return (
-                      <option key={s.id} value={s.id}>
-                        {name} ({s.email})
-                      </option>
-                    );
-                  })}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    University Name *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. Imperial College London"
-                    value={recUniName}
-                    onChange={(e) => setRecUniName(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    Country *
-                  </label>
-                  <select
-                    value={recCountry}
-                    onChange={(e) => setRecCountry(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                  >
-                    <option value="United Kingdom">United Kingdom</option>
-                    <option value="Germany">Germany</option>
-                    <option value="United States">United States</option>
-                    <option value="Ireland">Ireland</option>
-                    <option value="Canada">Canada</option>
-                    <option value="Australia">Australia</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    Programme / Course *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="e.g. MSc Advanced Computing"
-                    value={recCourse}
-                    onChange={(e) => setRecCourse(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    Intake
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Fall 2027"
-                    value={recIntake}
-                    onChange={(e) => setRecIntake(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    Tier Category
-                  </label>
-                  <select
-                    value={recTier}
-                    onChange={(e) => setRecTier(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                  >
-                    <option value="dream">Dream (Ambitious)</option>
-                    <option value="target">Target (High Fit)</option>
-                    <option value="safe">Safe (High Acceptance)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-foreground mb-1">
-                    Estimated Acceptance Chance
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. High (80-90%)"
-                    value={recChance}
-                    onChange={(e) => setRecChance(e.target.value)}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-foreground mb-1">
-                  Why this institution matches the candidate?
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="Explains curriculum alignment, placement track record, or post-study work visa benefits..."
-                  value={recReason}
-                  onChange={(e) => setRecReason(e.target.value)}
-                  className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowRecModal(false)}
-                  className="rounded-xl border border-border px-4 py-2 text-xs font-medium text-foreground hover:bg-muted"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submittingRec}
-                  className="rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-1.5"
-                >
-                  {submittingRec && <Loader2 className="h-4 w-4 animate-spin" />}
-                  {submittingRec ? "Submitting..." : "Send Recommendation"}
-                </button>
-              </div>
-            </form>
+      <ModalShell
+        isOpen={showRecModal}
+        onClose={() => setShowRecModal(false)}
+        title="Recommend University to Candidate"
+        subtitle="Suggest strategic universities tailored to the student's academic background."
+        maxWidth="max-w-lg"
+      >
+        <form onSubmit={handleCreateRecommendation} className="space-y-3.5 max-h-[70vh] overflow-y-auto pr-1">
+          <div>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              Select Student *
+            </label>
+            <select
+              value={recStudentId}
+              onChange={(e) => setRecStudentId(e.target.value)}
+              className={INPUT_CLASS}
+              required
+            >
+              {students.map((s) => {
+                const name =
+                  s.student_name ||
+                  `${s.first_name || ""} ${s.last_name || ""}`.trim() ||
+                  s.email ||
+                  "Candidate";
+                return (
+                  <option key={s.id} value={s.id}>
+                    {name} ({s.email})
+                  </option>
+                );
+              })}
+            </select>
           </div>
-        </div>
-      )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                University Name *
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Imperial College London"
+                value={recUniName}
+                onChange={(e) => setRecUniName(e.target.value)}
+                className={INPUT_CLASS}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                Country *
+              </label>
+              <select
+                value={recCountry}
+                onChange={(e) => setRecCountry(e.target.value)}
+                className={INPUT_CLASS}
+              >
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="Germany">Germany</option>
+                <option value="United States">United States</option>
+                <option value="Ireland">Ireland</option>
+                <option value="Canada">Canada</option>
+                <option value="Australia">Australia</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                Programme / Course *
+              </label>
+              <input
+                type="text"
+                required
+                placeholder="e.g. MSc Advanced Computing"
+                value={recCourse}
+                onChange={(e) => setRecCourse(e.target.value)}
+                className={INPUT_CLASS}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                Intake
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Fall 2027"
+                value={recIntake}
+                onChange={(e) => setRecIntake(e.target.value)}
+                className={INPUT_CLASS}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                Tier Category
+              </label>
+              <select
+                value={recTier}
+                onChange={(e) => setRecTier(e.target.value)}
+                className={INPUT_CLASS}
+              >
+                <option value="dream">Dream (Ambitious)</option>
+                <option value="target">Target (High Fit)</option>
+                <option value="safe">Safe (High Acceptance)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+                Estimated Acceptance Chance
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. High (80-90%)"
+                value={recChance}
+                onChange={(e) => setRecChance(e.target.value)}
+                className={INPUT_CLASS}
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              Tuition Fee Range
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. £24,000 - £28,000 / year"
+              value={recFees}
+              onChange={(e) => setRecFees(e.target.value)}
+              className={INPUT_CLASS}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1.5">
+              Why this institution matches the candidate?
+            </label>
+            <textarea
+              rows={2}
+              placeholder="Explains curriculum alignment, placement track record, or post-study work visa benefits..."
+              value={recReason}
+              onChange={(e) => setRecReason(e.target.value)}
+              className={INPUT_CLASS}
+            />
+          </div>
+
+          <div className="flex items-center justify-end gap-2 pt-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setShowRecModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              size="sm"
+              loading={submittingRec}
+              loadingText="Submitting..."
+              disabled={submittingRec}
+            >
+              Send Recommendation
+            </Button>
+          </div>
+        </form>
+      </ModalShell>
     </div>
   );
 }

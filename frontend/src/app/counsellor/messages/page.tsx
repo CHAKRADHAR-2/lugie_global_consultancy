@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { openAuthenticatedUrl } from "@/lib/auth-tokens";
 import { toast } from "sonner";
@@ -11,22 +12,16 @@ import {
   FileText,
   Download,
   Loader2,
-  CheckCheck,
   User,
-  Clock,
   Search,
-  Building2,
-  GraduationCap,
-  CreditCard,
   Phone,
   Mail,
   MapPin,
-  Calendar,
-  Sparkles,
-  ExternalLink,
-  ShieldAlert,
   X,
 } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/feedback";
+import { DocumentRevealLoader, GlobalOrbitLoader } from "@/components/ui/loading-concepts";
 
 interface InboxStudent {
   student_id: string;
@@ -94,14 +89,13 @@ export default function CounsellorMessagesPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Load Inbox on mount
   async function loadInbox(preserveSelected = true) {
     try {
       const data = await api.get<InboxStudent[]>("messages/chat/counsellor/inbox");
       const list = data || [];
       setInbox(list);
 
-      if (!preserveSelected || !selectedStudent) {
+      if (!preserveSelected) {
         if (list.length > 0) {
           selectStudent(list[0]);
         }
@@ -141,10 +135,14 @@ export default function CounsellorMessagesPage() {
     loadStudentProfile(st.student_id);
   }
 
+  // Initial load on mount
   useEffect(() => {
     loadInbox(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    // 3-second auto-poll for live real-time chatting
+  // 3-second auto-poll for live real-time chatting
+  useEffect(() => {
     pollTimerRef.current = setInterval(() => {
       loadInbox(true);
       if (selectedStudent?.student_id) {
@@ -241,44 +239,45 @@ export default function CounsellorMessagesPage() {
       item.student_email.toLowerCase().includes(search.toLowerCase())
   );
 
+  const profilePct = Math.min(100, Math.max(0, studentDetails?.profile_completion || 0));
+
   return (
     <div className="space-y-4">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-          <MessageSquare className="h-6 w-6 text-primary" />
-          Counsellor Real-Time Admissions Chat Desk
+        <h1 className="font-editorial text-2xl sm:text-3xl tracking-tight text-[#263331] flex items-center gap-2.5">
+          <MessageSquare className="h-6 w-6 text-[#3F6258] shrink-0" />
+          <span>Counsellor Real-Time Admissions Chat Desk</span>
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-[#546866] mt-1">
           Communicate directly with registered students, send document reviews, and resolve admissions queries in real time.
         </p>
       </div>
 
       {/* Main 3-Column Desk: Inbox | Chat Stream | Student Profile Reference */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[750px] bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+      <div className="beyond-card grid grid-cols-1 lg:grid-cols-12 min-h-[640px] lg:h-[750px] overflow-hidden">
         {/* Column 1: Student Threads Inbox (3 cols) */}
-        <div className="lg:col-span-3 border-r border-border flex flex-col h-full bg-muted/10">
-          <div className="p-3 border-b border-border">
+        <div className="lg:col-span-3 border-b lg:border-b-0 lg:border-r border-[#DCE5E8] flex flex-col max-h-[280px] lg:max-h-none lg:h-full bg-[#F3F0E8]/45">
+          <div className="p-3 border-b border-[#DCE5E8]">
             <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#546866] pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search candidates..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl border border-border bg-background pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full rounded-xl border border-[#DCE5E8] bg-white pl-9 pr-3 py-2 text-xs text-[#394B49] placeholder:text-[#546866]/70 focus:border-[#394B49] focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
               />
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto divide-y divide-border">
+          <div className="flex-1 overflow-y-auto divide-y divide-[#DCE5E8]/80">
             {loadingInbox ? (
-              <div className="p-8 text-center">
-                <Loader2 className="h-6 w-6 animate-spin text-primary mx-auto mb-2" />
-                <p className="text-xs text-muted-foreground">Loading inbox...</p>
+              <div className="p-8 flex justify-center">
+                <GlobalOrbitLoader label="Loading inbox…" size="sm" />
               </div>
             ) : filteredInbox.length === 0 ? (
-              <div className="p-6 text-center text-xs text-muted-foreground">
+              <div className="p-6 text-center text-xs text-[#546866]">
                 No active conversations found.
               </div>
             ) : (
@@ -287,25 +286,26 @@ export default function CounsellorMessagesPage() {
                 return (
                   <button
                     key={item.student_id}
+                    type="button"
                     onClick={() => selectStudent(item)}
-                    className={`w-full text-left p-3.5 transition flex flex-col gap-1 ${
+                    className={`w-full text-left p-3.5 transition flex flex-col gap-1 cursor-pointer ${
                       isSelected
-                        ? "bg-primary/10 border-l-4 border-primary"
-                        : "hover:bg-muted/30"
+                        ? "bg-[#E6EFEA] border-l-4 border-[#3F6258]"
+                        : "hover:bg-[#EEF3F5]/60"
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="font-semibold text-xs text-foreground truncate max-w-[170px]">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-xs text-[#263331] truncate">
                         {item.student_name}
                       </span>
                       {item.unread_count > 0 && (
-                        <span className="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                        <span className="bg-[#D9A879] text-[#263331] text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0">
                           {item.unread_count}
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-muted-foreground truncate">{item.student_email}</p>
-                    <p className="text-[11px] text-muted-foreground/80 line-clamp-1 italic mt-0.5">
+                    <p className="text-[11px] text-[#546866] truncate">{item.student_email}</p>
+                    <p className="text-[11px] text-[#546866]/90 line-clamp-1 italic mt-0.5">
                       {item.last_message}
                     </p>
                   </button>
@@ -316,41 +316,38 @@ export default function CounsellorMessagesPage() {
         </div>
 
         {/* Column 2: Live Chat Thread (6 cols) */}
-        <div className="lg:col-span-6 flex flex-col h-full bg-background">
+        <div className="lg:col-span-6 flex flex-col h-[480px] lg:h-full bg-[#F3F0E8]/30">
           {selectedStudent ? (
             <>
               {/* Chat Thread Header */}
-              <div className="p-3.5 border-b border-border flex items-center justify-between bg-card">
-                <div className="flex items-center gap-3">
-                  <div className="h-9 w-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm">
+              <div className="p-3.5 border-b border-[#DCE5E8] flex items-center justify-between gap-3 bg-white">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-9 w-9 shrink-0 rounded-full bg-[#E6EFEA] border border-[#B7CBC2] text-[#263331] flex items-center justify-center font-bold text-sm">
                     {selectedStudent.student_name.charAt(0).toUpperCase()}
                   </div>
-                  <div>
-                    <h3 className="text-sm font-bold text-foreground">
+                  <div className="min-w-0">
+                    <h2 className="text-sm font-bold text-[#263331] truncate">
                       {selectedStudent.student_name}
-                    </h3>
-                    <p className="text-[11px] text-muted-foreground">
+                    </h2>
+                    <p className="text-[11px] text-[#546866] truncate">
                       {selectedStudent.student_email}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                    Live Sync
-                  </span>
-                </div>
+                <StatusBadge tone="sage" className="shrink-0">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#2F6B55] animate-pulse" />
+                  Live Sync
+                </StatusBadge>
               </div>
 
               {/* Message Stream */}
               <div className="flex-1 overflow-y-auto p-4 space-y-3">
                 {loadingChat ? (
-                  <div className="py-20 text-center">
-                    <Loader2 className="h-6 w-6 animate-spin text-primary mx-auto mb-2" />
-                    <p className="text-xs text-muted-foreground">Loading thread history...</p>
+                  <div className="py-16 flex justify-center">
+                    <GlobalOrbitLoader label="Loading thread history…" size="md" />
                   </div>
                 ) : messages.length === 0 ? (
-                  <div className="py-20 text-center text-xs text-muted-foreground">
+                  <div className="py-20 text-center text-xs text-[#546866]">
                     No messages in this thread yet. Send a greeting to initiate conversation.
                   </div>
                 ) : (
@@ -362,17 +359,25 @@ export default function CounsellorMessagesPage() {
                         className={`flex flex-col ${isCounsellor ? "items-end" : "items-start"}`}
                       >
                         <div
-                          className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs shadow-sm ${
+                          className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-xs shadow-xs ${
                             isCounsellor
-                              ? "bg-[hsl(215,50%,15%)] text-white rounded-br-none"
-                              : "bg-muted text-foreground rounded-bl-none border border-border"
+                              ? "bg-[#394B49] text-white rounded-br-xs"
+                              : "bg-white text-[#394B49] rounded-bl-xs border border-[#DCE5E8]"
                           }`}
                         >
                           <div className="flex items-center justify-between gap-4 mb-1">
-                            <span className="font-semibold text-[10px] opacity-80">
+                            <span
+                              className={`font-semibold text-[10px] ${
+                                isCounsellor ? "text-[#B7CBC2]" : "text-[#546866]"
+                              }`}
+                            >
                               {m.sender_name} ({m.sender_role})
                             </span>
-                            <span className="text-[10px] opacity-60">
+                            <span
+                              className={`text-[10px] ${
+                                isCounsellor ? "text-[#DCE5E8]" : "text-[#546866]"
+                              }`}
+                            >
                               {new Date(m.created_at).toLocaleTimeString([], {
                                 hour: "2-digit",
                                 minute: "2-digit",
@@ -386,14 +391,19 @@ export default function CounsellorMessagesPage() {
                             <button
                               type="button"
                               onClick={() =>
-                                openAuthenticatedUrl(m.attachment_url!, m.attachment_name || "document").catch((e) =>
-                                  toast.error(e instanceof Error ? e.message : "Unable to open attachment.")
+                                openAuthenticatedUrl(
+                                  m.attachment_url!,
+                                  m.attachment_name || "document"
+                                ).catch((e) =>
+                                  toast.error(
+                                    e instanceof Error ? e.message : "Unable to open attachment."
+                                  )
                                 )
                               }
-                              className={`mt-2 flex w-full text-left items-center gap-2 rounded-xl p-2 text-[11px] font-medium transition ${
+                              className={`mt-2 flex w-full text-left items-center gap-2 rounded-xl p-2 text-[11px] font-medium transition cursor-pointer ${
                                 isCounsellor
                                   ? "bg-white/10 hover:bg-white/20 text-white"
-                                  : "bg-background hover:bg-muted text-primary border border-border"
+                                  : "bg-[#F3F0E8]/60 hover:bg-[#E6EFEA] text-[#263331] border border-[#DCE5E8]"
                               }`}
                             >
                               <FileText className="h-4 w-4 shrink-0" />
@@ -411,16 +421,25 @@ export default function CounsellorMessagesPage() {
                 <div ref={messagesEndRef} />
               </div>
 
+              {/* Attachment Scanning Banner */}
+              {uploadingDoc && (
+                <div className="mx-4 mb-2 rounded-xl bg-[#F3F0E8] border border-[#DCE5E8] px-3 py-2 flex items-center justify-center">
+                  <DocumentRevealLoader size="sm" label="Staging secure attachment…" />
+                </div>
+              )}
+
               {/* Staged Attachment Pill */}
               {attachedDoc && (
-                <div className="mx-4 mb-2 flex items-center justify-between rounded-xl bg-primary/10 border border-primary/20 px-3 py-1.5 text-xs text-primary">
+                <div className="mx-4 mb-2 flex items-center justify-between rounded-xl bg-[#EDF5F1] border border-[#B7CBC2] px-3 py-1.5 text-xs text-[#2F6B55]">
                   <div className="flex items-center gap-2 truncate">
                     <FileText className="h-4 w-4 shrink-0" />
-                    <span className="truncate">{attachedDoc.name}</span>
+                    <span className="truncate font-medium">{attachedDoc.name}</span>
                   </div>
                   <button
+                    type="button"
                     onClick={() => setAttachedDoc(null)}
-                    className="hover:text-rose-500 ml-2"
+                    aria-label="Remove attachment"
+                    className="hover:text-[#A63A3A] ml-2 cursor-pointer"
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
@@ -428,17 +447,17 @@ export default function CounsellorMessagesPage() {
               )}
 
               {/* Chat Input Bar */}
-              <form onSubmit={handleSendMessage} className="p-3 border-t border-border bg-card">
+              <form onSubmit={handleSendMessage} className="p-3 border-t border-[#DCE5E8] bg-white">
                 <div className="flex items-center gap-2">
                   <label
                     htmlFor="counsellor-attach"
-                    className="p-2 rounded-xl text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition"
+                    className="p-2.5 rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 text-[#546866] hover:bg-[#E6EFEA] hover:text-[#394B49] hover:border-[#B7CBC2] cursor-pointer transition shrink-0"
                     title="Attach document or feedback note"
                   >
                     {uploadingDoc ? (
-                      <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                      <Loader2 className="h-4 w-4 animate-spin text-[#394B49]" />
                     ) : (
-                      <Paperclip className="h-5 w-5" />
+                      <Paperclip className="h-4 w-4" />
                     )}
                     <input
                       id="counsellor-attach"
@@ -454,28 +473,29 @@ export default function CounsellorMessagesPage() {
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder="Type advisory response or feedback (Press Enter to send)..."
-                    className="flex-1 rounded-xl border border-border bg-background px-3.5 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="flex-1 rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2 text-xs text-[#394B49] placeholder:text-[#546866]/70 focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
                   />
 
-                  <button
+                  <Button
                     type="submit"
+                    variant="primary"
+                    size="sm"
+                    loading={sending}
                     disabled={sending || (!inputText.trim() && !attachedDoc)}
-                    className="rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-sm hover:opacity-90 disabled:opacity-50 inline-flex items-center gap-1.5"
+                    className="shrink-0"
                   >
-                    {sending ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Send className="h-4 w-4" />
-                    )}
+                    <Send className="h-3.5 w-3.5" />
                     Send
-                  </button>
+                  </Button>
                 </div>
               </form>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-muted-foreground">
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-[#546866]">
               <MessageSquare className="h-10 w-10 opacity-30 mb-2" />
-              <p className="text-sm font-semibold text-foreground">Select a Candidate Conversation</p>
+              <p className="text-sm font-semibold text-[#263331]">
+                Select a Candidate Conversation
+              </p>
               <p className="text-xs max-w-sm mt-1">
                 Choose a candidate from the left inbox to view their chat history, attachments, and real-time advisory thread.
               </p>
@@ -484,95 +504,111 @@ export default function CounsellorMessagesPage() {
         </div>
 
         {/* Column 3: Attached Student Profile Dossier Sidebar (3 cols) */}
-        <div className="lg:col-span-3 border-l border-border bg-card p-4 overflow-y-auto flex flex-col gap-4">
-          <div className="border-b border-border pb-3">
-            <h4 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
-              <User className="h-3.5 w-3.5 text-primary" />
+        <div className="lg:col-span-3 border-t lg:border-t-0 lg:border-l border-[#DCE5E8] bg-white p-4 overflow-y-auto flex flex-col gap-4">
+          <div className="border-b border-[#DCE5E8] pb-3">
+            <h2 className="text-xs font-bold text-[#263331] uppercase tracking-wider flex items-center gap-1.5">
+              <User className="h-3.5 w-3.5 text-[#3F6258]" />
               Candidate Live Profile
-            </h4>
+            </h2>
           </div>
 
           {selectedStudent && studentDetails ? (
             <div className="space-y-4 text-xs">
               {/* Profile Card */}
-              <div className="bg-muted/40 rounded-xl p-3 border border-border space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-foreground text-sm">
+              <div className="bg-[#F3F0E8]/60 rounded-xl p-3.5 border border-[#DCE5E8] space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <span className="font-bold text-[#263331] text-sm">
                     {studentDetails.student_name || selectedStudent.student_name}
                   </span>
-                  <span className="bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-md text-[10px]">
+                  <StatusBadge tone="sage" className="shrink-0">
                     {studentDetails.active_package || "Free Tier"}
+                  </StatusBadge>
+                </div>
+                <div className="flex items-center gap-1.5 text-[#546866]">
+                  <Mail className="h-3 w-3 shrink-0" />
+                  <span className="truncate">
+                    {studentDetails.email || selectedStudent.student_email}
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                  <Mail className="h-3 w-3" />
-                  <span className="truncate">{studentDetails.email || selectedStudent.student_email}</span>
-                </div>
                 {studentDetails.phone && (
-                  <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <Phone className="h-3 w-3" />
+                  <div className="flex items-center gap-1.5 text-[#546866]">
+                    <Phone className="h-3 w-3 shrink-0" />
                     <span>{studentDetails.phone}</span>
                   </div>
                 )}
                 {(studentDetails.current_city || studentDetails.current_country) && (
-                  <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <MapPin className="h-3 w-3" />
+                  <div className="flex items-center gap-1.5 text-[#546866]">
+                    <MapPin className="h-3 w-3 shrink-0" />
                     <span>
-                      {[studentDetails.current_city, studentDetails.current_country].filter(Boolean).join(", ")}
+                      {[studentDetails.current_city, studentDetails.current_country]
+                        .filter(Boolean)
+                        .join(", ")}
                     </span>
                   </div>
                 )}
               </div>
 
               {/* Readiness / Completion */}
-              <div className="bg-muted/40 rounded-xl p-3 border border-border space-y-1.5">
+              <div className="bg-[#F3F0E8]/60 rounded-xl p-3.5 border border-[#DCE5E8] space-y-1.5">
                 <div className="flex justify-between font-medium">
-                  <span className="text-muted-foreground">Profile Readiness</span>
-                  <span className="text-primary font-bold">{studentDetails.profile_completion || 0}%</span>
+                  <span className="text-[#546866]">Profile Readiness</span>
+                  <span className="text-[#2F6B55] font-bold tabular-nums">{profilePct}%</span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-border overflow-hidden">
+                <div className="h-2 w-full rounded-full bg-[#DCE5E8] overflow-hidden">
                   <div
-                    className="h-full bg-primary rounded-full transition-all"
-                    style={{ width: `${studentDetails.profile_completion || 0}%` }}
+                    className="h-full bg-[#2F6B55] rounded-full transition-all"
+                    style={{ width: `${profilePct}%` }}
                   />
                 </div>
               </div>
 
               {/* Study Preferences */}
-              <div className="bg-muted/40 rounded-xl p-3 border border-border space-y-2">
-                <span className="font-semibold text-foreground block">Study Preferences</span>
-                <div className="flex justify-between text-muted-foreground">
+              <div className="bg-[#F3F0E8]/60 rounded-xl p-3.5 border border-[#DCE5E8] space-y-2">
+                <span className="font-semibold text-[#263331] block">Study Preferences</span>
+                <div className="flex justify-between text-[#546866] gap-2">
                   <span>Target Intake:</span>
-                  <span className="font-medium text-foreground">{studentDetails.preferred_intake || "Not set"}</span>
+                  <span className="font-medium text-[#263331]">
+                    {studentDetails.preferred_intake || "Not set"}
+                  </span>
                 </div>
-                <div className="flex justify-between text-muted-foreground">
+                <div className="flex justify-between text-[#546866] gap-2">
                   <span>Budget Range:</span>
-                  <span className="font-medium text-foreground">
+                  <span className="font-medium text-[#263331] text-right">
                     {studentDetails.budget_min
-                      ? `₹${Number(studentDetails.budget_min).toLocaleString()} - ₹${Number(studentDetails.budget_max || 0).toLocaleString()}`
+                      ? `₹${Number(studentDetails.budget_min).toLocaleString()} - ₹${Number(
+                          studentDetails.budget_max || 0
+                        ).toLocaleString()}`
                       : "Flexible"}
                   </span>
                 </div>
               </div>
 
               {/* Direct Quick Actions */}
-              <div className="space-y-2 pt-2">
-                <a
-                  href={`/counsellor/students`}
-                  className="w-full rounded-xl border border-border bg-background py-2 text-center text-xs font-semibold text-foreground hover:bg-muted block transition"
+              <div className="space-y-2 pt-1">
+                <Link
+                  href="/counsellor/students"
+                  className={buttonVariants({
+                    variant: "secondary",
+                    size: "sm",
+                    className: "w-full",
+                  })}
                 >
                   View in Student Directory
-                </a>
-                <a
-                  href={`/counsellor/assessments`}
-                  className="w-full rounded-xl bg-primary/10 border border-primary/20 py-2 text-center text-xs font-semibold text-primary hover:bg-primary/20 block transition"
+                </Link>
+                <Link
+                  href={`/counsellor/assessments?student_id=${selectedStudent.student_id}`}
+                  className={buttonVariants({
+                    variant: "sage",
+                    size: "sm",
+                    className: "w-full",
+                  })}
                 >
                   Write / Update Assessment
-                </a>
+                </Link>
               </div>
             </div>
           ) : (
-            <div className="py-12 text-center text-xs text-muted-foreground">
+            <div className="py-12 text-center text-xs text-[#546866]">
               Select a student to inspect their profile dossier.
             </div>
           )}

@@ -8,21 +8,17 @@ import {
   Building2,
   Award,
   CheckCircle2,
-  Clock,
-  Sparkles,
   ArrowRight,
-  Loader2,
-  FileText,
-  AlertCircle,
-  HelpCircle,
   ShieldCheck,
-  Check,
   AlertTriangle,
   MessageSquare,
   Lock,
   UserCheck,
   TrendingUp,
 } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { SkeletonJourney } from "@/components/ui/skeleton";
+import { StatusBadge } from "@/components/ui/feedback";
 
 interface UniversityRec {
   name: string;
@@ -69,11 +65,7 @@ export default function StudentAssessmentPage() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex h-64 items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)]" />
-      </div>
-    );
+    return <SkeletonJourney />;
   }
 
   const latest = assessments.length > 0 ? assessments[0] : null;
@@ -83,25 +75,23 @@ export default function StudentAssessmentPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold text-[hsl(222,47%,11%)] flex items-center gap-2">
-              <ClipboardCheck className="h-6 w-6 text-[hsl(166,72%,40%)]" />
-              Counsellor Profile Assessment & Capacity Evaluation
-            </h1>
-          </div>
-          <p className="mt-1 text-sm text-gray-500">
-            Comprehensive advisory dossier, candidate capacity rating, pros & cons analysis, and university stratification.
+          <h1 className="font-editorial text-2xl sm:text-3xl text-[#263331] flex items-center gap-2.5">
+            <ClipboardCheck className="h-6 w-6 text-[#3F6258] shrink-0" />
+            <span>Counsellor Profile Assessment &amp; Capacity Evaluation</span>
+          </h1>
+          <p className="mt-1 text-sm text-[#546866]">
+            Comprehensive advisory dossier, candidate capacity rating, pros &amp; cons analysis, and university stratification.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 text-slate-700 px-3 py-1 text-xs font-semibold border border-slate-200">
-            <Lock className="h-3.5 w-3.5 text-slate-500" />
+        <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+          <StatusBadge tone="misty" className="py-1 px-3">
+            <Lock className="h-3.5 w-3.5 text-[#546866]" />
             Read-Only Student Dossier
-          </span>
+          </StatusBadge>
           <Link
             href="/student/messages"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-[hsl(166,72%,40%)] px-3.5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition"
+            className={buttonVariants({ variant: "primary", size: "sm" })}
           >
             <MessageSquare className="h-3.5 w-3.5" />
             Discuss with Counsellor
@@ -110,40 +100,42 @@ export default function StudentAssessmentPage() {
       </div>
 
       {/* Official Advisory Banner */}
-      <div className="rounded-2xl bg-teal-50/70 border border-teal-200/80 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="rounded-2xl bg-[#E6EFEA] border border-[#B7CBC2] p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-start gap-3">
-          <ShieldCheck className="h-5 w-5 text-[hsl(166,72%,40%)] shrink-0 mt-0.5" />
-          <div className="text-xs text-teal-950">
+          <ShieldCheck className="h-5 w-5 text-[#2F6B55] shrink-0 mt-0.5" />
+          <div className="text-xs text-[#263331]">
             <span className="font-bold text-sm block mb-0.5">
-              Official Counsellor Advisory Record — Formally Reviewed & Approved
+              Official Counsellor Advisory Record — Formally Reviewed &amp; Approved
             </span>
-            <span>
+            <span className="text-[#394B49]">
               This evaluation is curated exclusively for your profile by Lugie Global Consultancy’s senior admissions team. As per platform policy, students have read-only access to preserve unbiased academic assessment standards.
             </span>
           </div>
         </div>
-        <span className="text-[10px] uppercase tracking-wider font-extrabold bg-teal-600 text-white px-3 py-1 rounded-full shrink-0">
+        <StatusBadge tone="slate" className="uppercase tracking-wider shrink-0">
           Senior Verified
-        </span>
+        </StatusBadge>
       </div>
 
       {!latest ? (
-        <div className="rounded-2xl border border-gray-100 bg-white p-12 text-center max-w-lg mx-auto shadow-sm">
-          <ClipboardCheck className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <h2 className="text-lg font-bold text-gray-900">Evaluation Dossier in Review</h2>
-          <p className="text-xs text-gray-500 mt-1 mb-6">
+        <div className="beyond-card p-12 text-center max-w-lg mx-auto">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EEF3F5] border border-[#DCE5E8] text-[#546866]">
+            <ClipboardCheck className="h-6 w-6" />
+          </div>
+          <h2 className="font-editorial text-xl text-[#263331]">Evaluation Dossier in Review</h2>
+          <p className="text-xs text-[#546866] mt-1.5 mb-6 leading-relaxed">
             Your assigned senior counsellor is currently evaluating your uploaded transcripts, GPA, test scores, and work experience. Your formal assessment scorecard will appear here once approved.
           </p>
-          <div className="flex items-center justify-center gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/student/profile"
-              className="rounded-lg bg-[hsl(222,47%,11%)] px-5 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(222,47%,18%)]"
+              className={buttonVariants({ variant: "primary", size: "sm" })}
             >
               Update Academic History
             </Link>
             <Link
               href="/student/messages"
-              className="rounded-lg border border-gray-300 px-5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+              className={buttonVariants({ variant: "secondary", size: "sm" })}
             >
               Ping Counsellor
             </Link>
@@ -151,123 +143,113 @@ export default function StudentAssessmentPage() {
         </div>
       ) : (
         <div className="space-y-8">
-          {/* =============================================================== */}
-          {/* Section 1: Candidate Capacity Rating Matrix                      */}
-          {/* =============================================================== */}
+          {/* Section 1: Candidate Capacity Rating Matrix */}
           <div>
-            <h2 className="text-base font-bold text-[hsl(222,47%,11%)] mb-4 flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-[hsl(166,72%,40%)]" />
-              Candidate Capacity Rating & Profile Competitiveness
+            <h2 className="text-base font-bold text-[#263331] mb-4 flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-[#3F6258]" />
+              Candidate Capacity Rating &amp; Profile Competitiveness
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Overall Score */}
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
+              <div className="beyond-card p-5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#546866] block mb-1.5">
                   Overall Readiness Score
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-extrabold text-[hsl(166,72%,40%)]">88%</span>
-                  <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
-                    Strong Tier
-                  </span>
+                  <span className="text-3xl font-extrabold text-[#2F6B55] tabular-nums">88%</span>
+                  <StatusBadge tone="success">Strong Tier</StatusBadge>
                 </div>
-                <p className="text-[11px] text-gray-500 mt-2">
+                <p className="text-[11px] text-[#546866] mt-2">
                   High probability for Top 100 global institutions.
                 </p>
               </div>
 
-              {/* Academic Capacity */}
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
+              <div className="beyond-card p-5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#546866] block mb-1.5">
                   Academic Capacity
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-extrabold text-[hsl(222,47%,11%)]">8.4 / 10</span>
-                  <span className="text-xs font-semibold text-gray-500">CGPA</span>
+                  <span className="text-2xl font-extrabold text-[#263331] tabular-nums">8.4 / 10</span>
+                  <span className="text-xs font-semibold text-[#546866]">CGPA</span>
                 </div>
-                <p className="text-[11px] text-gray-500 mt-2">
-                  Zero active backlogs. Meets German Curricular & US GPA thresholds.
+                <p className="text-[11px] text-[#546866] mt-2">
+                  Zero active backlogs. Meets German Curricular &amp; US GPA thresholds.
                 </p>
               </div>
 
-              {/* Standardized Tests Band */}
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
+              <div className="beyond-card p-5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#546866] block mb-1.5">
                   Standardized Test Capacity
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-extrabold text-[hsl(222,47%,11%)]">314</span>
-                  <span className="text-xs font-semibold text-gray-500">GRE / 7.5 IELTS</span>
+                  <span className="text-2xl font-extrabold text-[#263331] tabular-nums">314</span>
+                  <span className="text-xs font-semibold text-[#546866]">GRE / 7.5 IELTS</span>
                 </div>
-                <p className="text-[11px] text-gray-500 mt-2">
+                <p className="text-[11px] text-[#546866] mt-2">
                   Quant 165+ clears STEM cutoffs across USA, UK, and Europe.
                 </p>
               </div>
 
-              {/* Visa & Financial Profile */}
-              <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 block mb-1">
-                  Visa & Solvency Profile
+              <div className="beyond-card p-5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#546866] block mb-1.5">
+                  Visa &amp; Financial Profile
                 </span>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-2xl font-extrabold text-emerald-600">Low Risk</span>
+                  <span className="text-2xl font-extrabold text-[#2F6B55]">Low Risk</span>
                 </div>
-                <p className="text-[11px] text-gray-500 mt-2">
+                <p className="text-[11px] text-[#546866] mt-2">
                   Standard ₹25L–35L fund availability with clean educational trajectory.
                 </p>
               </div>
             </div>
           </div>
 
-          {/* =============================================================== */}
-          {/* Section 2: Pros & Cons Breakdown                                 */}
-          {/* =============================================================== */}
+          {/* Section 2: Pros & Cons Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Pros / Strengths */}
-            <div className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-emerald-100 text-emerald-800 font-bold text-sm">
-                <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                <span>Profile Strengths & Key Advantages (Pros)</span>
+            <div className="beyond-card border-[#B7CBC2] p-6">
+              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#DCE5E8] text-[#2F6B55] font-bold text-sm">
+                <CheckCircle2 className="h-5 w-5 text-[#2F6B55]" />
+                <span>Profile Strengths &amp; Key Advantages (Pros)</span>
               </div>
 
-              <ul className="space-y-3 text-xs text-gray-700">
+              <ul className="space-y-3 text-xs text-[#394B49]">
                 <li className="flex items-start gap-2.5">
-                  <span className="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
+                  <span className="h-5 w-5 rounded-full bg-[#E6EFEA] border border-[#B7CBC2] text-[#2F6B55] flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
                     ✓
                   </span>
                   <div>
-                    <strong className="text-gray-900 block font-semibold">Consistent Academic Pedigree:</strong>
+                    <strong className="text-[#263331] block font-semibold">Consistent Academic Pedigree:</strong>
                     First class honours in undergraduate coursework with strong foundation in core algorithms and higher mathematics.
                   </div>
                 </li>
 
                 <li className="flex items-start gap-2.5">
-                  <span className="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
+                  <span className="h-5 w-5 rounded-full bg-[#E6EFEA] border border-[#B7CBC2] text-[#2F6B55] flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
                     ✓
                   </span>
                   <div>
-                    <strong className="text-gray-900 block font-semibold">Competitive Language Band:</strong>
-                    IELTS Band 7.5 (no sub-band below 6.5) exempts candidate from pre-sessional English courses at Russell Group & TU9 universities.
+                    <strong className="text-[#263331] block font-semibold">Competitive Language Band:</strong>
+                    IELTS Band 7.5 (no sub-band below 6.5) exempts candidate from pre-sessional English courses at Russell Group &amp; TU9 universities.
                   </div>
                 </li>
 
                 <li className="flex items-start gap-2.5">
-                  <span className="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
+                  <span className="h-5 w-5 rounded-full bg-[#E6EFEA] border border-[#B7CBC2] text-[#2F6B55] flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
                     ✓
                   </span>
                   <div>
-                    <strong className="text-gray-900 block font-semibold">Applied Technical Portfolio:</strong>
+                    <strong className="text-[#263331] block font-semibold">Applied Technical Portfolio:</strong>
                     Relevant full-stack / machine learning internship experience providing strong narrative substance for SOP drafting.
                   </div>
                 </li>
 
                 <li className="flex items-start gap-2.5">
-                  <span className="h-5 w-5 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
+                  <span className="h-5 w-5 rounded-full bg-[#E6EFEA] border border-[#B7CBC2] text-[#2F6B55] flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
                     ✓
                   </span>
                   <div>
-                    <strong className="text-gray-900 block font-semibold">Ready Dossier Documentation:</strong>
+                    <strong className="text-[#263331] block font-semibold">Ready Dossier Documentation:</strong>
                     Valid international passport and preliminary semester marksheets verified cleanly by security scanning.
                   </div>
                 </li>
@@ -275,49 +257,49 @@ export default function StudentAssessmentPage() {
             </div>
 
             {/* Cons / Gaps & Remediations */}
-            <div className="rounded-2xl border border-amber-100 bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-amber-100 text-amber-900 font-bold text-sm">
-                <AlertTriangle className="h-5 w-5 text-amber-600" />
-                <span>Gaps & Remediation Strategy (Cons)</span>
+            <div className="beyond-card border-[#D9A879] p-6">
+              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-[#DCE5E8] text-[#8A5A1E] font-bold text-sm">
+                <AlertTriangle className="h-5 w-5 text-[#8A5A1E]" />
+                <span>Gaps &amp; Remediation Strategy (Cons)</span>
               </div>
 
-              <ul className="space-y-3 text-xs text-gray-700">
+              <ul className="space-y-3 text-xs text-[#394B49]">
                 <li className="flex items-start gap-2.5">
-                  <span className="h-5 w-5 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
+                  <span className="h-5 w-5 rounded-full bg-[#FCF6EC] border border-[#D9A879] text-[#8A5A1E] flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
                     !
                   </span>
                   <div>
-                    <strong className="text-gray-900 block font-semibold">Statement of Purpose Specificity:</strong>
+                    <strong className="text-[#263331] block font-semibold">Statement of Purpose Specificity:</strong>
                     General SOP lacks faculty citations for German universities. Remediation: Incorporate specific lab/course modules for TUM and RWTH Aachen.
                   </div>
                 </li>
 
                 <li className="flex items-start gap-2.5">
-                  <span className="h-5 w-5 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
+                  <span className="h-5 w-5 rounded-full bg-[#FCF6EC] border border-[#D9A879] text-[#8A5A1E] flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
                     !
                   </span>
                   <div>
-                    <strong className="text-gray-900 block font-semibold">Priority Application Deadlines:</strong>
+                    <strong className="text-[#263331] block font-semibold">Priority Application Deadlines:</strong>
                     Top-tier universities in USA close scholarship consideration by Dec 15 / Jan 15. Applications must be locked 30 days prior.
                   </div>
                 </li>
 
                 <li className="flex items-start gap-2.5">
-                  <span className="h-5 w-5 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
+                  <span className="h-5 w-5 rounded-full bg-[#FCF6EC] border border-[#D9A879] text-[#8A5A1E] flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
                     !
                   </span>
                   <div>
-                    <strong className="text-gray-900 block font-semibold">Academic Letters of Recommendation (LORs):</strong>
+                    <strong className="text-[#263331] block font-semibold">Academic Letters of Recommendation (LORs):</strong>
                     Ensure all 3 LORs are issued on official institutional letterhead with official institutional .edu / .ac email addresses.
                   </div>
                 </li>
 
                 <li className="flex items-start gap-2.5">
-                  <span className="h-5 w-5 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
+                  <span className="h-5 w-5 rounded-full bg-[#FCF6EC] border border-[#D9A879] text-[#8A5A1E] flex items-center justify-center shrink-0 mt-0.5 text-[10px] font-bold">
                     !
                   </span>
                   <div>
-                    <strong className="text-gray-900 block font-semibold">Curricular ECTS Equivalency:</strong>
+                    <strong className="text-[#263331] block font-semibold">Curricular ECTS Equivalency:</strong>
                     For German TU9 applications, complete the Curricular Analysis form mapping your undergraduate ECTS credits to target guidelines.
                   </div>
                 </li>
@@ -325,23 +307,21 @@ export default function StudentAssessmentPage() {
             </div>
           </div>
 
-          {/* =============================================================== */}
           {/* Section 3: Stratified University Strategy (Dream • Target • Safe) */}
-          {/* =============================================================== */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          <div className="beyond-card p-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
               <div>
-                <h2 className="text-base font-bold text-[hsl(222,47%,11%)]">
+                <h2 className="text-base font-bold text-[#263331]">
                   Counsellor Stratified University Matrix (Dream • Target • Safe)
                 </h2>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs text-[#546866] mt-0.5">
                   Balanced institutional selection calibrated to your 88% capacity rating.
                 </p>
               </div>
 
               <Link
                 href="/student/universities"
-                className="text-xs font-semibold text-[hsl(166,72%,40%)] hover:underline inline-flex items-center gap-1"
+                className="text-xs font-semibold text-[#394B49] hover:text-[#8E572C] hover:underline inline-flex items-center gap-1"
               >
                 Manage Shortlist <ArrowRight className="h-3.5 w-3.5" />
               </Link>
@@ -349,75 +329,73 @@ export default function StudentAssessmentPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Dream Tier */}
-              <div className="rounded-xl border border-purple-200 bg-purple-50/40 p-5 space-y-3">
+              <div className="rounded-xl border border-[#D9A879] bg-[#F6EDE4]/70 p-5 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">
-                    🌟 Dream (Ambitious)
-                  </span>
-                  <Award className="h-4 w-4 text-purple-600" />
+                  <StatusBadge tone="warm" className="uppercase">
+                    Dream (Ambitious)
+                  </StatusBadge>
+                  <Award className="h-4 w-4 text-[#8E572C]" />
                 </div>
-                <h4 className="text-sm font-bold text-[hsl(222,47%,11%)]">
+                <h4 className="text-sm font-bold text-[#263331]">
                   Technical University of Munich (TUM)
                 </h4>
-                <p className="text-xs text-gray-500">Germany • M.Sc. Informatics</p>
-                <div className="text-[11px] text-purple-900 bg-white/80 p-2.5 rounded-lg border border-purple-100">
+                <p className="text-xs text-[#546866]">Germany • M.Sc. Informatics</p>
+                <div className="text-[11px] text-[#394B49] bg-white p-3 rounded-xl border border-[#DCE5E8]">
                   Global Rank #28. High competition aptitude assessment. Requires strong thesis proposal and curricular credit match.
                 </div>
               </div>
 
               {/* Target Tier */}
-              <div className="rounded-xl border border-blue-200 bg-blue-50/40 p-5 space-y-3">
+              <div className="rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/70 p-5 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full">
-                    🎯 Target (Strong Fit)
-                  </span>
-                  <Building2 className="h-4 w-4 text-blue-600" />
+                  <StatusBadge tone="misty" className="uppercase">
+                    Target (Strong Fit)
+                  </StatusBadge>
+                  <Building2 className="h-4 w-4 text-[#394B49]" />
                 </div>
-                <h4 className="text-sm font-bold text-[hsl(222,47%,11%)]">
+                <h4 className="text-sm font-bold text-[#263331]">
                   RWTH Aachen University
                 </h4>
-                <p className="text-xs text-gray-500">Germany • M.Sc. Software Systems Eng.</p>
-                <div className="text-[11px] text-blue-900 bg-white/80 p-2.5 rounded-lg border border-blue-100">
+                <p className="text-xs text-[#546866]">Germany • M.Sc. Software Systems Eng.</p>
+                <div className="text-[11px] text-[#394B49] bg-white p-3 rounded-xl border border-[#DCE5E8]">
                   Direct fit for your GPA and technical projects. Leading European engineering hub with zero tuition model.
                 </div>
               </div>
 
               {/* Safe Tier */}
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50/40 p-5 space-y-3">
+              <div className="rounded-xl border border-[#B7CBC2] bg-[#E6EFEA]/70 p-5 space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
-                    🛡️ Safe (High Probability)
-                  </span>
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                  <StatusBadge tone="sage" className="uppercase">
+                    Safe (High Probability)
+                  </StatusBadge>
+                  <CheckCircle2 className="h-4 w-4 text-[#2F6B55]" />
                 </div>
-                <h4 className="text-sm font-bold text-[hsl(222,47%,11%)]">
+                <h4 className="text-sm font-bold text-[#263331]">
                   University of Glasgow
                 </h4>
-                <p className="text-xs text-gray-500">United Kingdom • MSc Data Science</p>
-                <div className="text-[11px] text-emerald-900 bg-white/80 p-2.5 rounded-lg border border-emerald-100">
+                <p className="text-xs text-[#546866]">United Kingdom • MSc Data Science</p>
+                <div className="text-[11px] text-[#394B49] bg-white p-3 rounded-xl border border-[#DCE5E8]">
                   Russell Group member with 90%+ admit probability for candidate credentials. Fast offer turnaround (under 3 weeks).
                 </div>
               </div>
             </div>
           </div>
 
-          {/* =============================================================== */}
-          {/* Section 4: Senior Counsellor Remarks & Roadmap                   */}
-          {/* =============================================================== */}
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+          {/* Section 4: Senior Counsellor Remarks & Roadmap */}
+          <div className="beyond-card p-6 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#DCE5E8]">
               <div className="flex items-center gap-2">
-                <UserCheck className="h-5 w-5 text-[hsl(166,72%,40%)]" />
-                <h3 className="text-base font-bold text-[hsl(222,47%,11%)]">
-                  Senior Counsellor Advisory Remarks & Roadmap
+                <UserCheck className="h-5 w-5 text-[#3F6258]" />
+                <h3 className="text-base font-bold text-[#263331]">
+                  Senior Counsellor Advisory Remarks &amp; Roadmap
                 </h3>
               </div>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-[#546866]">
                 Evaluation Date: {new Date(latest.created_at).toLocaleDateString("en-IN")}
               </span>
             </div>
 
-            <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-line bg-slate-50 p-4 rounded-xl border border-slate-100">
+            <p className="text-xs text-[#394B49] leading-relaxed whitespace-pre-line bg-[#F3F0E8]/60 p-4 rounded-xl border border-[#DCE5E8]">
               {latest.eligibility_notes ||
                 "Candidate profile shows exemplary readiness for Fall 2025 / Winter 2025-2026 intake cycles.\n\n" +
                   "Key Directives:\n" +
@@ -427,12 +405,12 @@ export default function StudentAssessmentPage() {
             </p>
 
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[#546866]">
                 Have questions or need to discuss university choices?
               </span>
               <Link
                 href="/student/messages"
-                className="inline-flex items-center gap-2 rounded-lg bg-[hsl(166,72%,40%)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[hsl(166,72%,46%)] transition self-start"
+                className={buttonVariants({ variant: "primary", size: "sm", className: "self-start" })}
               >
                 <MessageSquare className="h-3.5 w-3.5" />
                 Chat with Your Assigned Counsellor

@@ -6,13 +6,16 @@ import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { api } from "@/lib/api-client";
 import { FadeIn, StaggerContainer, StaggerItem } from "@/components/ui/fade-in";
+import { HorizonPath } from "@/components/ui/horizon-path";
+import { GlobalOrbitLoader } from "@/components/ui/loading-concepts";
+import { SkeletonCard } from "@/components/ui/skeleton";
+import { FeedbackBanner, StatusBadge } from "@/components/ui/feedback";
+import { Button } from "@/components/ui/button";
 import {
   Building2,
   Search,
   MapPin,
   ExternalLink,
-  AlertCircle,
-  Loader2,
   ArrowRight,
   GraduationCap,
 } from "lucide-react";
@@ -76,62 +79,69 @@ export default function UniversitiesPage() {
   });
 
   return (
-    <div className="flex min-h-screen flex-col bg-[hsl(210,20%,98%)]">
+    <div className="flex min-h-screen flex-col bg-[#F3F0E8] text-[#394B49]">
       <Header />
 
       <main className="flex-1">
         {/* Banner */}
-        <section className="relative overflow-hidden bg-[hsl(222,47%,11%)] py-24 px-6 lg:px-8 text-center text-white">
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="mesh-orb absolute top-1/4 left-1/3 h-[420px] w-[420px] rounded-full bg-[hsl(166,72%,40%)] opacity-[0.07] blur-[120px]" />
-            <div className="mesh-orb-delayed absolute bottom-1/4 right-1/4 h-[350px] w-[350px] rounded-full bg-[hsl(45,93%,58%)] opacity-[0.05] blur-[100px]" />
-          </div>
-
-          <div className="relative mx-auto max-w-4xl">
-            <FadeIn delay={0.1} direction="none">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-5 py-2 text-xs font-semibold tracking-widest uppercase text-[hsl(166,72%,50%)] mb-6 backdrop-blur-sm border border-white/[0.08]">
-                <GraduationCap className="h-3.5 w-3.5" />
+        <section className="beyond-surface border-b border-[#DCE5E8] py-20 sm:py-24 px-6 lg:px-8 text-center">
+          <div className="mx-auto max-w-4xl">
+            <FadeIn delay={0.05} direction="none">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#B7CBC2] bg-[#E6EFEA] px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-[#3F6258] mb-6">
+                <GraduationCap className="h-3.5 w-3.5 text-[#8E572C]" aria-hidden="true" />
                 <span>Accredited Institutions</span>
               </div>
             </FadeIn>
-            <FadeIn delay={0.2}>
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-[1.1]">
-                Explore Partner & Verified Universities
+            <FadeIn delay={0.12}>
+              <h1 className="font-editorial text-4xl sm:text-5xl lg:text-6xl leading-[1.1] text-[#394B49]">
+                Explore Partner &amp; Verified Universities
               </h1>
             </FadeIn>
-            <FadeIn delay={0.35}>
-              <p className="mt-5 text-base sm:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
+            <FadeIn delay={0.22}>
+              <p className="mt-5 text-base sm:text-lg text-[#546866] max-w-2xl mx-auto leading-relaxed">
                 Browse world-class universities across UK, US, Canada, Australia, Germany, and Ireland.
                 All admissions criteria and course lists are sourced directly from verified university records.
               </p>
             </FadeIn>
           </div>
+          <HorizonPath variant="divider" className="mt-12" />
         </section>
 
         {/* Filters & Directory */}
         <section className="py-16 px-6 lg:px-8 max-w-7xl mx-auto w-full">
           {/* Controls */}
           <FadeIn>
-            <div className="bg-white p-6 rounded-2xl border border-[hsl(220,13%,91%)] shadow-sm mb-10 flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="beyond-card p-6 mb-10 flex flex-col md:flex-row gap-4 items-center justify-between">
               <div className="relative w-full md:w-96">
-                <Search className="absolute left-3.5 top-3 h-4 w-4 text-[hsl(220,13%,46%)]" />
+                <label htmlFor="uni-search" className="sr-only">
+                  Search university or city
+                </label>
+                <Search
+                  className="pointer-events-none absolute left-3.5 top-3 h-4 w-4 text-[#546866]"
+                  aria-hidden="true"
+                />
                 <input
+                  id="uni-search"
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search university or city..."
-                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-[hsl(220,13%,91%)] bg-[hsl(210,20%,98%)] text-[hsl(222,47%,11%)] focus:outline-none focus:border-[hsl(166,72%,40%)] focus:ring-1 focus:ring-[hsl(166,72%,40%)] transition-colors"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 text-[#394B49] placeholder:text-[#546866]/70 focus:bg-white focus:outline-none focus:border-[#394B49] focus:ring-2 focus:ring-[#B7CBC2] transition-colors"
                 />
               </div>
 
               <div className="flex items-center gap-3 w-full md:w-auto">
-                <label className="text-xs font-semibold text-[hsl(220,13%,46%)] whitespace-nowrap">
+                <label
+                  htmlFor="uni-country"
+                  className="text-xs font-semibold text-[#546866] whitespace-nowrap"
+                >
                   Filter by Country:
                 </label>
                 <select
+                  id="uni-country"
                   value={selectedCountry}
                   onChange={(e) => setSelectedCountry(e.target.value)}
-                  className="w-full md:w-56 py-2.5 px-3 text-sm rounded-xl border border-[hsl(220,13%,91%)] bg-[hsl(210,20%,98%)] text-[hsl(222,47%,11%)] focus:outline-none focus:border-[hsl(166,72%,40%)] focus:ring-1 focus:ring-[hsl(166,72%,40%)] transition-colors"
+                  className="w-full md:w-56 py-2.5 px-3 text-sm rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 text-[#394B49] focus:bg-white focus:outline-none focus:border-[#394B49] focus:ring-2 focus:ring-[#B7CBC2] transition-colors"
                 >
                   <option value="">All Countries ({countries.length})</option>
                   {countries.map((c) => (
@@ -146,35 +156,43 @@ export default function UniversitiesPage() {
 
           {/* Results State */}
           {loading ? (
-            <div className="py-24 text-center">
-              <Loader2 className="h-8 w-8 animate-spin text-[hsl(166,72%,40%)] mx-auto mb-3" />
-              <p className="text-sm text-[hsl(220,13%,46%)]">Loading university catalog from database...</p>
+            <div className="space-y-8 py-6">
+              <GlobalOrbitLoader label="Loading university catalog from database…" size="md" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }).map((_, idx) => (
+                  <SkeletonCard key={idx} />
+                ))}
+              </div>
             </div>
           ) : error ? (
             <FadeIn>
-              <div className="rounded-2xl border border-rose-200 bg-rose-50/60 p-8 text-center max-w-lg mx-auto">
-                <AlertCircle className="h-8 w-8 text-rose-500 mx-auto mb-3" />
-                <h3 className="text-base font-semibold text-rose-900">Database Connection Notice</h3>
-                <p className="text-xs text-rose-700 mt-1">{error}</p>
-              </div>
+              <FeedbackBanner
+                tone="error"
+                title="Database Connection Notice"
+                message={error}
+                className="max-w-lg mx-auto"
+              />
             </FadeIn>
           ) : filtered.length === 0 ? (
             <FadeIn>
-              <div className="rounded-2xl border border-[hsl(220,13%,91%)] bg-white p-12 text-center max-w-lg mx-auto">
-                <Building2 className="h-10 w-10 text-[hsl(220,13%,46%)] mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-[hsl(222,47%,11%)]">No Universities Found</h3>
-                <p className="text-sm text-[hsl(220,13%,46%)] mt-1">
+              <div className="beyond-card p-12 text-center max-w-lg mx-auto">
+                <Building2 className="h-10 w-10 text-[#546866] mx-auto mb-3" aria-hidden="true" />
+                <h2 className="font-editorial text-2xl text-[#394B49]">No Universities Found</h2>
+                <p className="text-sm text-[#546866] mt-1">
                   Try clearing your search query or switching country filters.
                 </p>
-                <button
+                <Button
+                  type="button"
+                  variant="sage"
+                  size="sm"
                   onClick={() => {
                     setSearchTerm("");
                     setSelectedCountry("");
                   }}
-                  className="mt-4 text-xs font-semibold text-[hsl(166,72%,40%)] hover:text-[hsl(166,72%,50%)] hover:underline"
+                  className="mt-5"
                 >
                   Reset Filters
-                </button>
+                </Button>
               </div>
             </FadeIn>
           ) : (
@@ -183,54 +201,57 @@ export default function UniversitiesPage() {
                 const countryName = countryMap.get(uni.country_id) || "International";
                 return (
                   <StaggerItem key={uni.id} className="flex">
-                    <div className="group w-full rounded-2xl border border-[hsl(220,13%,91%)] bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-black/5 hover:border-[hsl(166,72%,40%)]/30 flex flex-col justify-between">
+                    <div className="beyond-card beyond-card-interactive group w-full p-6 flex flex-col justify-between">
                       <div>
                         <div className="flex items-start justify-between gap-3 mb-4">
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[hsl(166,72%,40%)]/10 text-[hsl(166,72%,40%)]">
-                            <Building2 className="h-5 w-5" />
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#B7CBC2] bg-[#E6EFEA] text-[#3F6258] transition-colors group-hover:bg-[#394B49] group-hover:text-white group-hover:border-[#394B49]">
+                            <Building2 className="h-5 w-5" aria-hidden="true" />
                           </div>
                           {uni.ranking && (
-                            <span className="text-xs font-bold text-amber-700 bg-[hsl(45,93%,58%)]/15 px-3 py-1 rounded-full border border-[hsl(45,93%,58%)]/30">
-                              Rank #{uni.ranking}
-                            </span>
+                            <StatusBadge tone="warm">Rank #{uni.ranking}</StatusBadge>
                           )}
                         </div>
 
-                        <h3 className="text-lg font-bold text-[hsl(222,47%,11%)] leading-snug mb-2">
+                        <h2 className="text-lg font-semibold text-[#394B49] leading-snug mb-2">
                           {uni.name}
-                        </h3>
+                        </h2>
 
-                        <div className="flex items-center gap-2 text-xs text-[hsl(220,13%,46%)] mb-4">
-                          <MapPin className="h-3.5 w-3.5 text-[hsl(166,72%,40%)] shrink-0" />
-                          <span>{uni.city ? `${uni.city}, ` : ""}{countryName}</span>
+                        <div className="flex items-center gap-2 text-xs text-[#546866] mb-4">
+                          <MapPin className="h-3.5 w-3.5 text-[#8E572C] shrink-0" aria-hidden="true" />
+                          <span>
+                            {uni.city ? `${uni.city}, ` : ""}
+                            {countryName}
+                          </span>
                         </div>
 
                         {uni.type && (
-                          <span className="inline-block text-[11px] font-medium text-[hsl(220,13%,46%)] bg-[hsl(220,14%,96%)] px-2.5 py-1 rounded-lg mb-4">
-                            {uni.type}
-                          </span>
+                          <div className="mb-4">
+                            <StatusBadge tone="misty">{uni.type}</StatusBadge>
+                          </div>
                         )}
                       </div>
 
-                      <div className="pt-4 border-t border-[hsl(220,13%,91%)] flex items-center justify-between text-xs">
+                      <div className="pt-4 border-t border-[#DCE5E8] flex items-center justify-between text-xs">
                         {uni.website ? (
                           <a
                             href={uni.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="font-medium text-[hsl(220,13%,46%)] hover:text-[hsl(166,72%,40%)] flex items-center gap-1 transition-colors"
+                            className="font-medium text-[#546866] hover:text-[#394B49] flex items-center gap-1 transition-colors"
                           >
-                            Official Site <ExternalLink className="h-3 w-3" />
+                            <span>Official Site</span>
+                            <ExternalLink className="h-3 w-3" aria-hidden="true" />
                           </a>
                         ) : (
-                          <span className="text-[hsl(220,13%,46%)]/70">Website available on request</span>
+                          <span className="text-[#546866]/75">Website available on request</span>
                         )}
 
                         <Link
                           href={`/book-consultation?uni=${encodeURIComponent(uni.name)}`}
-                          className="font-semibold text-[hsl(166,72%,40%)] hover:text-[hsl(166,72%,50%)] inline-flex items-center gap-1 transition-colors"
+                          className="font-semibold text-[#8E572C] hover:text-[#394B49] inline-flex items-center gap-1 transition-colors"
                         >
-                          Apply Here <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                          <span>Apply Here</span>
+                          <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
                         </Link>
                       </div>
                     </div>
