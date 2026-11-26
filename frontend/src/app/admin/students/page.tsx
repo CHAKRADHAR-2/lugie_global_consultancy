@@ -5,13 +5,14 @@ import Link from "next/link";
 import { api } from "@/lib/api-client";
 import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { ModalShell, StatusBadge } from "@/components/ui/feedback";
+import { ModalShell, StatusBadge, FeedbackBanner } from "@/components/ui/feedback";
 import { SkeletonRow } from "@/components/ui/skeleton";
 import { DocumentRevealLoader } from "@/components/ui/loading-concepts";
 import {
   GraduationCap,
   Search,
   User,
+  UserPlus,
   Building2,
   Mail,
   Phone,
@@ -21,6 +22,7 @@ import {
   Briefcase,
   MapPin,
   MessageSquare,
+  Trash2,
 } from "lucide-react";
 
 interface Student {
@@ -32,6 +34,7 @@ interface Student {
   email?: string;
   phone?: string;
   active_package?: string;
+  is_active?: boolean;
   date_of_birth: string | null;
   nationality: string | null;
   current_city: string | null;
@@ -56,26 +59,131 @@ export default function AdminStudentsPage() {
   const [students, setStudents] = useState<Student[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [togglingUserId, setTogglingUserId] = useState<string | null>(null);
+
+  // Add Student Modal
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    phone: "",
+    current_city: "",
+    current_country: "India",
+    preferred_intake: "",
+    password: "",
+  });
+
+  // Remove Student Confirmation Modal
+  const [studentToDelete, setStudentToDelete] = useState<Student | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   // Full Dossier Modal
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
   const [dossier, setDossier] = useState<FullDossier | null>(null);
   const [loadingDossier, setLoadingDossier] = useState(false);
 
-  useEffect(() => {
-    async function loadStudents() {
-      try {
-        const data = await api.get<Student[]>("students");
-        setStudents(data || []);
-      } catch (err) {
-        console.error("Failed to load students:", err);
-        toast.error("Failed to load student profiles.");
-      } finally {
-        setLoading(false);
-      }
+  async function loadStudents() {
+    try {
+      const data = await api.get<Student[]>("students");
+      setStudents(data || []);
+    } catch (err) {
+      console.error("Failed to load students:", err);
+      toast.error("Failed to load student profiles.");
+    } finally {
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
     loadStudents();
   }, []);
+
+  async function handleCreateStudent(e: React.FormEvent) {
+    e.preventDefault();
+    if (!formData.first_name.trim() || !formData.last_name.trim() || !formData.email.trim() || !formData.password) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+    if (formData.password.length < 8) {
+      toast.error("Password must be at least 8 characters long.");
+      return;
+    }
+    setSubmitting(true);
+    try {
+      await api.post<Student>("students", {
+        first_name: formData.first_name.trim(),
+        last_name: formData.last_name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim() || null,
+        current_city: formData.current_city.trim() || null,
+        current_country: formData.current_country.trim() || "India",
+        preferred_intake: formData.preferred_intake.trim() || null,
+        password: formData.password,
+      });
+      toast.success(`Student account created for ${formData.first_name.trim()} ${formData.last_name.trim()}`);
+      setIsAddModalOpen(false);
+      setFormData({
+        first_name: "",
+        last_name: "",
+        email: "",
+        phone: "",
+        current_city: "",
+        current_country: "India",
+        preferred_intake: "",
+        password: "",
+      });
+      await loadStudents();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create student account.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleToggleStatus(student: Student) {
+    const currentlyActive = student.is_active !== false;
+    setTogglingUserId(student.user_id);
+    try {
+      await api.patch(`users/${student.user_id}/status`, { is_active: !currentlyActive });
+      setStudents((prev) =>
+        prev.map((item) =>
+          item.user_id === student.user_id ? { ...item, is_active: !currentlyActive } : item
+        )
+      );
+      toast.success(`Student account ${!currentlyActive ? "activated" : "deactivated"}.`);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to update student status.");
+    } finally {
+      setTogglingUserId(null);
+    }
+  }
+
+  async function handleConfirmDelete() {
+    if (!studentToDelete) return;
+    setDeleting(true);
+    try {
+      await api.delete(`students/${studentToDelete.id}`);
+      const deletedId = studentToDelete.id;
+      const displayName =
+        studentToDelete.student_name ||
+        `${studentToDelete.first_name || ""} ${studentToDelete.last_name || ""}`.trim() ||
+        studentToDelete.email ||
+        "Student";
+      setStudents((prev) => prev.filter((item) => item.id !== deletedId));
+      if (selectedStudentId === deletedId) {
+        setSelectedStudentId(null);
+        setDossier(null);
+      }
+      toast.success(`${displayName} has been removed.`);
+      setStudentToDelete(null);
+    } catch (err: any) {
+      toast.error(err.message || "Failed to remove student account.");
+    } finally {
+      setDeleting(false);
+    }
+  }
 
   async function openDossier(studentId: string) {
     setSelectedStudentId(studentId);
@@ -122,7 +230,7 @@ export default function AdminStudentsPage() {
             Total {students.length} registered students enrolled in admissions advisory programs.
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
           <Link
             href="/admin/messages"
             className={buttonVariants({ variant: "secondary", size: "md" })}
@@ -130,6 +238,14 @@ export default function AdminStudentsPage() {
             <MessageSquare className="h-4 w-4 text-[#3F6258]" />
             Supervisory Chat Desk
           </Link>
+          <Button
+            variant="primary"
+            size="md"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            <UserPlus className="h-4 w-4" />
+            Add Student
+          </Button>
         </div>
       </div>
 
@@ -164,9 +280,17 @@ export default function AdminStudentsPage() {
           <div className="py-14 text-center px-4">
             <GraduationCap className="h-10 w-10 text-[#546866]/45 mx-auto mb-3" />
             <p className="text-sm font-semibold text-[#263331]">No registered students yet</p>
-            <p className="text-xs text-[#546866] mt-1">
-              Convert enquiries from the CRM Leads page to create student accounts.
+            <p className="text-xs text-[#546866] mt-1 mb-4">
+              Add a student directly or convert enquiries from the CRM Leads page to create student accounts.
             </p>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={() => setIsAddModalOpen(true)}
+            >
+              <UserPlus className="h-4 w-4" />
+              Add First Student
+            </Button>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -191,6 +315,7 @@ export default function AdminStudentsPage() {
                     "Candidate";
                   const planName = s.active_package || "Free Tier";
                   const isPaidPlan = Boolean(s.active_package && s.active_package !== "Free Tier");
+                  const isActive = s.is_active !== false;
 
                   return (
                     <tr key={s.id} className="hover:bg-[#EEF3F5]/45 transition-colors">
@@ -201,9 +326,14 @@ export default function AdminStudentsPage() {
                           </span>
                           <span>{displayName}</span>
                         </div>
-                        <span className="font-mono text-[10px] text-[#546866] pl-9 block">
-                          ID: {s.id.slice(0, 8)}...
-                        </span>
+                        <div className="flex items-center gap-2 pl-9 mt-1">
+                          <span className="font-mono text-[10px] text-[#546866]">
+                            ID: {s.id.slice(0, 8)}...
+                          </span>
+                          <StatusBadge tone={isActive ? "success" : "error"}>
+                            {isActive ? "Active" : "Inactive"}
+                          </StatusBadge>
+                        </div>
                       </td>
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-1.5 text-[#394B49] font-medium">
@@ -242,13 +372,31 @@ export default function AdminStudentsPage() {
                         </div>
                       </td>
                       <td className="py-3.5 px-4 text-right">
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => openDossier(s.id)}
-                        >
-                          <Eye className="h-3.5 w-3.5" /> Full Dossier
-                        </Button>
+                        <div className="inline-flex flex-wrap items-center justify-end gap-2">
+                          <Button
+                            variant="primary"
+                            size="sm"
+                            onClick={() => openDossier(s.id)}
+                          >
+                            <Eye className="h-3.5 w-3.5" /> Dossier
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            loading={togglingUserId === s.user_id}
+                            loadingText="Saving…"
+                            onClick={() => handleToggleStatus(s)}
+                          >
+                            {isActive ? "Deactivate" : "Activate"}
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => setStudentToDelete(s)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" /> Remove
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -474,6 +622,182 @@ export default function AdminStudentsPage() {
             Close Dossier
           </Button>
         </div>
+      </ModalShell>
+
+      {/* Add Student Modal */}
+      <ModalShell
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        title="Add New Student"
+        subtitle="Create a student portal account and onboarding workspace."
+        maxWidth="max-w-md"
+      >
+        <form onSubmit={handleCreateStudent} className="space-y-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1">
+                First Name *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.first_name}
+                onChange={(e) => setFormData({ ...formData, first_name: e.target.value })}
+                className="w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2.5 text-sm text-[#394B49] focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+                placeholder="Aarav"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1">
+                Last Name *
+              </label>
+              <input
+                type="text"
+                required
+                value={formData.last_name}
+                onChange={(e) => setFormData({ ...formData, last_name: e.target.value })}
+                className="w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2.5 text-sm text-[#394B49] focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+                placeholder="Mehta"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1">
+              Email Address *
+            </label>
+            <input
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2.5 text-sm text-[#394B49] focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+              placeholder="student@example.com"
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              className="w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2.5 text-sm text-[#394B49] focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+              placeholder="+91 9876543210"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1">
+                City
+              </label>
+              <input
+                type="text"
+                value={formData.current_city}
+                onChange={(e) => setFormData({ ...formData, current_city: e.target.value })}
+                className="w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2.5 text-sm text-[#394B49] focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+                placeholder="Bengaluru"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#394B49] mb-1">
+                Target Intake
+              </label>
+              <input
+                type="text"
+                value={formData.preferred_intake}
+                onChange={(e) => setFormData({ ...formData, preferred_intake: e.target.value })}
+                className="w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2.5 text-sm text-[#394B49] focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+                placeholder="Fall 2026"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold text-[#394B49] mb-1">
+              Temporary Password *
+            </label>
+            <input
+              type="password"
+              required
+              minLength={8}
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              className="w-full rounded-xl border border-[#DCE5E8] bg-[#EEF3F5]/60 px-3.5 py-2.5 text-sm text-[#394B49] focus:border-[#394B49] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#B7CBC2] transition"
+              placeholder="Minimum 8 characters"
+            />
+          </div>
+
+          <div className="pt-2 flex justify-end gap-2">
+            <Button
+              variant="secondary"
+              size="md"
+              onClick={() => setIsAddModalOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              size="md"
+              loading={submitting}
+              loadingText="Creating…"
+            >
+              Create Student
+            </Button>
+          </div>
+        </form>
+      </ModalShell>
+
+      {/* Remove Student Confirmation Modal */}
+      <ModalShell
+        isOpen={Boolean(studentToDelete)}
+        onClose={() => !deleting && setStudentToDelete(null)}
+        title="Remove Student Account"
+        subtitle="Confirm permanent deletion of this student record."
+        maxWidth="max-w-md"
+      >
+        {studentToDelete && (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-[#DCE5E8] bg-[#F3F0E8]/60 p-3.5 text-xs text-[#394B49]">
+              <p className="font-semibold text-sm text-[#263331]">
+                {studentToDelete.student_name ||
+                  `${studentToDelete.first_name || ""} ${studentToDelete.last_name || ""}`.trim() ||
+                  "Student"}
+              </p>
+              <p className="text-[#546866] mt-0.5">{studentToDelete.email || "No email"}</p>
+            </div>
+
+            <FeedbackBanner
+              tone="warning"
+              title="This action cannot be undone"
+              message="Removing this student will permanently delete their portal login, academic dossier, uploaded documents, applications, chat history, and order records. Use Deactivate instead if you only want to suspend login access temporarily."
+            />
+
+            <div className="pt-2 flex justify-end gap-2">
+              <Button
+                variant="secondary"
+                size="md"
+                disabled={deleting}
+                onClick={() => setStudentToDelete(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                size="md"
+                loading={deleting}
+                loadingText="Removing…"
+                onClick={handleConfirmDelete}
+              >
+                <Trash2 className="h-4 w-4" /> Remove Permanently
+              </Button>
+            </div>
+          </div>
+        )}
       </ModalShell>
     </div>
   );

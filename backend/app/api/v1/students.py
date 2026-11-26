@@ -7,25 +7,34 @@ from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, Field
-from sqlalchemy import desc, select
+from pydantic import BaseModel, EmailStr, Field
+from sqlalchemy import delete, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
-from app.core.exceptions import NotFoundError, PermissionDeniedError
+from app.core.exceptions import (
+    BadRequestError,
+    DuplicateError,
+    NotFoundError,
+    PermissionDeniedError,
+)
+from app.core.redis import revoke_all_user_jtis
+from app.core.security import hash_password
 from app.dependencies import get_current_active_user
 from app.models.assessment import ProfileAssessment
+from app.models.audit import AuditLog
 from app.models.document import Document
 from app.models.experience import Project, WorkExperience
 from app.models.package import Package
-from app.models.payment import Order
+from app.models.payment import Order, Payment
 from app.models.student import AcademicRecord, LanguageTest, StudentProfile
 from app.models.university_preference import CounsellorRecommendation, StudentOptedUniversity
-from app.models.user import User
+from app.models.user import Role, User, UserRole
 
 router = APIRouter(prefix="/students", tags=["Students"])
 
 ADMIN_ROLES = ["super_admin", "admin", "counsellor"]
+ONLY_ADMIN_ROLES = ["super_admin", "admin"]
 
 
 # ---------------------------------------------------------------------------
@@ -56,7 +65,25 @@ class StudentProfileResponse(BaseModel):
     email: str | None = None
     phone: str | None = None
     active_package: str | None = None
+    is_active: bool = True
     model_config = {"from_attributes": True}
+
+
+class AdminStudentCreate(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8)
+    first_name: str = Field(min_length=1, max_length=100)
+    last_name: str = Field(min_length=1, max_length=100)
+    phone: str | None = Field(default=None, max_length=20)
+    current_city: str | None = Field(default=None, max_length=100)
+    current_country: str | None = Field(default="India", max_length=100)
+    preferred_intake: str | None = Field(default=None, max_length=20)
+
+
+class AdminStudentDeleteResponse(BaseModel):
+    message: str
+    deleted_student_id: str
+    deleted_user_id: str
 
 
 class StudentProfileUpdate(BaseModel):
@@ -426,6 +453,7 @@ async def _enrich_profile(profile: StudentProfile, db: AsyncSession) -> StudentP
     full_name = f"{first_name} {last_name}".strip() or (user.email if user else "Student")
     email = user.email if user else None
     phone = user.phone if user else None
+    is_active = user.is_active if user else True
 
     pkg_name = "Free Tier"
     order_res = await db.execute(
@@ -452,7 +480,7 @@ async def _enrich_profile(profile: StudentProfile, db: AsyncSession) -> StudentP
         preferred_courses=profile.preferred_courses,
         budget_min=float(profile.budget_min) if profile.budget_min else None,
         budget_max=float(profile.budget_max) if profile.budget_max else None,
-        budget_currency=profile.budget_currency,
+        budget_currency=profile.budget_currency or "INR",
         preferred_intake=profile.preferred_intake,
         funding_preference=profile.funding_preference,
         profile_completion=profile.profile_completion,
@@ -462,6 +490,7 @@ async def _enrich_profile(profile: StudentProfile, db: AsyncSession) -> StudentP
         email=email,
         phone=phone,
         active_package=pkg_name,
+        is_active=is_active,
     )
 
 
@@ -477,8 +506,14 @@ class StudentFullDossierResponse(BaseModel):
     assessment: dict | None = None
 
 
+def _require_only_admin(current_user: dict) -> None:
+    """Ensure only system administrators (not counsellors or students) can perform this action."""
+    if not any(r in ONLY_ADMIN_ROLES for r in current_user.get("roles", [])):
+        raise PermissionDeniedError("Administrator permission required.")
+
+
 # ---------------------------------------------------------------------------
-# Admin: List all students
+# Admin: List, create, and remove students
 # ---------------------------------------------------------------------------
 
 @router.get("", response_model=list[StudentProfileResponse])
@@ -492,6 +527,166 @@ async def list_students(
     result = await db.execute(select(StudentProfile).order_by(StudentProfile.created_at.desc()))
     profiles = list(result.scalars().all())
     return [await _enrich_profile(p, db) for p in profiles]
+
+
+@router.post("", response_model=StudentProfileResponse, status_code=201)
+async def create_student_by_admin(
+    data: AdminStudentCreate,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[dict, Depends(get_current_active_user)],
+):
+    """Admin only: provision a new student account and profile."""
+    _require_only_admin(current_user)
+
+    first_name = data.first_name.strip()
+    last_name = data.last_name.strip()
+    if not first_name or not last_name:
+        raise BadRequestError("First name and last name are required.")
+
+    normalized_email = data.email.strip().lower()
+    existing_res = await db.execute(select(User).where(User.email == normalized_email))
+    if existing_res.scalar_one_or_none():
+        raise DuplicateError("A user with this email already exists.")
+
+    new_user = User(
+        id=uuid.uuid4(),
+        email=normalized_email,
+        password_hash=hash_password(data.password),
+        first_name=first_name,
+        last_name=last_name,
+        phone=data.phone.strip() if data.phone and data.phone.strip() else None,
+        is_active=True,
+    )
+    db.add(new_user)
+    await db.flush()
+
+    role_res = await db.execute(select(Role).where(Role.name == "student"))
+    student_role = role_res.scalar_one_or_none()
+    if not student_role:
+        student_role = Role(id=uuid.uuid4(), name="student", is_system=True)
+        db.add(student_role)
+        await db.flush()
+
+    db.add(UserRole(id=uuid.uuid4(), user_id=new_user.id, role_id=student_role.id))
+
+    profile = StudentProfile(
+        id=uuid.uuid4(),
+        user_id=new_user.id,
+        current_city=data.current_city.strip() if data.current_city and data.current_city.strip() else None,
+        current_country=data.current_country.strip() if data.current_country and data.current_country.strip() else None,
+        preferred_intake=data.preferred_intake.strip() if data.preferred_intake and data.preferred_intake.strip() else None,
+        budget_currency="INR",
+    )
+    profile.profile_completion = _calculate_completion(profile)
+    db.add(profile)
+    await db.flush()
+
+    from app.api.v1.tasks import ensure_onboarding_tasks_for_student
+
+    await ensure_onboarding_tasks_for_student(db, profile.id)
+
+    db.add(
+        AuditLog(
+            id=uuid.uuid4(),
+            user_id=uuid.UUID(current_user["id"]),
+            action="student_created_by_admin",
+            resource_type="student_profile",
+            resource_id=profile.id,
+            details={
+                "student_email": normalized_email,
+                "student_user_id": str(new_user.id),
+            },
+        )
+    )
+
+    await db.commit()
+    await db.refresh(profile)
+    return await _enrich_profile(profile, db)
+
+
+@router.delete("/{student_id}", response_model=AdminStudentDeleteResponse)
+async def delete_student_by_admin(
+    student_id: uuid.UUID,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[dict, Depends(get_current_active_user)],
+):
+    """Admin only: permanently remove a student account and dependent records."""
+    _require_only_admin(current_user)
+
+    result = await db.execute(
+        select(StudentProfile).where(
+            (StudentProfile.id == student_id) | (StudentProfile.user_id == student_id)
+        )
+    )
+    profile = result.scalar_one_or_none()
+    if not profile:
+        raise NotFoundError("Student")
+
+    if str(profile.user_id) == current_user["id"]:
+        raise PermissionDeniedError("You cannot delete your own account.")
+
+    user_res = await db.execute(select(User).where(User.id == profile.user_id))
+    user = user_res.scalar_one_or_none()
+    student_email = user.email if user else None
+
+    doc_rows = (
+        await db.execute(
+            select(Document.id, Document.file_name).where(Document.student_id == profile.id)
+        )
+    ).all()
+
+    # Clear RESTRICT-protected financial records (Payments -> Orders) before deleting student/user.
+    order_ids = list(
+        (await db.execute(select(Order.id).where(Order.student_id == profile.id))).scalars().all()
+    )
+    if order_ids:
+        await db.execute(delete(Payment).where(Payment.order_id.in_(order_ids)))
+        await db.execute(delete(Order).where(Order.id.in_(order_ids)))
+
+    profile_id = profile.id
+    user_id = profile.user_id
+
+    await db.execute(delete(StudentProfile).where(StudentProfile.id == profile_id))
+    if user:
+        await db.execute(delete(User).where(User.id == user_id))
+
+    db.add(
+        AuditLog(
+            id=uuid.uuid4(),
+            user_id=uuid.UUID(current_user["id"]),
+            action="student_deleted_by_admin",
+            resource_type="student_profile",
+            resource_id=profile_id,
+            details={
+                "student_email": student_email,
+                "student_user_id": str(user_id),
+                "deleted_orders": len(order_ids),
+            },
+        )
+    )
+    await db.commit()
+
+    # Best-effort cleanup of stored document files and Redis refresh tokens.
+    try:
+        from app.api.v1.documents import _get_document_file_path
+
+        for doc_id, file_name in doc_rows:
+            path = _get_document_file_path(doc_id, file_name)
+            if path.exists():
+                path.unlink(missing_ok=True)
+    except Exception:
+        pass
+
+    try:
+        await revoke_all_user_jtis(str(user_id))
+    except Exception:
+        pass
+
+    return AdminStudentDeleteResponse(
+        message="Student account removed permanently.",
+        deleted_student_id=str(profile_id),
+        deleted_user_id=str(user_id),
+    )
 
 
 @router.get("/{student_id}", response_model=StudentProfileResponse)

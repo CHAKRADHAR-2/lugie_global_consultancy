@@ -128,3 +128,101 @@ async def test_create_and_list_language_tests(client, db_session, seed_roles):
     items = list_resp.json()
     assert len(items) == 1
     assert items[0]["test_type"] == "IELTS"
+
+
+@pytest.mark.asyncio
+async def test_admin_create_and_delete_student(client, db_session, seed_roles):
+    """Admin can create and remove student accounts; counsellors and students cannot."""
+    from sqlalchemy import select
+    from app.models.package import Package
+    from app.models.payment import Order, Payment
+    from app.models.student import StudentProfile
+    from app.models.user import User
+
+    admin = await create_test_user(
+        db_session, seed_roles["admin"], email="admin_students@test.com"
+    )
+    counsellor = await create_test_user(
+        db_session, seed_roles["counsellor"], email="counsellor_students@test.com"
+    )
+    admin_headers = {"Authorization": f"Bearer {create_access_token(str(admin.id), 'admin')}"}
+    counsellor_headers = {
+        "Authorization": f"Bearer {create_access_token(str(counsellor.id), 'counsellor')}"
+    }
+
+    payload = {
+        "first_name": "Aarav",
+        "last_name": "Mehta",
+        "email": "aarav.student@test.com",
+        "phone": "+91 9876543210",
+        "password": "StudentPass123!",
+        "current_city": "Pune",
+        "current_country": "India",
+        "preferred_intake": "Fall 2026",
+    }
+
+    # Counsellor cannot create a student directly
+    forbidden_create = await client.post(
+        "/api/v1/students", json=payload, headers=counsellor_headers
+    )
+    assert forbidden_create.status_code == 403
+
+    # Admin creates student
+    create_resp = await client.post("/api/v1/students", json=payload, headers=admin_headers)
+    assert create_resp.status_code == 201
+    created = create_resp.json()
+    assert created["email"] == "aarav.student@test.com"
+    assert created["student_name"] == "Aarav Mehta"
+    assert created["is_active"] is True
+
+    # Duplicate email is rejected
+    dup_resp = await client.post("/api/v1/students", json=payload, headers=admin_headers)
+    assert dup_resp.status_code == 409
+
+    # Attach an Order + Payment (ON DELETE RESTRICT foreign keys) to verify safe cleanup
+    pkg = Package(name="Basic", slug="basic", price=7999, currency="INR", is_active=True)
+    db_session.add(pkg)
+    await db_session.flush()
+
+    order = Order(
+        student_id=created["id"],
+        package_id=pkg.id,
+        amount=7999,
+        currency="INR",
+        status="paid",
+    )
+    db_session.add(order)
+    await db_session.flush()
+
+    payment = Payment(
+        order_id=order.id,
+        provider="razorpay",
+        amount=7999,
+        currency="INR",
+        status="captured",
+    )
+    db_session.add(payment)
+    await db_session.commit()
+
+    # Counsellor cannot remove a student
+    forbidden_del = await client.delete(
+        f"/api/v1/students/{created['id']}", headers=counsellor_headers
+    )
+    assert forbidden_del.status_code == 403
+
+    # Admin deletes student permanently
+    del_resp = await client.delete(
+        f"/api/v1/students/{created['id']}", headers=admin_headers
+    )
+    assert del_resp.status_code == 200
+    assert del_resp.json()["deleted_student_id"] == created["id"]
+
+    # Confirm DB records are gone
+    prof_check = await db_session.execute(
+        select(StudentProfile).where(StudentProfile.id == created["id"])
+    )
+    assert prof_check.scalar_one_or_none() is None
+    user_check = await db_session.execute(
+        select(User).where(User.email == "aarav.student@test.com")
+    )
+    assert user_check.scalar_one_or_none() is None
