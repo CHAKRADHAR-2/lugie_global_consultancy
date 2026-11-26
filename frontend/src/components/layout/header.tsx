@@ -3,15 +3,37 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { PUBLIC_NAV_ITEMS } from "@/lib/constants";
 import { BEYOND_EASE } from "@/lib/design-tokens";
 import { buttonVariants } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+
+function getPortalDashboardHref(roles: string[] = []): string {
+  if (roles.includes("super_admin") || roles.includes("admin")) {
+    return "/admin/dashboard";
+  }
+  if (roles.includes("counsellor")) {
+    return "/counsellor/dashboard";
+  }
+  return "/student/dashboard";
+}
+
+function getPortalLabel(roles: string[] = []): string {
+  if (roles.includes("super_admin") || roles.includes("admin")) {
+    return "Admin Portal";
+  }
+  if (roles.includes("counsellor")) {
+    return "Counsellor Portal";
+  }
+  return "Student Portal";
+}
 
 export function Header() {
   const pathname = usePathname();
   const prefersReduced = useReducedMotion();
+  const { user, loading: authLoading, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -33,6 +55,11 @@ export function Header() {
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [mobileOpen]);
+
+  const dashboardHref = user ? getPortalDashboardHref(user.roles) : "/student/dashboard";
+  const portalLabel = user ? getPortalLabel(user.roles) : "Portal";
+  const displayFirstName = user?.first_name?.trim() || "Account";
+  const initialLetter = displayFirstName[0]?.toUpperCase() || "L";
 
   return (
     <>
@@ -59,7 +86,7 @@ export function Header() {
               className="inline-block h-2 w-2 rounded-full bg-[#D9A879] transition-transform duration-300 group-hover:scale-125"
               aria-hidden="true"
             />
-            <span className="hidden sm:inline-block ml-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#546866]">
+            <span className="hidden sm:inline-block lg:hidden xl:inline-block ml-1.5 text-[10px] font-semibold uppercase tracking-[0.18em] text-[#546866]">
               Global Consultancy
             </span>
           </Link>
@@ -92,18 +119,55 @@ export function Header() {
 
           {/* Auth & CTA */}
           <div className="hidden items-center gap-2.5 lg:flex">
-            <Link
-              href="/login"
-              className={buttonVariants({ variant: "ghost", size: "sm" })}
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/register"
-              className={buttonVariants({ variant: "secondary", size: "sm" })}
-            >
-              Register
-            </Link>
+            {authLoading ? (
+              <div
+                aria-hidden="true"
+                className="skeleton-shimmer h-9 w-36 rounded-xl border border-[#DCE5E8]"
+              />
+            ) : user ? (
+              <>
+                <Link
+                  href={dashboardHref}
+                  title={`Open ${portalLabel}`}
+                  className="inline-flex items-center gap-2 rounded-xl border border-[#B7CBC2] bg-[#E6EFEA] px-3 py-1.5 text-xs font-semibold text-[#263331] shadow-2xs transition hover:bg-[#B7CBC2]/55 focus-visible:outline-2 focus-visible:outline-[#394B49]"
+                >
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#394B49] text-[11px] font-bold text-white">
+                    {initialLetter}
+                  </span>
+                  <span className="max-w-[120px] truncate">{displayFirstName}</span>
+                  <LayoutDashboard className="h-3.5 w-3.5 text-[#3F6258]" aria-hidden="true" />
+                </Link>
+                <button
+                  type="button"
+                  onClick={logout}
+                  aria-label="Sign out"
+                  title="Sign out"
+                  className={buttonVariants({
+                    variant: "secondary",
+                    size: "sm",
+                    className: "px-2.5 text-[#546866] hover:text-[#A63A3A]",
+                  })}
+                >
+                  <LogOut className="h-3.5 w-3.5" aria-hidden="true" />
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className={buttonVariants({ variant: "ghost", size: "sm" })}
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/register"
+                  className={buttonVariants({ variant: "secondary", size: "sm" })}
+                >
+                  Register
+                </Link>
+              </>
+            )}
+
             <Link
               href="/book-consultation"
               className={buttonVariants({ variant: "warm", size: "sm" })}
@@ -171,20 +235,66 @@ export function Header() {
                 <hr className="my-4 border-[#DCE5E8]" />
 
                 <div className="flex flex-col gap-2.5">
-                  <Link
-                    href="/login"
-                    className={buttonVariants({ variant: "secondary", size: "md", className: "w-full" })}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Sign in
-                  </Link>
-                  <Link
-                    href="/register"
-                    className={buttonVariants({ variant: "primary", size: "md", className: "w-full" })}
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    Create Student Account
-                  </Link>
+                  {authLoading ? (
+                    <div
+                      aria-hidden="true"
+                      className="skeleton-shimmer h-10 w-full rounded-xl border border-[#DCE5E8]"
+                    />
+                  ) : user ? (
+                    <>
+                      <div className="flex items-center gap-3 rounded-2xl border border-[#B7CBC2] bg-[#E6EFEA] px-3.5 py-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#394B49] text-xs font-bold text-white">
+                          {initialLetter}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-[#263331]">
+                            {displayFirstName}
+                          </p>
+                          <p className="truncate text-[11px] text-[#3F6258]">{portalLabel}</p>
+                        </div>
+                      </div>
+                      <Link
+                        href={dashboardHref}
+                        className={buttonVariants({ variant: "primary", size: "md", className: "w-full" })}
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+                        <span>Go to {portalLabel}</span>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMobileOpen(false);
+                          logout();
+                        }}
+                        className={buttonVariants({
+                          variant: "secondary",
+                          size: "md",
+                          className: "w-full text-[#A63A3A]",
+                        })}
+                      >
+                        <LogOut className="h-4 w-4" aria-hidden="true" />
+                        <span>Sign out</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        className={buttonVariants({ variant: "secondary", size: "md", className: "w-full" })}
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        Sign in
+                      </Link>
+                      <Link
+                        href="/register"
+                        className={buttonVariants({ variant: "primary", size: "md", className: "w-full" })}
+                        onClick={() => setMobileOpen(false)}
+                      >
+                        Create Student Account
+                      </Link>
+                    </>
+                  )}
                   <Link
                     href="/book-consultation"
                     className={buttonVariants({ variant: "warm", size: "md", className: "w-full" })}
