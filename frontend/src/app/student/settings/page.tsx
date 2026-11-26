@@ -154,7 +154,7 @@ export default function StudentSettingsPage() {
             <span className="text-[#546866] block mb-1">Registered Account Email</span>
             <span className="font-semibold text-[#263331] block truncate">{user?.email}</span>
             <StatusBadge tone="success" className="mt-2.5">
-              <CheckCircle2 className="h-3 w-3" /> Brevo Verified
+              <CheckCircle2 className="h-3 w-3" /> Email Verified
             </StatusBadge>
           </div>
 
@@ -164,7 +164,7 @@ export default function StudentSettingsPage() {
               {user?.phone || "+91 93927 34699"}
             </span>
             <StatusBadge tone="success" className="mt-2.5">
-              <CheckCircle2 className="h-3 w-3" /> Firebase Phone Verified
+              <CheckCircle2 className="h-3 w-3" /> Phone Verified
             </StatusBadge>
           </div>
 

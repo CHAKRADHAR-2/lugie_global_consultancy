@@ -78,7 +78,7 @@ export function VerificationModal({
       if (res.test_otp_hint) {
         setEmailOtpHint(res.test_otp_hint);
       }
-      toast.success(res.message || "Verification code sent via Brevo to your registered email!");
+      toast.success(res.message || "Verification code sent to your registered email!");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to send email verification code.";
       toast.error(msg);
@@ -146,17 +146,18 @@ export function VerificationModal({
         (window as unknown as Record<string, unknown>).confirmationResult = confirmation;
         setPhoneSent(true);
         fbSuccess = true;
-        toast.success(`Firebase SMS OTP sent to ${formattedPhone}! Please check your mobile messages.`);
+        toast.success(`SMS OTP sent to ${formattedPhone}! Please check your mobile messages.`);
       } catch (fbErr: unknown) {
-        console.warn("Firebase Phone Auth client notice:", fbErr);
+        console.warn("Phone verification dispatch notice:", fbErr);
         const errObj = fbErr as { code?: string; message?: string };
         const errCode = errObj?.code || "";
-        let helpfulMsg = errObj?.message || "Firebase SMS dispatch notice";
+        let helpfulMsg =
+          (errObj?.message || "SMS dispatch notice").replace(/firebase/gi, "SMS service");
 
         if (errCode === "auth/operation-not-allowed") {
-          helpfulMsg = "Phone Auth is disabled in Firebase Console. (Enable: Authentication > Sign-in method > Phone in Firebase Console).";
+          helpfulMsg = "Automated SMS dispatch is currently unavailable. Please use the verification code provided below.";
         } else if (errCode === "auth/unauthorized-domain") {
-          helpfulMsg = "Domain unauthorized. Add 'localhost' in Firebase Console > Authentication > Settings > Authorized domains.";
+          helpfulMsg = "Automated SMS verification is unavailable on this domain. Please use the verification code provided below.";
         } else if (errCode === "auth/invalid-phone-number") {
           helpfulMsg = "Invalid phone number format. Please ensure country code is included (e.g. +91 98765 43210).";
         }
@@ -264,7 +265,7 @@ export function VerificationModal({
           }`}
         >
           <Mail className="h-3.5 w-3.5" />
-          <span>Email (Brevo)</span>
+          <span>Email</span>
           {emailVerified && <CheckCircle2 className="h-3.5 w-3.5 text-[#2F6B55] ml-auto" />}
         </button>
 
@@ -278,7 +279,7 @@ export function VerificationModal({
           }`}
         >
           <Smartphone className="h-3.5 w-3.5" />
-          <span>Phone (Firebase)</span>
+          <span>Phone</span>
           {phoneVerified && <CheckCircle2 className="h-3.5 w-3.5 text-[#2F6B55] ml-auto" />}
         </button>
       </div>
@@ -320,13 +321,13 @@ export function VerificationModal({
                   </Button>
                 </div>
                 <p className="text-[11px] text-[#546866] mt-1.5">
-                  Powered by Brevo transactional relay. Please check your <strong>Spam/Junk</strong> folder if delayed.
+                  We will send a 6-digit verification code to this email. Please check your <strong>Spam/Junk</strong> folder if delayed.
                 </p>
                 {emailOtpHint && (
                   <div className="mt-2">
                     <FeedbackBanner
                       tone="info"
-                      message={`Verification Code: ${emailOtpHint} (Use this code if email delivery is pending Brevo sender validation).`}
+                      message={`Verification Code: ${emailOtpHint} (Use this code if email delivery is delayed).`}
                     />
                   </div>
                 )}
@@ -401,7 +402,7 @@ export function VerificationModal({
                 </div>
                 <div id="recaptcha-container"></div>
                 <p className="text-[11px] text-[#546866] mt-1.5">
-                  Powered by Firebase Phone Auth. Dispatches 6-digit SMS code to your phone.
+                  Dispatches a 6-digit SMS verification code to your phone.
                 </p>
                 {firebaseError && (
                   <div className="mt-2">

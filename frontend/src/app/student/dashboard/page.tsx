@@ -346,7 +346,7 @@ export default function StudentDashboard() {
                 <Mail className="h-3.5 w-3.5 text-[#546866]" />
                 Email:{" "}
                 {verificationStatus.is_email_verified ? (
-                  <strong className="text-[#2F6B55] font-semibold">Verified (Brevo)</strong>
+                  <strong className="text-[#2F6B55] font-semibold">Verified</strong>
                 ) : (
                   <span className="text-[#8A5A1E] font-semibold">Unverified</span>
                 )}
@@ -356,7 +356,7 @@ export default function StudentDashboard() {
                 <Smartphone className="h-3.5 w-3.5 text-[#546866]" />
                 Mobile:{" "}
                 {verificationStatus.is_phone_verified ? (
-                  <strong className="text-[#2F6B55] font-semibold">Verified (Firebase)</strong>
+                  <strong className="text-[#2F6B55] font-semibold">Verified</strong>
                 ) : (
                   <span className="text-[#8A5A1E] font-semibold">Unverified</span>
                 )}
