@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { api } from "@/lib/api-client";
+import { openAuthenticatedUrl } from "@/lib/auth-tokens";
 import { toast } from "sonner";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ModalShell, StatusBadge, FeedbackBanner } from "@/components/ui/feedback";
@@ -23,6 +24,7 @@ import {
   MapPin,
   MessageSquare,
   Trash2,
+  FileText,
 } from "lucide-react";
 
 interface Student {
@@ -608,6 +610,68 @@ export default function AdminStudentsPage() {
                         <StatusBadge tone="sage" className="uppercase text-[10px]">
                           {opt.tier}
                         </StatusBadge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* 5. Uploaded Documents */}
+              <div className="space-y-3">
+                <h4 className="text-sm font-semibold text-[#263331] flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-[#3F6258]" />
+                  Uploaded Dossier Documents ({(dossier.documents || []).length})
+                </h4>
+                {(dossier.documents || []).length === 0 ? (
+                  <p className="text-xs text-[#546866] italic">
+                    No documents uploaded by this candidate yet.
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {(dossier.documents || []).map((doc: any) => (
+                      <div
+                        key={doc.id}
+                        className="bg-[#F3F0E8]/75 rounded-xl p-3.5 border border-[#DCE5E8] text-xs flex flex-wrap justify-between items-center gap-3"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold text-[#263331] truncate">
+                            {doc.document_type?.replace(/_/g, " ") || "Document"}
+                          </div>
+                          <p className="text-[#546866] truncate mt-0.5">
+                            {doc.file_name} • {((doc.file_size || 0) / 1024).toFixed(0)} KB
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <StatusBadge
+                            tone={
+                              doc.status === "verified"
+                                ? "success"
+                                : doc.status === "rejected"
+                                ? "error"
+                                : "misty"
+                            }
+                            className="uppercase text-[10px]"
+                          >
+                            {doc.status}
+                          </StatusBadge>
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            size="sm"
+                            onClick={() =>
+                              openAuthenticatedUrl(
+                                `/api/proxy/documents/${doc.id}/file`,
+                                doc.file_name || "document"
+                              ).catch((e) =>
+                                toast.error(
+                                  e instanceof Error ? e.message : "Unable to open document."
+                                )
+                              )
+                            }
+                          >
+                            <Eye className="h-3.5 w-3.5" /> Inspect
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>

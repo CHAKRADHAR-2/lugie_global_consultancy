@@ -79,9 +79,17 @@ async function request<T>(
       });
 
       if (!retryRes.ok) {
-        const error = await retryRes.json().catch(() => ({ detail: "Request failed" }));
-        throw new ApiError(retryRes.status, error.detail || "Request failed");
+        const rawText = await retryRes.text().catch(() => "");
+        let detail = "";
+        try {
+          const parsed = JSON.parse(rawText);
+          detail = typeof parsed?.detail === "string" ? parsed.detail : "";
+        } catch {
+          detail = rawText.trim();
+        }
+        throw new ApiError(retryRes.status, detail || `HTTP error: ${retryRes.status}`);
       }
+      if (retryRes.status === 204) return undefined as T;
       return retryRes.json();
     }
 
@@ -94,10 +102,18 @@ async function request<T>(
   }
 
   if (!res.ok) {
-    const error = await res.json().catch(() => ({ detail: "Request failed" }));
-    throw new ApiError(res.status, error.detail || "Request failed");
+    const rawText = await res.text().catch(() => "");
+    let detail = "";
+    try {
+      const parsed = JSON.parse(rawText);
+      detail = typeof parsed?.detail === "string" ? parsed.detail : "";
+    } catch {
+      detail = rawText.trim();
+    }
+    throw new ApiError(res.status, detail || `HTTP error: ${res.status}`);
   }
 
+  if (res.status === 204) return undefined as T;
   return res.json();
 }
 

@@ -171,3 +171,45 @@ async def test_document_lifecycle(
     )
     assert res_disguised.status_code == 400
     assert "magic bytes check failed" in res_disguised.json()["detail"]
+
+    # 12. Counsellor & admin can inspect metadata and file binary even if ephemeral disk cache cleared
+    counsellor = await create_test_user(
+        db_session, seed_roles["counsellor"], email="counsellor_doc@example.com"
+    )
+    counsellor_token = create_access_token(str(counsellor.id), "counsellor")
+
+    real_pdf = b"%PDF-1.4\n%Authentic Student Marksheet\n%%EOF"
+    res_up_b64 = await client.post(
+        "/api/v1/documents/presigned-upload",
+        json={
+            "filename": "marksheet_2026.pdf",
+            "document_type": "Class XII (12th / Intermediate) Marksheet",
+            "mime_type": "application/pdf",
+            "file_size_bytes": len(real_pdf),
+            "file_base64": base64.b64encode(real_pdf).decode(),
+        },
+        headers={"Authorization": f"Bearer {student_token}"},
+    )
+    assert res_up_b64.status_code == 201
+    doc_b64_id = res_up_b64.json()["document_id"]
+
+    res_meta = await client.get(
+        f"/api/v1/documents/{doc_b64_id}",
+        headers={"Authorization": f"Bearer {counsellor_token}"},
+    )
+    assert res_meta.status_code == 200
+    assert res_meta.json()["file_name"] == "marksheet_2026.pdf"
+
+    res_counsellor_file = await client.get(
+        f"/api/v1/documents/{doc_b64_id}/file",
+        headers={"Authorization": f"Bearer {counsellor_token}"},
+    )
+    assert res_counsellor_file.status_code == 200
+    assert res_counsellor_file.content == real_pdf
+
+    res_admin_file = await client.get(
+        f"/api/v1/documents/{doc_b64_id}/file",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert res_admin_file.status_code == 200
+    assert res_admin_file.content == real_pdf

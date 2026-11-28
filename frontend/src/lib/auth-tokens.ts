@@ -105,8 +105,15 @@ export async function openAuthenticatedUrl(url: string, fallbackFilename?: strin
   }
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: "Unable to open file." }));
-    throw new Error(err.detail || "Unable to open file.");
+    const rawText = await res.text().catch(() => "");
+    let detail = "";
+    try {
+      const parsed = JSON.parse(rawText);
+      detail = typeof parsed?.detail === "string" ? parsed.detail : "";
+    } catch {
+      detail = rawText.trim();
+    }
+    throw new Error(detail || `HTTP error: ${res.status}`);
   }
 
   const blob = await res.blob();

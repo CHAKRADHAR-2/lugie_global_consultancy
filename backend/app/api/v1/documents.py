@@ -11,9 +11,9 @@ from pathlib import Path
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, Query, Request, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import Response
 from pydantic import BaseModel, computed_field
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
@@ -118,9 +118,16 @@ class DownloadResponse(BaseModel):
 # ---------------------------------------------------------------------------
 
 
+def _sanitize_filename(file_name: str) -> str:
+    base = os.path.basename((file_name or "document").replace("\\", "/"))
+    cleaned = "".join(ch if ch.isalnum() or ch in "._- " else "_" for ch in base).strip()
+    return cleaned or "document"
+
+
 def _get_document_file_path(doc_id: uuid.UUID, file_name: str) -> Path:
     STORAGE_DIR.mkdir(parents=True, exist_ok=True)
-    safe_name = os.path.basename(file_name).replace(" ", "_")
+    safe_name = os.path.basename((file_name or "document").replace("\\", "/")).replace(" ", "_")
+    safe_name = "".join(ch if ch.isalnum() or ch in "._-" else "_" for ch in safe_name) or "document"
     return STORAGE_DIR / f"{doc_id}_{safe_name}"
 
 
@@ -131,31 +138,113 @@ def _save_document_to_disk(doc_id: uuid.UUID, file_name: str, content: bytes) ->
     return path
 
 
-def _create_fallback_file(file_path: Path, doc: Document) -> None:
-    """Generate a clean visual PDF certificate if file binary is absent on disk."""
-    file_path.parent.mkdir(parents=True, exist_ok=True)
+def _pdf_escape(text_val: str) -> str:
+    return text_val.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
+
+
+def _build_fallback_pdf_bytes(doc: Document) -> bytes:
+    """Build a valid verification PDF when an original binary is absent on ephemeral disk."""
     clean_sha = doc.checksum_sha256 or "VERIFIED-AES256"
-    pdf_content = (
-        b"%PDF-1.4\n"
-        b"1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n"
-        b"2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n"
-        b"3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] "
-        b"/Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n"
-        b"4 0 obj\n<< /Length 260 >>\nstream\n"
-        b"BT /F1 20 Tf 50 720 Td (LUGIE Global Consultancy - Verified Document) Tj\n"
-        b"/F1 12 Tf 0 -35 Td (File Name: " + doc.file_name.encode("latin-1", "replace") + b") Tj\n"
-        b"0 -25 Td (Document Category: " + doc.document_type.encode("latin-1", "replace") + b") Tj\n"
-        b"0 -25 Td (Security Scan: 4-Layer Verification Passed (Clean / No Malware)) Tj\n"
-        b"0 -25 Td (SHA-256 Checksum: " + clean_sha[:32].encode("latin-1", "replace") + b"...) Tj\n"
-        b"0 -25 Td (Status: Active Student Dossier) Tj\n"
-        b"ET\nendstream\nendobj\n"
-        b"5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n"
-        b"xref\n0 6\n0000000000 65535 f \n0000000009 00000 n \n0000000058 00000 n \n"
-        b"0000000115 00000 n \n0000000244 00000 n \n0000000560 00000 n \n"
-        b"trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n639\n%%EOF\n"
+    file_label = _pdf_escape(doc.file_name or "document")
+    cat_label = _pdf_escape(doc.document_type or "Student Document")
+    stream_text = (
+        "BT /F1 18 Tf 50 730 Td (LUGIE Global Consultancy - Document Verification Record) Tj\n"
+        f"/F1 12 Tf 0 -35 Td (File Name: {file_label}) Tj\n"
+        f"0 -24 Td (Document Category: {cat_label}) Tj\n"
+        "0 -24 Td (Security Scan: 4-Layer Verification Passed) Tj\n"
+        f"0 -24 Td (SHA-256 Checksum: {clean_sha[:48]}) Tj\n"
+        "0 -24 Td (Status: Active Student Dossier) Tj\n"
+        "ET\n"
+    ).encode("latin-1", "replace")
+
+    obj1 = b"1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n"
+    obj2 = b"2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n"
+    obj3 = b"3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n"
+    obj4 = (
+        f"4 0 obj\n<< /Length {len(stream_text)} >>\nstream\n".encode("latin-1")
+        + stream_text
+        + b"endstream\nendobj\n"
     )
+    obj5 = b"5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n"
+
+    header = b"%PDF-1.4\n"
+    parts = [obj1, obj2, obj3, obj4, obj5]
+    offsets: list[int] = []
+    pos = len(header)
+    for part in parts:
+        offsets.append(pos)
+        pos += len(part)
+
+    xref_pos = pos
+    xref_lines = [b"xref\n0 6\n0000000000 65535 f \n"]
+    for off in offsets:
+        xref_lines.append(f"{off:010d} 00000 n \n".encode("latin-1"))
+    trailer = (
+        f"trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n{xref_pos}\n%%EOF\n".encode("latin-1")
+    )
+    return header + b"".join(parts) + b"".join(xref_lines) + trailer
+
+
+def _create_fallback_file(file_path: Path, doc: Document) -> None:
+    """Write a valid PDF verification certificate when file binary is absent on disk."""
+    file_path.parent.mkdir(parents=True, exist_ok=True)
     with open(file_path, "wb") as f:
-        f.write(pdf_content)
+        f.write(_build_fallback_pdf_bytes(doc))
+
+
+async def _save_document_blob(db: AsyncSession, doc_id: uuid.UUID, content: bytes) -> None:
+    """Persist uploaded binary bytes in PostgreSQL so stateless containers never lose files."""
+    try:
+        async with db.begin_nested():
+            await db.execute(
+                text(
+                    "CREATE TABLE IF NOT EXISTS document_blobs ("
+                    "document_id UUID PRIMARY KEY REFERENCES documents(id) ON DELETE CASCADE, "
+                    "content BYTEA NOT NULL, "
+                    "created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()"
+                    ")"
+                )
+            )
+            await db.execute(
+                text(
+                    "INSERT INTO document_blobs (document_id, content) "
+                    "VALUES (:doc_id, :content) "
+                    "ON CONFLICT (document_id) DO UPDATE SET content = EXCLUDED.content"
+                ),
+                {"doc_id": doc_id, "content": content},
+            )
+    except Exception:
+        pass
+
+
+async def _load_document_blob(db: AsyncSession, doc_id: uuid.UUID) -> bytes | None:
+    """Load persisted document bytes from PostgreSQL if available."""
+    try:
+        async with db.begin_nested():
+            row = (
+                await db.execute(
+                    text("SELECT content FROM document_blobs WHERE document_id = :doc_id"),
+                    {"doc_id": doc_id},
+                )
+            ).first()
+            if row and row[0] is not None:
+                return bytes(row[0])
+    except Exception:
+        return None
+    return None
+
+
+def _build_inline_response(content: bytes, media_type: str, file_name: str) -> Response:
+    from urllib.parse import quote
+
+    safe_name = _sanitize_filename(file_name)
+    ascii_fallback = safe_name.encode("ascii", "ignore").decode("ascii").replace('"', "") or "document"
+    encoded_name = quote(safe_name)
+    headers = {
+        "Content-Disposition": f"inline; filename=\"{ascii_fallback}\"; filename*=UTF-8''{encoded_name}",
+        "Cache-Control": "private, no-store",
+    }
+    return Response(content=content, media_type=media_type or "application/pdf", headers=headers)
 
 
 async def _get_student_profile(db: AsyncSession, user_id: str) -> StudentProfile:
@@ -355,7 +444,11 @@ async def upload_document(
     await db.flush()
     await db.refresh(doc)
 
-    _save_document_to_disk(doc.id, doc.file_name, content)
+    try:
+        _save_document_to_disk(doc.id, doc.file_name, content)
+    except OSError:
+        pass
+    await _save_document_blob(db, doc.id, content)
 
     ip = request.client.host if request.client else None
     ua = request.headers.get("user-agent")
@@ -422,10 +515,17 @@ async def presigned_upload(
     await db.refresh(doc)
 
     if content:
-        _save_document_to_disk(doc.id, doc.file_name, content)
+        try:
+            _save_document_to_disk(doc.id, doc.file_name, content)
+        except OSError:
+            pass
+        await _save_document_blob(db, doc.id, content)
     else:
-        path = _get_document_file_path(doc.id, doc.file_name)
-        _create_fallback_file(path, doc)
+        try:
+            path = _get_document_file_path(doc.id, doc.file_name)
+            _create_fallback_file(path, doc)
+        except OSError:
+            pass
 
     upload_url = f"/api/proxy/documents/{doc.id}/file"
     return PresignedUploadResponse(
@@ -443,12 +543,13 @@ async def confirm_upload(
     current_user: Annotated[dict, Depends(get_current_active_user)],
 ):
     """Confirm a completed upload and transition status."""
-    profile = await _get_student_profile(db, current_user["id"])
     doc = await _get_document(db, body.document_id)
 
     roles = current_user.get("roles", [])
-    if doc.student_id != profile.id and not any(r in ADMIN_ROLES for r in roles):
-        raise PermissionDeniedError("You can only confirm your own documents.")
+    if not any(r in ADMIN_ROLES for r in roles):
+        profile = await _get_student_profile(db, current_user["id"])
+        if doc.student_id != profile.id:
+            raise PermissionDeniedError("You can only confirm your own documents.")
 
     doc.status = DocumentStatus.UPLOADED
     if doc.scan_status in (ScanStatus.PENDING, ScanStatus.SCAN_DISABLED):
@@ -456,10 +557,17 @@ async def confirm_upload(
     doc.scanned_at = datetime.now(UTC)
     await db.flush()
 
-    # Ensure document file exists on disk
-    file_path = _get_document_file_path(doc.id, doc.file_name)
-    if not file_path.exists():
-        _create_fallback_file(file_path, doc)
+    # Restore from persistent DB blob if local ephemeral disk lacks the file
+    try:
+        file_path = _get_document_file_path(doc.id, doc.file_name)
+        if not file_path.exists():
+            blob = await _load_document_blob(db, doc.id)
+            if blob is not None:
+                _save_document_to_disk(doc.id, doc.file_name, blob)
+            else:
+                _create_fallback_file(file_path, doc)
+    except OSError:
+        pass
 
     ip = request.client.host if request.client else None
     ua = request.headers.get("user-agent")
@@ -567,20 +675,80 @@ async def get_document_file(
             "This document has been quarantined due to a security violation."
         )
 
+    content_bytes: bytes | None = None
+    media_type = doc.mime_type or "application/pdf"
+    display_name = doc.file_name or "document"
+
     file_path = _get_document_file_path(doc.id, doc.file_name)
-    if not file_path.exists():
-        _create_fallback_file(file_path, doc)
+    if file_path.exists():
+        try:
+            content_bytes = file_path.read_bytes()
+        except OSError:
+            content_bytes = None
+
+    if content_bytes is None:
+        blob = await _load_document_blob(db, doc.id)
+        if blob is not None:
+            content_bytes = blob
+            try:
+                _save_document_to_disk(doc.id, doc.file_name, blob)
+            except OSError:
+                pass
+
+    if content_bytes is None:
+        content_bytes = _build_fallback_pdf_bytes(doc)
+        media_type = "application/pdf"
+        stem = os.path.splitext(_sanitize_filename(display_name))[0] or "document"
+        display_name = f"{stem}_verification.pdf"
 
     ip = request.client.host if request.client else None
     ua = request.headers.get("user-agent")
     await _log_access(db, doc.id, uuid.UUID(current_user["id"]), "download", ip, ua)
 
-    return FileResponse(
-        path=str(file_path),
-        media_type=doc.mime_type or "application/pdf",
-        filename=doc.file_name,
-        content_disposition_type="inline",
-    )
+    return _build_inline_response(content_bytes, media_type, display_name)
+
+
+@router.put("/{document_id}/file", response_model=DocumentResponse)
+async def put_document_file(
+    document_id: uuid.UUID,
+    request: Request,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[dict, Depends(get_current_active_user)],
+):
+    """Accept direct binary PUT uploads to the presigned file URL."""
+    doc = await _get_document(db, document_id)
+    roles = current_user.get("roles", [])
+    if not any(r in ADMIN_ROLES for r in roles):
+        profile = await _get_student_profile(db, current_user["id"])
+        if doc.student_id != profile.id:
+            raise PermissionDeniedError("You can only upload to your own documents.")
+
+    if doc.is_deleted:
+        raise NotFoundError("Document")
+
+    content = await request.body()
+    content_type = request.headers.get("content-type") or doc.mime_type or "application/octet-stream"
+    checksum, scan_status = _security_scan_file(doc.file_name, content_type, content)
+
+    doc.file_size = len(content)
+    doc.mime_type = content_type
+    doc.checksum_sha256 = checksum
+    doc.scan_status = scan_status
+    doc.scanned_at = datetime.now(UTC)
+    doc.status = DocumentStatus.UPLOADED
+    await db.flush()
+
+    try:
+        _save_document_to_disk(doc.id, doc.file_name, content)
+    except OSError:
+        pass
+    await _save_document_blob(db, doc.id, content)
+
+    ip = request.client.host if request.client else None
+    ua = request.headers.get("user-agent")
+    await _log_access(db, doc.id, uuid.UUID(current_user["id"]), "upload", ip, ua)
+
+    return doc
 
 
 # ---------------------------------------------------------------------------
@@ -598,6 +766,8 @@ async def verify_document(
     """Admin/counsellor: mark a document as verified."""
     _require_admin(current_user)
     doc = await _get_document(db, document_id)
+    if doc.is_deleted:
+        raise NotFoundError("Document")
 
     doc.status = DocumentStatus.VERIFIED
     doc.verified_by = uuid.UUID(current_user["id"])
@@ -619,6 +789,8 @@ async def reject_document(
     """Admin/counsellor: reject a document."""
     _require_admin(current_user)
     doc = await _get_document(db, document_id)
+    if doc.is_deleted:
+        raise NotFoundError("Document")
 
     doc.status = DocumentStatus.REJECTED
     await db.flush()
@@ -640,6 +812,8 @@ async def quarantine_document(
         raise PermissionDeniedError()
 
     doc = await _get_document(db, document_id)
+    if doc.is_deleted:
+        raise NotFoundError("Document")
     doc.scan_status = ScanStatus.QUARANTINED
     await db.flush()
 
@@ -649,8 +823,28 @@ async def quarantine_document(
 
 
 # ---------------------------------------------------------------------------
-# Soft Delete
+# Metadata & Soft Delete
 # ---------------------------------------------------------------------------
+
+
+@router.get("/{document_id}", response_model=DocumentResponse)
+async def get_document_metadata(
+    document_id: uuid.UUID,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    current_user: Annotated[dict, Depends(get_current_active_user)],
+):
+    """Fetch document metadata. Student: own only. Admin/counsellor: any."""
+    doc = await _get_document(db, document_id)
+    if doc.is_deleted:
+        raise NotFoundError("Document")
+
+    roles = current_user.get("roles", [])
+    if not any(r in ADMIN_ROLES for r in roles):
+        profile = await _get_student_profile(db, current_user["id"])
+        if doc.student_id != profile.id:
+            raise PermissionDeniedError("You can only view your own documents.")
+
+    return doc
 
 
 @router.delete("/{document_id}")

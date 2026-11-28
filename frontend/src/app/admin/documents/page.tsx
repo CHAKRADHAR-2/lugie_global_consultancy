@@ -51,6 +51,7 @@ export default function AdminDocumentsPage() {
   const [search, setSearch] = useState("");
   const [quarantineTarget, setQuarantineTarget] = useState<DocumentItem | null>(null);
   const [quarantining, setQuarantining] = useState(false);
+  const [inspectingId, setInspectingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchDocuments();
@@ -311,18 +312,25 @@ export default function AdminDocumentsPage() {
                       <td className="py-3.5 px-4 text-right">
                         <div className="inline-flex flex-wrap items-center justify-end gap-1.5">
                           <Button
+                            type="button"
                             variant="secondary"
                             size="sm"
-                            onClick={() =>
+                            loading={inspectingId === doc.id}
+                            loadingText="Opening..."
+                            disabled={inspectingId === doc.id}
+                            onClick={() => {
+                              setInspectingId(doc.id);
                               openAuthenticatedUrl(
                                 `/api/proxy/documents/${doc.id}/file`,
                                 doc.file_name
-                              ).catch((e) =>
-                                toast.error(
-                                  e instanceof Error ? e.message : "Unable to open document."
-                                )
                               )
-                            }
+                                .catch((e) =>
+                                  toast.error(
+                                    e instanceof Error ? e.message : "Unable to open document."
+                                  )
+                                )
+                                .finally(() => setInspectingId(null));
+                            }}
                             title="Inspect document"
                           >
                             <Eye className="h-3.5 w-3.5" /> Inspect

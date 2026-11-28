@@ -226,3 +226,63 @@ async def test_admin_create_and_delete_student(client, db_session, seed_roles):
         select(User).where(User.email == "aarav.student@test.com")
     )
     assert user_check.scalar_one_or_none() is None
+
+
+@pytest.mark.asyncio
+async def test_full_dossier_with_work_experience_and_documents(client, db_session, seed_roles):
+    """Admin and counsellor can retrieve full dossier including work experience and documents."""
+    from datetime import date
+    from app.models.document import Document
+    from app.models.experience import WorkExperience
+
+    student = await create_test_user(
+        db_session, seed_roles["student"], email="dossier_student@test.com"
+    )
+    counsellor = await create_test_user(
+        db_session, seed_roles["counsellor"], email="dossier_counsellor@test.com"
+    )
+    admin = await create_test_user(
+        db_session, seed_roles["admin"], email="dossier_admin@test.com"
+    )
+
+    from sqlalchemy import select
+    from app.models.student import StudentProfile
+
+    prof = (
+        await db_session.execute(select(StudentProfile).where(StudentProfile.user_id == student.id))
+    ).scalar_one()
+
+    db_session.add(
+        WorkExperience(
+            student_id=prof.id,
+            company="Infosys Ltd",
+            designation="Software Engineer",
+            employment_type="Full-time",
+            start_date=date(2024, 1, 10),
+            is_current=True,
+        )
+    )
+    db_session.add(
+        Document(
+            student_id=prof.id,
+            document_type="Passport (Front & Back)",
+            file_name="passport.pdf",
+            storage_key=f"{prof.id}/passport.pdf",
+            file_size=1234,
+            mime_type="application/pdf",
+            status="uploaded",
+            scan_status="clean",
+        )
+    )
+    await db_session.commit()
+
+    for role, actor in (("counsellor", counsellor), ("admin", admin)):
+        headers = {"Authorization": f"Bearer {create_access_token(str(actor.id), role)}"}
+        resp = await client.get(f"/api/v1/students/{prof.id}/full-dossier", headers=headers)
+        assert resp.status_code == 200
+        data = resp.json()
+        assert len(data["work_experiences"]) == 1
+        assert data["work_experiences"][0]["company_name"] == "Infosys Ltd"
+        assert data["work_experiences"][0]["job_title"] == "Software Engineer"
+        assert len(data["documents"]) == 1
+        assert data["documents"][0]["file_name"] == "passport.pdf"
